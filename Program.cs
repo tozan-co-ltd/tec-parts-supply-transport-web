@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using tec_empty_box_supply_transport_web.Commons;
 using tec_empty_box_supply_transport_web.Hubs;
 using tec_empty_box_supply_transport_web.MiddlewareExtensions;
 using tec_empty_box_supply_transport_web.SubscribeTableDependencies;
@@ -15,7 +16,7 @@ builder.Services.AddSingleton<SubscribeSupplyTableDependency>();
 
 var app = builder.Build();
 
-var connectionString = app.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

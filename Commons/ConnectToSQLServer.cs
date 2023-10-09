@@ -11,7 +11,7 @@
         /// <returns></returns>
         public static string GetSQLServerConnectionString()
         {
-            var databaseName = "DefaultConnection";
+            var databaseName = "tec-empty-box-supply";
             var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false);

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
+using tec_empty_box_supply_transport_web.Commons;
 using tec_empty_box_supply_transport_web.Repositories;
 
 namespace tec_empty_box_supply_transport_web.Controllers
@@ -17,9 +19,8 @@ namespace tec_empty_box_supply_transport_web.Controllers
         {
             try
             {
-                DateTime currentDateTime = DateTime.Now;
                 string emptyBoxSupplyRequestIid = dataSupplyId;
-                bool resUpdate = UpdateEmptyBoxSupplyRequest(currentDateTime, emptyBoxSupplyRequestIid);
+                bool resUpdate = UpdateEmptyBoxSupplyRequest(emptyBoxSupplyRequestIid);
                 var result = new { res = resUpdate };
 
                 return Json(result);
@@ -35,39 +36,53 @@ namespace tec_empty_box_supply_transport_web.Controllers
         }
 
 
-        public bool UpdateEmptyBoxSupplyRequest(DateTime ready_datetime, string empty_box_supply_request_id)
+        /// <summary>
+        /// 準備を更新するSQL作成
+        /// </summary>
+        /// <param>empty_box_supply_request_id</param>
+        /// <remarks>UPDATE文</remarks>
+        /// <returns>SQL</returns>
+        public static string CreateSQLUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
         {
-            string connectionString = "Data Source=DSP40A\\USA;Initial Catalog=tec-empty-box-supply;User Id=sa;Password=anhminh92";
+            var sql = $@"
+                    UPDATE
+                        t_empty_box_supply_request
+                    SET
+                        ready_datetime  = GETDATE()
+                    WHERE empty_box_supply_request_id = {@empty_box_supply_request_id}
+            ";
+            return sql;
+        }
 
-            string updateQuery = "UPDATE t_empty_box_supply_request SET ready_datetime = @ready_datetime WHERE empty_box_supply_request_id = @empty_box_supply_request_id";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+        /// <summary>
+        /// 準備を更新する
+        /// </summary>
+        /// <param>empty_box_supply_request_id</param>
+        /// <returns>成功したらtrueを返す</returns>
+        public bool UpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
+        {
+            // 戻り値
+            bool isUpdateEmptyBoxSupply = false;
+
+            // SQL作成
+            var sql = CreateSQLUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
+
+            // DB接続
+            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+            using (var connection = new SqlConnection(connectionString))
             {
-                try
-                {
-                    connection.Open();
-                    using (SqlCommand command = new SqlCommand(updateQuery, connection))
-                    {
-                        // Parameters to prevent SQL injection
-                        command.Parameters.AddWithValue("@ready_datetime", ready_datetime);
-                        command.Parameters.AddWithValue("@empty_box_supply_request_id", Convert.ToInt32(empty_box_supply_request_id));
+                connection.ConnectionString = connectionString;
+                connection.Open();
 
-                        // Execute the update query
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        Console.WriteLine($"Rows Affected: {rowsAffected}");
-                    }
-                    return true;
-                }
-                catch (Exception ex)
+                // 戻り値は処理件数
+                var update = connection.Execute(sql, empty_box_supply_request_id);
+                if (update >= 1)
                 {
-                    throw;
-                }
-                finally
-                {
-                    connection.Close();
+                    isUpdateEmptyBoxSupply = true;
                 }
             }
+            return isUpdateEmptyBoxSupply;
         }
     }
 }
