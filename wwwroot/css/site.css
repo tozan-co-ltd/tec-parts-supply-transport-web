@@ -46,6 +46,10 @@ a{
     display: block;
 }
 
+.min-width48{
+    min-width: 48px;
+}
+
 .prepare, .transport {
     overflow: hidden;
 }
@@ -56,6 +60,11 @@ a{
 .zoom:hover {
     transform: scale(1.05); 
     opacity: 0.9;
+}
+
+.supplyContent{
+    width: 100%;
+    margin: 0;
 }
 
 .nav-head {
