@@ -14,8 +14,8 @@ namespace tec_empty_box_supply_transport_web.Models
         [Column("permanent_abbreviation")]
         public string PermanentAbbreviation { get; set; }
 
-        //[Column("box_type")]
-        //public string BoxType { get; set; }
+        [Column("box_type")]
+        public string BoxType { get; set; }
 
         [Column("box_count")]
         public int BoxCount { get; set; }
