@@ -19,7 +19,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
         public List<SupplyModel> GetListSupplys(string sql)
         {
             // 戻り値
-            List<SupplyModel> supplys = new List<SupplyModel>();
+            List<SupplyModel> supplys = new();
 
             // DB接続
             try
@@ -36,7 +36,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                 }
                 return supplys;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

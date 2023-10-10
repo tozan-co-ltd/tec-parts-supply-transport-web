@@ -41,20 +41,20 @@ function BindSupplysToGrid(supplys) {
 
     // 左のテーブル用を取得
     var supplys1 = supplys.slice(0, 6);
-    createTable(supplys1, table)
+    createTable(supplys1, table);
 
     //右のテーブル用を取得
     var supplysTmp = supplys.length - supplys1.length;
     if (supplysTmp > 0) {
         var supplys2 = supplys.slice(6, 12);
-        createTable(supplys2, table1)
+        createTable(supplys2, table1);
     }
 
     // テーブルを作成
     function createTable(supplys, table) {
         if (supplys.length > 0) {
-            $(".supplyContent").show()
-            $(".noneDateMess").hide()
+            $(".supplyContent").show();
+            $(".noneDateMess").hide();
             for (let i = 0; i < supplys.length; i++) {
                 var row = table.insertRow();
                 var cell1 = row.insertCell(0);
@@ -67,7 +67,7 @@ function BindSupplysToGrid(supplys) {
                 var cell8 = row.insertCell(7);
 
                 // 現在日時
-                var today = new Date()
+                var today = new Date();
                 //　依頼時間
                 var resDateTime = new Date(supplys[i].correctedRequestDatetime);
 
@@ -81,16 +81,16 @@ function BindSupplysToGrid(supplys) {
                 var subResult = "";
                 //　60:00以上はデフォルト"59:59"
                 if (minuteNum >= 60)
-                    subResult = "59:59"
+                    subResult = "59:59";
                 else
                     subResult = subtractTime(today, resDateTime, subResult);　// 時間を引く
 
                 var timeTmp = subResult.split(':');
-                var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000
+                var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
                 if (supplys[i].important == 1) {
                     //cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                    cell1.className = 'importTd'
+                    cell1.className = 'importTd';
                 }
 
                 cell2.innerHTML = `${supplys[i].machineNum}`;
@@ -103,19 +103,19 @@ function BindSupplysToGrid(supplys) {
                 cell6.innerHTML = `${subResult}`;
                 cell7.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">完了</button>`;
                 if (dataTime < 0) {
-                    row.className = "redBg"
-                    cell6.className = 'timeCount redflag'
+                    row.className = "redBg";
+                    cell6.className = 'timeCount redflag';
                 }
                 else
-                    cell6.className = 'timeCount'
+                    cell6.className = 'timeCount';
 
                 cell6.setAttribute("data-time", dataTime);
                 cell8.innerHTML = `${supplys[i].emptyBoxSupplyRequestId}`;
                 cell8.className = 'supplyId';
             }
         } else {
-            $(".supplyContent").hide()
-            $(".noneDateMess").show()
+            $(".supplyContent").hide();
+            $(".noneDateMess").show();
         }
     }
 
@@ -124,6 +124,7 @@ function BindSupplysToGrid(supplys) {
         const startTime = parseInt(element.getAttribute('data-time'), 10);
         let timeLeft = startTime;
         let isCountingDown = true;
+
         // カウントダウンを開始する
         let countdownInterval;
         let countupInterval;
@@ -152,9 +153,11 @@ function BindSupplysToGrid(supplys) {
                         timeLeft = startTime;
                         isCountingDown = false;
                         timeLeft = timeLeft + 10 * 60000; // カウントダウンが終了するまで、10分を加算
+
                         countupInterval = setInterval(function () {
                             timeLeft += 1000;
                             element.className = 'timeCount redflag'
+
                             if (timeLeft == 3599000)
                                 clearInterval(countupInterval);
 
@@ -167,6 +170,7 @@ function BindSupplysToGrid(supplys) {
                 countupInterval = setInterval(function () {
                     timeLeft += 1000;
                     element.className = 'timeCount redflag'
+
                     if (timeLeft == 3599000) 
                         clearInterval(countupInterval);
 
@@ -211,20 +215,20 @@ function BindSupplysToGrid(supplys) {
         element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
-    // 各tdを繰り返し、各tdにカウントダウン関数を適用します
+    // 各tdを繰り返し、各tdにカウントダウン関数を適用する
     const tdElements = document.querySelectorAll('#tblSupplyLeft td.timeCount');
     const tdElements1 = document.querySelectorAll('#tblSupplyRight td.timeCount');
     tdElements.forEach(countdown);
     tdElements1.forEach(countdown);
 
-    // show loading when send data
+    // ローディング表示
     $(document).ajaxSend(function () {
         $("#overlay").fadeIn(300);
     });
 
     var buttons = document.querySelectorAll('.btnCompletion');
 
-    // 各ボタンを繰り返し、各ボタンにクリックイベントを追加する
+    // ボタン押下時に確認ダイアログ表示
     buttons.forEach(function (button) {
         button.addEventListener('click', function () {
             var row = button.parentElement.parentElement;

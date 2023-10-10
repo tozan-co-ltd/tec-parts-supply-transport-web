@@ -13,7 +13,10 @@ namespace tec_empty_box_supply_transport_web.Hubs
         {
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
             supplyRepository = new SupplyRepository(connectionString);
+            Configuration = configuration;
         }
+
+        public IConfiguration Configuration { get; }
 
         public async Task SendSupplys()
         {
@@ -24,7 +27,7 @@ namespace tec_empty_box_supply_transport_web.Hubs
                 List<SupplyModel> listSupplys = supplyRepository.GetListSupplys(sql);
                 await Clients.All.SendAsync("ReceivedSupplys", listSupplys);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
