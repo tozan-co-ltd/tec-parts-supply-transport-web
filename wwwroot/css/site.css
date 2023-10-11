@@ -83,6 +83,27 @@ a{
     border: solid #ccc 1px;
     cursor: pointer;
 }
+/* 終了ボタンのアニメーション */
+@keyframes animation {
+    0% {
+        background: #198754;
+        border: #198754;
+    }
+    50% {
+        background: rgba(25,135,84,0.5);
+        border: rgba(25,135,84,0.5);
+    }
+    100% {
+        background: #198754;
+        border: #198754;
+    }
+}
+
+.btnEnd {
+    animation-name: animation;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
 
 .row {
     --bs-gutter-x: 0rem;

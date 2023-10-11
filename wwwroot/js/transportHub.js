@@ -102,10 +102,10 @@ function BindSupplysToGrid(supplys) {
                 cell6.innerHTML = `${subResult}`;
                 cell7.className = 'statusBtn';
                 if (supplys[i].emptyBoxSupplyStatusId == 2 ) 
-                    cell7.innerHTML = `<button type="button" class="btn btn-warning btnStart">開始</button>`;
+                    cell7.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
 
                 if (supplys[i].emptyBoxSupplyStatusId == 3) 
-                    cell7.innerHTML = `<button type="button" class="btn btn-success btnStart">終了</button>`;
+                    cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
 
                 if (dataTime < 0) {
                     row.className = "redBg";
@@ -232,7 +232,7 @@ function BindSupplysToGrid(supplys) {
         $("#overlay").fadeIn(300);
     });
 
-    var buttons = document.querySelectorAll('.btnStart');
+    var buttons = document.querySelectorAll('.btnRegister');
     var buttonsClose = document.querySelectorAll('.btnClose');
 
     // ボタン押下時に確認ダイアログ表示
@@ -306,13 +306,13 @@ function BindSupplysToGrid(supplys) {
             var tdWithSupplyId = row.querySelector('.transportId');
             var tdWithBoxType = row.querySelector('.boxType');
             var tdWithBoxCount = row.querySelector('.boxCount');
-            var tdWithBtnStart = row.querySelector('.btnStart');
+            var tdWithbtnRegister = row.querySelector('.btnRegister');
 
             // td要素のdata-timeとidを含むテキスト値を取得する
             var dataSupplyId = tdWithSupplyId.textContent;
             var dataBoxType = tdWithBoxType.textContent;
             var dataBoxCount = tdWithBoxCount.textContent;
-            var statusBtn = tdWithBtnStart.textContent || tdWithBtnStart.innerText;
+            var statusBtn = tdWithbtnRegister.textContent || tdWithbtnRegister.innerText;
             if (statusBtn == "開始") {
                 $.ajax({
                     type: 'POST',
@@ -320,9 +320,9 @@ function BindSupplysToGrid(supplys) {
                     data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                     success: function (response) {
                         if (response.res == true) {
-                            tdWithBtnStart.innerText = "開始";
-                            tdWithBtnStart.classList.add('btn-warning');
-                            tdWithBtnStart.classList.remove('btn-success');
+                            tdWithbtnRegister.innerText = "開始";
+                            tdWithbtnRegister.classList.add('btn-warning');
+                            tdWithbtnRegister.classList.remove('btn-success');
                         }
                     }
                 }).done(function () {
@@ -339,9 +339,9 @@ function BindSupplysToGrid(supplys) {
                     data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                     success: function (response) {
                         if (response.res == true) {
-                            tdWithBtnStart.innerText = "開始";
-                            tdWithBtnStart.classList.add('btn-warning');
-                            tdWithBtnStart.classList.remove('btn-success');
+                            tdWithbtnRegister.innerText = "開始";
+                            tdWithbtnRegister.classList.add('btn-warning');
+                            tdWithbtnRegister.classList.remove('btn-success');
                         }
                     }
                 }).done(function () {
