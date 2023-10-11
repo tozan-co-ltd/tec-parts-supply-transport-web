@@ -1,9 +1,24 @@
+using Microsoft.AspNetCore.SignalR;
+using tec_empty_box_supply_transport_web.Commons;
+using tec_empty_box_supply_transport_web.Hubs;
+using tec_empty_box_supply_transport_web.MiddlewareExtensions;
+using tec_empty_box_supply_transport_web.SubscribeTableDependencies;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
+
+// DI
+builder.Services.AddSingleton<SupplyHub>();
+builder.Services.AddSingleton<SubscribeSupplyTableDependency>();
+builder.Services.AddSingleton<TransportHub>();
+builder.Services.AddSingleton<SubscribeTransportTableDependency>();
 
 var app = builder.Build();
+
+var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -20,8 +35,23 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+//app.MapHub<SupplyHub>("/supplyHub");
+//app.MapHub<TransportHub>("/transportHub");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Top}/{action=Index}/{id?}");
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapHub<SupplyHub>("/supplyHub");
+        endpoints.MapHub< TransportHub > ("/transportHub");
+    });
+});
+
+app.UseSqlTableDependency<SubscribeSupplyTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribeTransportTableDependency>(connectionString);
 
 app.Run();
