@@ -152,7 +152,7 @@ function BindSupplysToGrid(supplys) {
                         // 初期の時間から再びカウントダウンを開始する
                         timeLeft = startTime;
                         isCountingDown = false;
-                        timeLeft = timeLeft + 10 * 60000; // カウントダウンが終了するまで、10分を加算
+                        timeLeft = 10 * 60000; // カウントダウンが終了するまで、10分を加算
 
                         countupInterval = setInterval(function () {
                             timeLeft += 1000;
