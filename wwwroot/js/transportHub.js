@@ -1,7 +1,7 @@
 ﻿"use strict";
 
 // signalRを使用して接続を初期化する
-var connection = new signalR.HubConnectionBuilder().withUrl("/supplyHub").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/transportHub").build();
 $(function () {
     connection.start().then(function () {
         InvokeSupplys();
@@ -9,6 +9,7 @@ $(function () {
         return console.error(err.toString());
     });
 });
+
 
 // 短い遅延後に再接続を試みる
 connection.onclose(function (error) {
@@ -21,23 +22,23 @@ connection.onclose(function (error) {
 
 // InvokeSupplys
 function InvokeSupplys() {
-    connection.invoke("SendSupplys").catch(function (err) {
+    connection.invoke("SendTransports").catch(function (err) {
         return console.error(err.toString());
     });
 }
 
 // グリッドにサプライをバインドする
-connection.on("ReceivedSupplys", function (products) {
+connection.on("ReceivedTransports", function (products) {
     BindSupplysToGrid(products);
 });
 
 // グリッドにサプライをバインド
 function BindSupplysToGrid(supplys) {
-    $('#tblSupplyLeft tbody').empty();
-    $('#tblSupplyRight tbody').empty();
+    $('#tblTransportLeft tbody').empty();
+    $('#tblTransportRight tbody').empty();
 
-    var table = document.getElementById('tblSupplyLeft').getElementsByTagName('tbody')[0];
-    var table1 = document.getElementById('tblSupplyRight').getElementsByTagName('tbody')[0];
+    var table = document.getElementById('tblTransportLeft').getElementsByTagName('tbody')[0];
+    var table1 = document.getElementById('tblTransportRight').getElementsByTagName('tbody')[0];
 
     // 左のテーブル用を取得
     var supplys1 = supplys.slice(0, 6);
@@ -53,7 +54,7 @@ function BindSupplysToGrid(supplys) {
     // テーブルを作成
     function createTable(supplys, table) {
         if (supplys.length > 0) {
-            $(".supplyContent").show();
+            $(".transportContent").show();
             $(".noneDateMess").hide();
             for (let i = 0; i < supplys.length; i++) {
                 var row = table.insertRow();
@@ -65,6 +66,7 @@ function BindSupplysToGrid(supplys) {
                 var cell6 = row.insertCell(5);
                 var cell7 = row.insertCell(6);
                 var cell8 = row.insertCell(7);
+                var cell9 = row.insertCell(8);
 
                 // 現在日時
                 var today = new Date();
@@ -87,11 +89,8 @@ function BindSupplysToGrid(supplys) {
 
                 var timeTmp = subResult.split(':');
                 var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
-
-                if (supplys[i].important == 1) {
-                    //cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                    cell1.className = 'importTd';
-                }
+  
+                cell1.className = 'importTd';
 
                 cell2.innerHTML = `${supplys[i].machineNum}`;
                 cell2.className = 'machine-number';
@@ -101,7 +100,13 @@ function BindSupplysToGrid(supplys) {
                 cell5.innerHTML = `${supplys[i].boxCount}`;
                 cell5.className = 'boxCount';
                 cell6.innerHTML = `${subResult}`;
-                cell7.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">完了</button>`;
+                cell7.className = 'statusBtn';
+                if (supplys[i].emptyBoxSupplyStatusId == 2 ) 
+                    cell7.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
+
+                if (supplys[i].emptyBoxSupplyStatusId == 3) 
+                    cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
+
                 if (dataTime < 0) {
                     row.className = "redBg";
                     cell6.className = 'timeCount redflag';
@@ -111,10 +116,11 @@ function BindSupplysToGrid(supplys) {
 
                 cell6.setAttribute("data-time", dataTime);
                 cell8.innerHTML = `${supplys[i].emptyBoxSupplyRequestId}`;
-                cell8.className = 'supplyId';
+                cell8.className = 'transportId';
+                cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa fa-window-close">X</i></button>`;
             }
         } else {
-            $(".supplyContent").hide();
+            $(".transportContent").hide();
             $(".noneDateMess").show();
         }
     }
@@ -216,8 +222,8 @@ function BindSupplysToGrid(supplys) {
     }
 
     // 各tdを繰り返し、各tdにカウントダウン関数を適用する
-    const tdElements = document.querySelectorAll('#tblSupplyLeft td.timeCount');
-    const tdElements1 = document.querySelectorAll('#tblSupplyRight td.timeCount');
+    const tdElements = document.querySelectorAll('#tblTransportLeft td.timeCount');
+    const tdElements1 = document.querySelectorAll('#tblTransportRight td.timeCount');
     tdElements.forEach(countdown);
     tdElements1.forEach(countdown);
 
@@ -226,13 +232,16 @@ function BindSupplysToGrid(supplys) {
         $("#overlay").fadeIn(300);
     });
 
-    var buttons = document.querySelectorAll('.btnCompletion');
+    var buttons = document.querySelectorAll('.btnRegister');
+    var buttonsClose = document.querySelectorAll('.btnClose');
 
     // ボタン押下時に確認ダイアログ表示
     buttons.forEach(function (button) {
         button.addEventListener('click', function () {
+            var isDelete = false;
             var row = button.parentElement.parentElement;
-            var tdWithSupplyId = row.querySelector('.supplyId');
+            var statusBtn = button.textContent || button.innerText;
+            var tdWithSupplyId = row.querySelector('.transportId');
             var tdWithBoxType = row.querySelector('.boxType');
             var tdWithBoxCount = row.querySelector('.boxCount');
 
@@ -241,30 +250,106 @@ function BindSupplysToGrid(supplys) {
             var dataBoxType = tdWithBoxType.textContent;
             var dataBoxCount = tdWithBoxCount.textContent;
 
-            // sweetalert2
-            Swal.fire({
-                title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録を行います。<br>よろしいですか？`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#0d6efd',
-                cancelButtonText: 'キャンセル',
-                confirmButtonText: '完了'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'Supply/Complete',
-                        data: { dataSupplyId: dataSupplyId },
-                        success: function (response) {
-                            console.log(response)
+            if (statusBtn == "開始") {
+                $.ajax({
+                    type: 'POST',
+                    url: 'Transport/Complete',
+                    data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                    success: function (response) {
+                        if (response.res == true) {
+                            button.innerText = "終了";
+                            button.classList.remove('btn-warning');
+                            button.classList.add('btn-success');
                         }
-                    }).done(function () {
-                        setTimeout(function () {
-                            $("#overlay").fadeOut(300);
-                        }, 500);
-                    });
-                }
-            })
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 10);
+                });
+            }
+
+             if (statusBtn == "終了") {
+                // sweetalert2
+                Swal.fire({
+                    title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録を行います。<br>よろしいですか？`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonText: 'キャンセル',
+                    confirmButtonText: '完了'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Transport/Complete',
+                            data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                            success: function (response) {
+                                console.log(response)
+                            }
+                        }).done(function () {
+                            setTimeout(function () {
+                                $("#overlay").fadeOut(300);
+                            }, 500);
+                        });
+                    }
+                })
+            }
+        });
+    });
+
+     // ボタン押下時に確認ダイアログ表示
+    buttonsClose.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var isDelete = true;
+            var row = button.parentElement.parentElement;
+            var tdWithSupplyId = row.querySelector('.transportId');
+            var tdWithBoxType = row.querySelector('.boxType');
+            var tdWithBoxCount = row.querySelector('.boxCount');
+            var tdWithbtnRegister = row.querySelector('.btnRegister');
+
+            // td要素のdata-timeとidを含むテキスト値を取得する
+            var dataSupplyId = tdWithSupplyId.textContent;
+            var dataBoxType = tdWithBoxType.textContent;
+            var dataBoxCount = tdWithBoxCount.textContent;
+            var statusBtn = tdWithbtnRegister.textContent || tdWithbtnRegister.innerText;
+            if (statusBtn == "開始") {
+                $.ajax({
+                    type: 'POST',
+                    url: 'Transport/Complete',
+                    data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                    success: function (response) {
+                        if (response.res == true) {
+                            tdWithbtnRegister.innerText = "開始";
+                            tdWithbtnRegister.classList.add('btn-warning');
+                            tdWithbtnRegister.classList.remove('btn-success');
+                        }
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 10);
+                });
+            }
+
+            if (statusBtn == "終了") {
+                $.ajax({
+                    type: 'POST',
+                    url: 'Transport/Complete',
+                    data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                    success: function (response) {
+                        if (response.res == true) {
+                            tdWithbtnRegister.innerText = "開始";
+                            tdWithbtnRegister.classList.add('btn-warning');
+                            tdWithbtnRegister.classList.remove('btn-success');
+                        }
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 10);
+                });
+            }
         });
     });
 }

@@ -7,19 +7,19 @@ using tec_empty_box_supply_transport_web.Commons;
 
 namespace tec_empty_box_supply_transport_web.Repositories
 {
-    public class SupplyRepository
+    public class TransportRepository
     {
         string connectionString;
 
-        public SupplyRepository(string connectionString)
+        public TransportRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        public List<SupplyModel> GetListSupplys(string sql)
+        public List<TransportModel> GetListTransports(string sql)
         {
             // 戻り値
-            List<SupplyModel> supplys = new();
+            List<TransportModel> transports = new();
 
             // DB接続
             try
@@ -32,9 +32,9 @@ namespace tec_empty_box_supply_transport_web.Repositories
                     connection.ConnectionString = connectionString;
                     connection.Open();
 
-                    supplys = connection.Query<SupplyModel>(sql).ToList();
+                    transports = connection.Query<TransportModel>(sql).ToList();
                 }
-                return supplys;
+                return transports;
             }
             catch (Exception)
             {
@@ -44,10 +44,10 @@ namespace tec_empty_box_supply_transport_web.Repositories
 
 
         /// <summary>
-        /// 準備取得SQL作成
+        /// 運搬取得SQL作成
         /// </summary>
         /// <returns>SQL</returns>
-        public string CreateSQLToGetSupplys()
+        public string CreateSQLToGetTransport()
         {
             var sql = $@"SELECT 
                             empty_box_supply_request_id AS EmptyBoxSupplyRequestId
@@ -60,7 +60,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                             ,corrected_request_datetime AS CorrectedRequestDatetime
                             ,empty_box_supply_status_id AS EmptyBoxSupplyStatusId
                             FROM t_empty_box_supply_request 
-                            WHERE ready_datetime is NULL AND is_deleted = 0";
+                            WHERE is_deleted = 0 AND empty_box_supply_status_id != 1 AND empty_box_supply_status_id != 4";
 
             return sql;
         }

@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "運搬";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    table tbody {
+        font-size: 30px;
+    }
+
+    table thead tr {
+        text-align: center;
+    }
+
+    h3 {
+        margin: 5px;
+    }
+
+    #express-table-row tr {
+        text-align: center;
+    }
+
+    #nomal-table-row tr {
+        text-align: center;
+    }
+
+    .button-large {
+        font-size: 25px;
+    }
+
+    .time-exceeded {
+        background-color: #FFC1C1;
+    }
+
+    .redflag {
+        color: red;
+    }
+
+    .redBg {
+        background: #EAB1B1;
+    }
+
+    .btnStart {
+        width: 60px;
+        color:#fff;
+    }
+
+    .importTd {
+        width: 55px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .importantFlag {
+        color: red;
+        width: 45px;
+        border: 1px solid #C1000B;
+        border-radius: 5px;
+        padding: 5px 1px;
+        background: #fff !important;
+        font-size: 20px;
+        margin-bottom: 0;
+        margin-left: 5px;
+    }
+
+    .transportId {
+        display: none;
+    }
+
+    .noneDateMess {
+        margin: 20px 0;
+    }
+</style>
+
+<div class="card shadow">
+    <div class="row table-content transportContent" style="display: none">
+        <div class="col-6 col6-sp" style="padding:20px;">
+            <div class="d-flex justify-content-center">
+                <table id="tblTransportLeft" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>機番</th>
+                            <th>永久略番</th>
+                            <th>箱種</th>
+                            <th class="min-width48">箱数</th>
+                            <th>時間</th>
+                            <th>登録</th>
+                            <th>取消</th>
+                        </tr>
+                    </thead>
+                    <tbody id="express-table-row">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-6 col6-sp" style="padding:20px;">
+            <div class="d-flex justify-content-center">
+                <table id="tblTransportRight" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>機番</th>
+                            <th>永久略番</th>
+                            <th>箱種</th>
+                            <th class="min-width48">箱数</th>
+                            <th>時間</th>
+                            <th>登録</th>
+                            <th>取消</th>
+                        </tr>
+                    </thead>
+                    <tbody id="express-table-row">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="noneDateMess text-center text-danger" style="display: none">E2007 該当データがありません。</div>
+
+    <div id="overlay">
+        <div class="cv-spinner">
+            <span class="dots-circle-spinner loading"></span>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        //window.location.href = "@Url.Action("Index", "Supply")";
+        //window.location.href = "@Url.Action("Index", "Transport")";
+    </script>
+    <script src="~/js/transportHub.js"></script>
+    
+}

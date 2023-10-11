@@ -3,7 +3,7 @@
 namespace tec_empty_box_supply_transport_web.Models
 {
     [Table("t_empty_box_supply_request")]
-    public class SupplyModel
+    public class TransportModel
     {
         [Column("empty_box_supply_request_id")]
         public int EmptyBoxSupplyRequestId { get; set; }
@@ -24,14 +24,14 @@ namespace tec_empty_box_supply_transport_web.Models
         public DateTime RequestDatetime { get; set; }
 
         [Column("ready_datetime")]
-        public DateTime ReadyDatetime { get; set; }
-
+        public DateTime ReadyDatetime { get; set; } 
+        
         [Column("corrected_request_datetime")]
         public DateTime CorrectedRequestDatetime { get; set; }
 
         [Column("is_deleted")]
         public int IsDeleted { get; set; }
-
+        
         [Column("empty_box_supply_status_id")]
         public int EmptyBoxSupplyStatusId { get; set; }
     }
