@@ -13,6 +13,8 @@ builder.Services.AddSignalR();
 // DI
 builder.Services.AddSingleton<SupplyHub>();
 builder.Services.AddSingleton<SubscribeSupplyTableDependency>();
+builder.Services.AddSingleton<TransportHub>();
+builder.Services.AddSingleton<SubscribeTransportTableDependency>();
 
 var app = builder.Build();
 
@@ -33,15 +35,23 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapHub<SupplyHub>("/supplyHub");
+//app.MapHub<SupplyHub>("/supplyHub");
+//app.MapHub<TransportHub>("/transportHub");
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Top}/{action=Index}/{id?}");
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapHub<SupplyHub>("/supplyHub");
+        endpoints.MapHub< TransportHub > ("/transportHub");
+    });
 });
 
 app.UseSqlTableDependency<SubscribeSupplyTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribeTransportTableDependency>(connectionString);
 
 app.Run();

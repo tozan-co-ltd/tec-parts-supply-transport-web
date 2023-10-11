@@ -84,6 +84,10 @@ a{
     cursor: pointer;
 }
 
+.row {
+    --bs-gutter-x: 0rem;
+}
+
 #overlay {
     position: fixed;
     top: 0;
@@ -93,6 +97,10 @@ a{
     height: 100%;
     display: none;
     background: rgba(0, 0, 0, 0.3);
+}
+
+.transportContent{
+    max-width: 100%;
 }
 
 .cv-spinner {
