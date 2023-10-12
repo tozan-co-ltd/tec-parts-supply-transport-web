@@ -3,71 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    table tbody {
-        font-size: 30px;
-    }
-
-    table thead tr {
-        text-align: center;
-    }
-
-    h3 {
-        margin: 5px;
-    }
-
-    #express-table-row tr {
-        text-align: center;
-    }
-
-    #nomal-table-row tr {
-        text-align: center;
-    }
-
-    .button-large {
-        font-size: 25px;
-    }
-
-    .time-exceeded {
-        background-color: #FFC1C1;
-    }
-
-    .redflag {
-        color: red;
-    }
-    .redBg{
-        background: #EAB1B1;
-    }
-
-    .btnCompletion{
-        width: 60px;
-    }
-
-    .importTd{
-        width: 55px;
-        padding-left: 0 !important;
-        padding-right:0 !important;
-    }
-    .importantFlag{
-        color: red;
-        width: 45px;
-        border: 1px solid #C1000B;
-        border-radius: 5px;
-        padding: 5px 1px;
-        background: #fff !important;
-        font-size: 20px;
-        margin-bottom: 0;
-        margin-left: 5px;
-    }
-    .supplyId{
-        display: none;
-    }
-
-    .noneDateMess{
-        margin: 20px 0;
-    }
-</style>
-
 <div class="card shadow">
     <div class="row table-content supplyContent" style="display: none">
         <div class="col-6 col6-sp" style="padding:20px;">
@@ -77,8 +12,8 @@
                         <tr>
                             <th></th>
                             <th>機番</th>
-                            <th>永久略番</th>
-                            <th>箱種</th>
+                            <th class="min-width91">永久略番</th>
+                            <th class="min-width48">箱種</th>
                             <th class="min-width48">箱数</th>
                             <th>時間</th>
                             <th>登録</th>
@@ -97,8 +32,8 @@
                         <tr>
                             <th></th>
                             <th>機番</th>
-                            <th>永久略番</th>
-                            <th>箱種</th>
+                            <th class="min-width91">永久略番</th>
+                            <th class="min-width48">箱種</th>
                             <th class="min-width48">箱数</th>
                             <th>時間</th>
                             <th>登録</th>
@@ -112,6 +47,7 @@
     </div>
 
     <div class="noneDateMess text-center text-danger" style="display: none">E2007 該当データがありません。</div>
+    <div class="connectionError text-center text-danger" style="display: none">接続エラー！</div>
 
     <div id="overlay">
         <div class="cv-spinner">
@@ -119,11 +55,4 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-    <script src="~/js/supplyHub.js"></script>
-    <script>
-        
-    </script>
-}
 
