@@ -106,7 +106,7 @@ var boxTypeLength = $(".boxType");
                         cell4.className = 'boxType';
                         // 異なるテキストの長さに応じて文字のサイズを調整する
                         var cellTextLength = cell4.innerText.length;
-                        var minFontSize = 16;
+                        var minFontSize = 12;
                         var maxFontSize = 30;
                         var fontSize = maxFontSize - (cellTextLength * 2);
                         fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
@@ -293,7 +293,7 @@ var boxTypeLength = $(".boxType");
 
                         // 異なるテキストの長さに応じて文字のサイズを調整する
                         var cellTextLength = cell4.innerText.length;
-                        var minFontSize = 16;
+                        var minFontSize = 12;
                         var maxFontSize = 30;
                         var fontSize = maxFontSize - (cellTextLength * 2);
                         fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));

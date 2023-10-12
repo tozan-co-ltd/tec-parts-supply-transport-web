@@ -46,12 +46,16 @@ a{
     display: block;
 }
 
-.min-width48{
+.col-6{
+    padding: 10px !important;
+}
+
+.min-width48 {
     min-width: 48px;
 }
 
-.min-width91{
-    min-width: 91px;
+.min-width90{
+    min-width: 90px;
 }
 
 .prepare, .transport {
@@ -161,7 +165,7 @@ h3 {
 }
 
 .importTd {
-    width: 55px;
+    /*width: 55px;*/
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -190,10 +194,9 @@ h3 {
     margin: 20px 0;
 }
 
-.btnCompletion {
+.btnCompletion, .btnRegister {
     width: 60px;
 }
-
 
 #overlay {
     position: fixed;
