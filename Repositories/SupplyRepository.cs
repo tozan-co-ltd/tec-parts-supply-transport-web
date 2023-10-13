@@ -60,7 +60,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                             ,corrected_request_datetime AS CorrectedRequestDatetime
                             ,empty_box_supply_status_id AS EmptyBoxSupplyStatusId
                             FROM t_empty_box_supply_request 
-                            WHERE ready_datetime is NULL AND is_deleted = 0";
+                            WHERE ready_datetime is NULL AND is_deleted = 0 ORDER BY request_datetime ASC";
 
             return sql;
         }
