@@ -8,25 +8,6 @@ html {
   }
 }
 
-@media (max-width: 768px) {
-    tbody {
-        font-size: 18px !important;
-    }
-}
-
-@media (max-width: 640px) {
-    tbody {
-        font-size: 16px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    tbody {
-        font-size: 14px !important;
-    }
-}
-
-
 html {
   position: relative;
   min-height: 100%;
