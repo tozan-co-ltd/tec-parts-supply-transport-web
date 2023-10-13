@@ -46,8 +46,16 @@ a{
     display: block;
 }
 
-.min-width48{
+.col-6{
+    padding: 10px !important;
+}
+
+.min-width48 {
     min-width: 48px;
+}
+
+.min-width90{
+    min-width: 90px;
 }
 
 .prepare, .transport {
@@ -99,6 +107,11 @@ a{
     }
 }
 
+td {
+    text-align: center;
+    vertical-align: middle; 
+}
+
 .btnEnd {
     animation-name: animation;
     animation-duration: 1.5s;
@@ -107,6 +120,82 @@ a{
 
 .row {
     --bs-gutter-x: 0rem;
+}
+
+
+table tbody {
+    font-size: 30px;
+}
+
+table thead tr {
+    text-align: center;
+}
+
+h3 {
+    margin: 5px;
+}
+
+#express-table-row tr {
+    text-align: center;
+}
+
+#nomal-table-row tr {
+    text-align: center;
+}
+
+.button-large {
+    font-size: 25px;
+}
+
+.time-exceeded {
+    background-color: #FFC1C1;
+}
+
+.redflag {
+    color: red;
+}
+
+.redBg {
+    background: #EAB1B1;
+}
+
+.btnStart {
+    width: 60px;
+    color: #fff;
+}
+
+.importTd {
+    /*width: 55px;*/
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.importantFlag {
+    color: red;
+    width: 45px;
+    border: 1px solid #C1000B;
+    border-radius: 5px;
+    padding: 5px 1px;
+    background: #fff !important;
+    font-size: 20px;
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+
+.transportId {
+    display: none;
+}
+
+.supplyId {
+    display: none;
+}
+
+.noneDateMess {
+    margin: 20px 0;
+}
+
+.btnCompletion, .btnRegister {
+    width: 60px;
 }
 
 #overlay {
