@@ -1,8 +1,8 @@
 ﻿// -----------------------------------準備画面-----------------------------------//
 
-var baseSupplyUrl = window.location.origin;
+var baseUrl = window.location.origin;
 var supplyRelativePath = "/supplyHub";
-var supplyApiUrl = baseSupplyUrl + supplyRelativePath;
+var supplyApiUrl = baseUrl + supplyRelativePath;
 
 // SignalRを使用して接続を初期化する
 //var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/supplyHub").build();
@@ -176,7 +176,7 @@ function BindSupplysToGrid(supplys) {
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'POST',
-                            url: baseSupplyUrl +'/Supply/Complete',
+                            url: baseUrl +'/Supply/Complete',
                             data: { dataSupplyId: dataSupplyId },
                             success: function (response) {
                                 console.log(response)
@@ -196,9 +196,9 @@ function BindSupplysToGrid(supplys) {
 
 
 // -----------------------------------運搬画面-----------------------------------//
-var baseTransportUrl = window.location.origin;
+var baseUrl = window.location.origin;
 var transportRelativePath = "/transportHub";
-var transportApiUrl = baseTransportUrl + transportRelativePath;
+var transportApiUrl = baseUrl + transportRelativePath;
 
 // SignalRを使用して接続を初期化する
 var connectionTransport = new signalR.HubConnectionBuilder().withUrl(transportApiUrl).build();
@@ -366,7 +366,7 @@ function BindTransportsToGrid(transports) {
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
-                        url: baseTransportUrl + '/Transport/Complete',
+                        url: baseUrl + '/Transport/Complete',
                         data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                         success: function (response) {
                             if (response.res == true) {
@@ -395,7 +395,7 @@ function BindTransportsToGrid(transports) {
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: 'POST',
-                                url: baseTransportUrl + '/Transport/Complete',
+                                url: baseUrl + '/Transport/Complete',
                                 data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                                 success: function (response) {
                                     console.log(response)
@@ -429,7 +429,7 @@ function BindTransportsToGrid(transports) {
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
-                        url: baseTransportUrl + '/Transport/Complete',
+                        url: baseUrl + '/Transport/Complete',
                         data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                         success: function (response) {
                             if (response.res == true) {
@@ -448,7 +448,7 @@ function BindTransportsToGrid(transports) {
                 if (statusBtn == "終了") {
                     $.ajax({
                         type: 'POST',
-                        url: baseTransportUrl + '/Transport/Complete',
+                        url: baseUrl + '/Transport/Complete',
                         data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                         success: function (response) {
                             if (response.res == true) {
