@@ -137,8 +137,8 @@ var boxTypeLength = $(".boxType");
             // 各tdを繰り返し、各tdにカウントダウン関数を適用する
             const tdElements = document.querySelectorAll('#tblSupplyLeft td.timeCount');
             const tdElements1 = document.querySelectorAll('#tblSupplyRight td.timeCount');
-            tdElements.forEach(countdown);
-            tdElements1.forEach(countdown);
+            tdElements.forEach(countTime);
+            tdElements1.forEach(countTime);
 
             var buttons = document.querySelectorAll('.btnCompletion');
 
@@ -330,8 +330,8 @@ var boxTypeLength = $(".boxType");
             // 各tdを繰り返し、各tdにカウントダウン関数を適用する
             const tdElements = document.querySelectorAll('#tblTransportLeft td.timeCount');
             const tdElements1 = document.querySelectorAll('#tblTransportRight td.timeCount');
-            tdElements.forEach(countdown);
-            tdElements1.forEach(countdown);
+            tdElements.forEach(countTime);
+            tdElements1.forEach(countTime);
 
             var buttons = document.querySelectorAll('.btnRegister');
             var buttonsClose = document.querySelectorAll('.btnClose');
@@ -459,7 +459,7 @@ var boxTypeLength = $(".boxType");
 // -----------------------------------接続運搬の終了-----------------------------------//
 
     // カウントダウン
-    function countdown(element) {
+    function countTime(element) {
         const startTime = parseInt(element.getAttribute('data-time'), 10);
         let timeLeft = startTime;
         let isCountingDown = true;
