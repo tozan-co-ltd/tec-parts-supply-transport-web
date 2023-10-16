@@ -1,7 +1,8 @@
 ﻿// -----------------------------------準備画面-----------------------------------//
-var originUrl = window.location.origin;
+var baseUrl = window.location.origin;
 var pathName = window.location.pathname.split('/');
-var baseUrl = originUrl + "/" + pathName[1];
+if (pathName.length > 2)
+    baseUrl = baseUrl + "/" + pathName[1];
 
 
 // SignalRを使用して接続を初期化する
@@ -175,7 +176,7 @@ function BindSupplysToGrid(supplys) {
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'POST',
-                            url: baseUrl +'/Complete',
+                            url: baseUrl +'/Supply/Complete',
                             data: { dataSupplyId: dataSupplyId },
                             success: function (response) {
                                 console.log(response)
@@ -362,7 +363,7 @@ function BindTransportsToGrid(transports) {
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
-                        url: baseUrl + '/Complete',
+                        url: baseUrl + '/Transport/Complete',
                         data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                         success: function (response) {
                             if (response.res == true) {
@@ -391,7 +392,7 @@ function BindTransportsToGrid(transports) {
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: 'POST',
-                                url: baseUrl + '/Complete',
+                                url: baseUrl + '/Transport/Complete',
                                 data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                                 success: function (response) {
                                     console.log(response)
@@ -425,7 +426,7 @@ function BindTransportsToGrid(transports) {
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
-                        url: baseUrl + '/Complete',
+                        url: baseUrl + '/Transport/Complete',
                         data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                         success: function (response) {
                             if (response.res == true) {
@@ -444,7 +445,7 @@ function BindTransportsToGrid(transports) {
                 if (statusBtn == "終了") {
                     $.ajax({
                         type: 'POST',
-                        url: baseUrl + '/Complete',
+                        url: baseUrl + '/Transport/Complete',
                         data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                         success: function (response) {
                             if (response.res == true) {
