@@ -5,8 +5,8 @@ var supplyRelativePath = "/supplyHub";
 var supplyApiUrl = baseUrl + supplyRelativePath;
 
 // SignalRを使用して接続を初期化する
-//var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/supplyHub").build();
-var connectionSupply = new signalR.HubConnectionBuilder().withUrl(supplyApiUrl).build();
+var connectionSupply = new signalR.HubConnectionBuilder().withUrl("supplyHub").build();
+//var connectionSupply = new signalR.HubConnectionBuilder().withUrl(supplyApiUrl).build();
 
 $(function () {
     connectionSupply.start().then(function () {
@@ -201,7 +201,9 @@ var transportRelativePath = "/transportHub";
 var transportApiUrl = baseUrl + transportRelativePath;
 
 // SignalRを使用して接続を初期化する
-var connectionTransport = new signalR.HubConnectionBuilder().withUrl(transportApiUrl).build();
+var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportHub").build();
+//var connectionTransport = new signalR.HubConnectionBuilder().withUrl(transportApiUrl).build();
+
 $(function () {
     connectionTransport.start().then(function () {
         InvokeTransports();

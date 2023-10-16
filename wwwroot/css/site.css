@@ -1,24 +1,46 @@
-html {
-  font-size: 14px;
+ï»¿html {
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 914px) {
+    .transportContent {
+        display: block;
+    }
+
+    .col6-sp {
+        width: 100% !important;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .cl-001E64 {
     color: #001E64;
+}
+
+.active {
+    color: #fff !important;
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+.clicked {
+    color: #fff !important;
+    background-color: #198754 !important;
+    border-color: #198754 !important;
 }
 
 .inner {
@@ -32,21 +54,22 @@ body {
     border-radius: 15px;
     box-shadow: 0 0 8px gray;
 }
-    .menu-top a{
+
+    .menu-top a {
         margin: 0;
         padding: 0;
     }
 
-    .system_logo {
-        width: 121px;
-        margin: 0 auto;
-    }
+.system_logo {
+    width: 121px;
+    margin: 0 auto;
+}
 
-a{
+a {
     display: block;
 }
 
-.col-6{
+.col-6 {
     padding: 10px !important;
 }
 
@@ -54,29 +77,37 @@ a{
     min-width: 48px;
 }
 
-.min-width90{
+.min-width90 {
     min-width: 90px;
 }
 
-.prepare, .transport {
+.prepare,
+.transport {
     overflow: hidden;
 }
+
 .zoom {
-    transition: transform .2s; /* Animation */
+    transition: transform .2s;
+    /* Animation */
 }
 
-.zoom:hover {
-    transform: scale(1.05); 
-    opacity: 0.9;
-}
+    .zoom:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
 
-.supplyContent{
+.supplyContent {
     width: 100%;
     margin: 0;
 }
 
 .nav-head {
     background: #F7F9FF !important;
+}
+
+.navbar {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
 }
 
 .text-bl {
@@ -91,16 +122,21 @@ a{
     border: solid #ccc 1px;
     cursor: pointer;
 }
-/* I—¹ƒ{ƒ^ƒ“‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ */
+
+
+/* ï¿½Iï¿½ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ÌƒAï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ */
+
 @keyframes animation {
     0% {
         background: #198754;
         border: #198754;
     }
+
     50% {
-        background: rgba(25,135,84,0.5);
-        border: rgba(25,135,84,0.5);
+        background: rgba(25, 135, 84, 0.5);
+        border: rgba(25, 135, 84, 0.5);
     }
+
     100% {
         background: #198754;
         border: #198754;
@@ -109,7 +145,8 @@ a{
 
 td {
     text-align: center;
-    vertical-align: middle; 
+    vertical-align: middle;
+    padding: 0.5rem 0.4rem !important;
 }
 
 .btnEnd {
@@ -121,7 +158,6 @@ td {
 .row {
     --bs-gutter-x: 0rem;
 }
-
 
 table tbody {
     font-size: 30px;
@@ -194,8 +230,16 @@ h3 {
     margin: 20px 0;
 }
 
-.btnCompletion, .btnRegister {
-    width: 60px;
+.btnCompletion,
+.btnRegister {
+    width: 80px;
+    height: 70px;
+    font-size: 26px;
+}
+
+.btnClose {
+    height: 70px;
+    width: 57px;
 }
 
 #overlay {
@@ -209,7 +253,7 @@ h3 {
     background: rgba(0, 0, 0, 0.3);
 }
 
-.transportContent{
+.transportContent {
     max-width: 100%;
 }
 
@@ -316,31 +360,37 @@ h3 {
     }
 }
 
+
 /*sweetalert2*/
+
 .swal2-confirm {
     width: 98px;
 }
 
+
 /*header*/
+
 i.fa-home {
     background: #c4000b;
     color: #fff;
     border-radius: 7px;
-    font-size: 40px;
+    font-size: 60px;
     display: block;
     height: 100%;
 }
+
 a > i.fa-home {
     border: 1px solid;
     transition: 0.5s;
 }
+
     a > i.fa-home:hover {
         background: #fff;
         color: #C1000B;
     }
 
-@media (max-width: 1024px){
-    .container{
+@media (max-width: 1024px) {
+    .container {
         width: 100% !important;
         max-width: 100% !important;
     }
@@ -351,13 +401,12 @@ a > i.fa-home {
         width: 100% !important;
         max-width: 100% !important;
     }
-    .table-content{
+
+    .table-content {
         display: block;
     }
-    .col6-sp{
+
+    .col6-sp {
         width: 100%;
     }
 }
-
-
-
