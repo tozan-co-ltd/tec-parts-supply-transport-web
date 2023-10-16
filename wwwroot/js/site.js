@@ -387,7 +387,7 @@ function BindTransportsToGrid(transports) {
                         showCancelButton: true,
                         confirmButtonColor: '#198754',
                         cancelButtonText: 'キャンセル',
-                        confirmButtonText: '完了'
+                        confirmButtonText: '終了'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({

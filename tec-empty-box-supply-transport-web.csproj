@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ConnectController\**" />
+    <Content Remove="ConnectController\**" />
+    <EmbeddedResource Remove="ConnectController\**" />
+    <None Remove="ConnectController\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.151" />
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
     <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.3" />
@@ -17,10 +24,6 @@
     <PackageReference Include="NLog" Version="5.2.4" />
     <PackageReference Include="SqlTableDependency" Version="8.5.8" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ConnectController\" />
   </ItemGroup>
 
 </Project>
