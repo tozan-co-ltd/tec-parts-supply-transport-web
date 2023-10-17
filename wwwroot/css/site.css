@@ -96,6 +96,11 @@ a {
         opacity: 0.9;
     }
 
+.login-img{
+    width: 117px;
+    height: 117px;
+}
+
 .supplyContent {
     width: 100%;
     margin: 0;
