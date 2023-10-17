@@ -77,7 +77,6 @@ function BindSupplysToGrid(supplys) {
                     var cell5 = row.insertCell(4);
                     var cell6 = row.insertCell(5);
                     var cell7 = row.insertCell(6);
-                    var cell8 = row.insertCell(7);
 
                     // 現在日時
                     var today = new Date();
@@ -109,33 +108,32 @@ function BindSupplysToGrid(supplys) {
 
                     cell2.innerHTML = `${supplys[i].machineNum}`;
                     cell2.className = 'machine-number';
-                    cell3.innerHTML = `${supplys[i].permanentAbbreviation}`;
-                    cell4.innerHTML = `${supplys[i].boxType}`;
-                    cell4.className = 'boxType';
+                    cell3.innerHTML = `${supplys[i].boxType}`;
+                    cell3.className = 'boxType';
 
                     // 異なるテキストの長さに応じて文字サイズを調整
-                    var cellTextLength = cell4.innerText.length;
+                    var cellTextLength = cell3.innerText.length;
                     var minFontSize = 12;
                     var maxFontSize = 30;
                     var fontSize = maxFontSize - (cellTextLength * 2);
                     fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    cell4.style.fontSize = fontSize + 'px';
+                    cell3.style.fontSize = fontSize + 'px';
 
-                    cell5.innerHTML = `${supplys[i].boxCount}`;
-                    cell5.className = 'boxCount';
-                    cell6.innerHTML = `${subResult}`;
-                    cell7.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">完了</button>`;
+                    cell4.innerHTML = `${supplys[i].boxCount}`;
+                    cell4.className = 'boxCount';
+                    cell5.innerHTML = `${subResult}`;
+                    cell6.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">完了</button>`;
 
                     if (dataTime < 0) {
                         row.className = "redBg";
-                        cell6.className = 'timeCount redflag';
+                        cell5.className = 'timeCount redflag';
                     }
                     else
-                        cell6.className = 'timeCount';
+                        cell5.className = 'timeCount';
 
-                    cell6.setAttribute("data-time", dataTime);
-                    cell8.innerHTML = `${supplys[i].emptyBoxSupplyRequestId}`;
-                    cell8.className = 'supplyId';
+                    cell5.setAttribute("data-time", dataTime);
+                    cell7.innerHTML = `${supplys[i].emptyBoxSupplyRequestId}`;
+                    cell7.className = 'supplyId';
                 }
             } else {
                 $(".supplyContent").hide();
@@ -171,7 +169,8 @@ function BindSupplysToGrid(supplys) {
                     showCancelButton: true,
                     confirmButtonColor: '#0d6efd',
                     cancelButtonText: 'キャンセル',
-                    confirmButtonText: '完了'
+                    confirmButtonText: '完了',
+                    allowOutsideClick: false,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -267,7 +266,6 @@ function BindTransportsToGrid(transports) {
                     var cell6 = row.insertCell(5);
                     var cell7 = row.insertCell(6);
                     var cell8 = row.insertCell(7);
-                    var cell9 = row.insertCell(8);
 
                     // 現在日時
                     var today = new Date();
@@ -294,41 +292,39 @@ function BindTransportsToGrid(transports) {
 
                     cell1.className = 'importTd';
                     cell2.innerHTML = `${transports[i].machineNum}`;
-                    cell2.className = 'machine-number';
-                    cell3.innerHTML = `${transports[i].permanentAbbreviation}`;
-                    cell4.innerHTML = `${transports[i].boxType}`;
-                    cell4.className = 'boxType';
+                    cell3.innerHTML = `${transports[i].boxType}`;
+                    cell3.className = 'boxType';
 
                     // 異なるテキストの長さに応じて文字サイズを調整
-                    var cellTextLength = cell4.innerText.length;
+                    var cellTextLength = cell3.innerText.length;
                     var minFontSize = 12;
                     var maxFontSize = 30;
                     var fontSize = maxFontSize - (cellTextLength * 2);
                     fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    cell4.style.fontSize = fontSize + 'px';
+                    cell3.style.fontSize = fontSize + 'px';
 
-                    cell5.innerHTML = `${transports[i].boxCount}`;
-                    cell5.className = 'boxCount';
-                    cell6.innerHTML = `${subResult}`;
-                    cell7.className = 'statusBtn';
+                    cell4.innerHTML = `${transports[i].boxCount}`;
+                    cell4.className = 'boxCount';
+                    cell5.innerHTML = `${subResult}`;
+                    cell6.className = 'statusBtn';
 
                     if (transports[i].emptyBoxSupplyStatusId == 2)
-                        cell7.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
+                        cell6.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
 
                     if (transports[i].emptyBoxSupplyStatusId == 3)
-                        cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
+                        cell6.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
 
                     if (dataTime < 0) {
                         row.className = "redBg";
-                        cell6.className = 'timeCount redflag';
+                        cell5.className = 'timeCount redflag';
                     }
                     else
-                        cell6.className = 'timeCount';
+                        cell5.className = 'timeCount';
 
-                    cell6.setAttribute("data-time", dataTime);
-                    cell8.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
-                    cell8.className = 'transportId';
-                    cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa fa-window-close">X</i></button>`;
+                    cell5.setAttribute("data-time", dataTime);
+                    cell7.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
+                    cell7.className = 'transportId';
+                    cell8.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa fa-window-close">X</i></button>`;
                 }
             } else {
                 $(".transportContent").hide();
@@ -387,6 +383,7 @@ function BindTransportsToGrid(transports) {
                         showCancelButton: true,
                         confirmButtonColor: '#198754',
                         cancelButtonText: 'キャンセル',
+                        allowOutsideClick: false,
                         confirmButtonText: '終了'
                     }).then((result) => {
                         if (result.isConfirmed) {
