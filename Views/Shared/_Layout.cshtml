@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - 空箱供給運搬アプリ</title>
+    <!-- ▼ファビコン -->
+    <link rel="shortcut icon" type="image/png" href="~/images\icon_app.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images\icon_app.png">
+
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -12,8 +16,13 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.31/dist/sweetalert2.all.min.js"></script>
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
+@{
+    if (@ViewData["Title"] != "トップ")
+    {
+        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    }
+}
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 nav-head">

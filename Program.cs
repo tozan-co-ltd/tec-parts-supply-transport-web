@@ -35,20 +35,14 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-//app.MapHub<SupplyHub>("/supplyHub");
-//app.MapHub<TransportHub>("/transportHub");
+app.MapHub<SupplyHub>("supplyHub");
+app.MapHub<TransportHub>("transportHub");
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Top}/{action=Index}/{id?}");
-
-    app.UseEndpoints(endpoints =>
-    {
-        endpoints.MapHub<SupplyHub>("/supplyHub");
-        endpoints.MapHub< TransportHub > ("/transportHub");
-    });
 });
 
 app.UseSqlTableDependency<SubscribeSupplyTableDependency>(connectionString);

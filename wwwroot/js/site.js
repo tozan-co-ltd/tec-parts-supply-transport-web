@@ -1,12 +1,12 @@
 ﻿// -----------------------------------準備画面-----------------------------------//
-
 var baseUrl = window.location.origin;
-var supplyRelativePath = "/supplyHub";
-var supplyApiUrl = baseUrl + supplyRelativePath;
+var pathName = window.location.pathname.split('/');
+if (pathName.length > 2)
+    baseUrl = baseUrl + "/" + pathName[1];
+
 
 // SignalRを使用して接続を初期化する
-//var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/supplyHub").build();
-var connectionSupply = new signalR.HubConnectionBuilder().withUrl(supplyApiUrl).build();
+var connectionSupply = new signalR.HubConnectionBuilder().withUrl("supplyHub").build();
 
 $(function () {
     connectionSupply.start().then(function () {
@@ -196,12 +196,9 @@ function BindSupplysToGrid(supplys) {
 
 
 // -----------------------------------運搬画面-----------------------------------//
-var baseUrl = window.location.origin;
-var transportRelativePath = "/transportHub";
-var transportApiUrl = baseUrl + transportRelativePath;
-
 // SignalRを使用して接続を初期化する
-var connectionTransport = new signalR.HubConnectionBuilder().withUrl(transportApiUrl).build();
+var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportHub").build();
+
 $(function () {
     connectionTransport.start().then(function () {
         InvokeTransports();
@@ -390,7 +387,7 @@ function BindTransportsToGrid(transports) {
                         showCancelButton: true,
                         confirmButtonColor: '#198754',
                         cancelButtonText: 'キャンセル',
-                        confirmButtonText: '完了'
+                        confirmButtonText: '終了'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
