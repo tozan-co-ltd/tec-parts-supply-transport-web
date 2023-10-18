@@ -113,8 +113,8 @@ function BindSupplysToGrid(supplys) {
 
                     // 異なるテキストの長さに応じて文字サイズを調整
                     var cellTextLength = cell3.innerText.length;
-                    var minFontSize = 12;
-                    var maxFontSize = 30;
+                    var minFontSize = 24;
+                    var maxFontSize = 28;
                     var fontSize = maxFontSize - (cellTextLength * 2);
                     fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
                     cell3.style.fontSize = fontSize + 'px';
@@ -297,11 +297,11 @@ function BindTransportsToGrid(transports) {
 
                     // 異なるテキストの長さに応じて文字サイズを調整
                     var cellTextLength = cell3.innerText.length;
-                    var minFontSize = 12;
-                    var maxFontSize = 30;
-                    var fontSize = maxFontSize - (cellTextLength * 2);
-                    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    cell3.style.fontSize = fontSize + 'px';
+                    //var minFontSize = 24;
+                    //var maxFontSize = 28;
+                    //var fontSize = maxFontSize - (cellTextLength * 2);
+                    //fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
+                    //cell3.style.fontSize = fontSize + 'px';
 
                     cell4.innerHTML = `${transports[i].boxCount}`;
                     cell4.className = 'boxCount';
@@ -324,7 +324,7 @@ function BindTransportsToGrid(transports) {
                     cell5.setAttribute("data-time", dataTime);
                     cell7.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
                     cell7.className = 'transportId';
-                    cell8.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa fa-window-close">X</i></button>`;
+                    cell8.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fas fa-times"></i></button>`;
                 }
             } else {
                 $(".transportContent").hide();
