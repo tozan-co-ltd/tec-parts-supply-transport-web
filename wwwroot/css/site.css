@@ -81,6 +81,10 @@ a {
     min-width: 90px;
 }
 
+.min-width130 {
+    min-width: 130px;
+}
+
 .prepare,
 .transport {
     overflow: hidden;
@@ -367,11 +371,9 @@ h3 {
 
 
 /*sweetalert2*/
-
-.swal2-confirm {
-    width: 98px;
+.swal2-confirm, .swal2-cancel {
+    width: 100px;
 }
-
 
 /*header*/
 
