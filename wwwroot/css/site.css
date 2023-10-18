@@ -414,6 +414,17 @@ a > i.fa-home {
         color: #C1000B;
     }
 
+@media (max-width: 1180px) {
+    table tbody {
+        font-size: 23px;
+    }
+
+    .col-6 {
+        padding: 5px !important;
+    }
+}
+
+
 @media (max-width: 1024px) {
     .container {
         width: 100% !important;
@@ -421,6 +432,15 @@ a > i.fa-home {
     }
     table tbody {
         font-size: 20px;
+    }
+    .btnClose {
+        height: 70px;
+        width: 45px;
+    }
+    .btnCompletion, .btnRegister {
+        width: 65px;
+        height: 70px;
+        font-size: 23px;
     }
 }
 
@@ -447,4 +467,19 @@ a > i.fa-home {
     .col6-sp {
         width: 100%;
     }
+    .registerTh {
+        width: 80px;
+    }
+}
+
+@media (max-width: 640px) {
+    .table-content {
+        display: block;
+    }
+
+    table tbody {
+        font-size: 20px;
+    }
+
+
 }
