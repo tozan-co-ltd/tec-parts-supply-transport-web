@@ -16,11 +16,23 @@ namespace tec_empty_box_supply_transport_web.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// 運搬画面表示
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             return View();
         }
 
+
+        /// <summary>
+        /// 運搬開始・運搬終了に更新
+        /// </summary>
+        /// <param name="dataSupplyId"></param>
+        /// <param name="statusBtn"></param>
+        /// <param name="isDelete"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Complete(string dataSupplyId, string statusBtn, bool isDelete)
         {
@@ -44,9 +56,42 @@ namespace tec_empty_box_supply_transport_web.Controllers
 
 
         /// <summary>
-        /// 運搬を更新するSQL作成
+        /// 運搬開始・運搬終了に更新
         /// </summary>
-        /// <param>empty_box_supply_request_id</param>
+        /// <param name="empty_box_supply_request_id"></param>
+        /// <returns>成功したらtrueを返す</returns>
+        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isDelete)
+        {
+            // 戻り値
+            bool isUpdateEmptyBoxSupply = false;
+
+            // SQL作成
+            var sql = CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isDelete);
+
+            // DB接続
+            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.ConnectionString = connectionString;
+                connection.Open();
+
+                // 戻り値は処理件数
+                var update = connection.Execute(sql, empty_box_supply_request_id);
+                if (update >= 1)
+                {
+                    isUpdateEmptyBoxSupply = true;
+                }
+            }
+            return isUpdateEmptyBoxSupply;
+        }
+
+
+        /// <summary>
+        /// 運搬開始・運搬終了に更新するSQL作成
+        /// </summary>
+        /// <param name="empty_box_supply_request_id"></param>
+        /// <param name="isDelete"></param>
+        /// <param name="status"></param>
         /// <remarks>UPDATE文</remarks>
         /// <returns>SQL</returns>
         public static string CreateSQLChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string status, bool isDelete)
@@ -84,37 +129,6 @@ namespace tec_empty_box_supply_transport_web.Controllers
 
             sql += $@"  WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
             return sql;
-        }
-
-
-        /// <summary>
-        /// 運搬を更新する
-        /// </summary>
-        /// <param>empty_box_supply_request_id</param>
-        /// <returns>成功したらtrueを返す</returns>
-        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isDelete)
-        {
-            // 戻り値
-            bool isUpdateEmptyBoxSupply = false;
-
-            // SQL作成
-            var sql = CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isDelete);
-
-            // DB接続
-            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-            using (var connection = new SqlConnection(connectionString))
-            {
-                connection.ConnectionString = connectionString;
-                connection.Open();
-
-                // 戻り値は処理件数
-                var update = connection.Execute(sql, empty_box_supply_request_id);
-                if (update >= 1)
-                {
-                    isUpdateEmptyBoxSupply = true;
-                }
-            }
-            return isUpdateEmptyBoxSupply;
         }
     }
 }

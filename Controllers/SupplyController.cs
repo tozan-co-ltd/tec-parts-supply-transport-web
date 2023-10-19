@@ -9,11 +9,21 @@ namespace tec_empty_box_supply_transport_web.Controllers
 {
     public class SupplyController : Controller
     {
+        /// <summary>
+        /// 準備画面表示
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             return View();
         }
 
+
+        /// <summary>
+        /// 準備完了登録
+        /// </summary>
+        /// <param name="dataSupplyId"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Complete(string dataSupplyId)
         {
@@ -37,28 +47,9 @@ namespace tec_empty_box_supply_transport_web.Controllers
 
 
         /// <summary>
-        /// 準備を更新するSQL作成
+        /// 準備完了に更新
         /// </summary>
-        /// <param>empty_box_supply_request_id</param>
-        /// <remarks>UPDATE文</remarks>
-        /// <returns>SQL</returns>
-        public static string CreateSQLUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
-        {
-            var sql = $@"
-                    UPDATE
-                        t_empty_box_supply_request
-                    SET
-                        ready_datetime  = GETDATE()
-                    WHERE empty_box_supply_request_id = {@empty_box_supply_request_id}
-            ";
-            return sql;
-        }
-
-
-        /// <summary>
-        /// 準備を更新する
-        /// </summary>
-        /// <param>empty_box_supply_request_id</param>
+        /// <param name="empty_box_supply_request_id"></param>
         /// <returns>成功したらtrueを返す</returns>
         public bool UpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
         {
@@ -66,7 +57,7 @@ namespace tec_empty_box_supply_transport_web.Controllers
             bool isUpdateEmptyBoxSupply = false;
 
             // SQL作成
-            var sql = CreateSQLUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
+            var sql = CreateSQLToUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
 
             // DB接続
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
@@ -83,6 +74,27 @@ namespace tec_empty_box_supply_transport_web.Controllers
                 }
             }
             return isUpdateEmptyBoxSupply;
+        }
+
+
+        /// <summary>
+        /// 準備完了に更新するSQL作成
+        /// </summary>
+        /// <param name="empty_box_supply_request_id"></param>
+        /// <remarks>UPDATE文</remarks>
+        /// <returns>SQL</returns>
+        public static string CreateSQLToUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
+        {
+            var sql = $@"
+                    UPDATE
+                        t_empty_box_supply_request
+                    SET
+                        ready_datetime  = GETDATE()
+                        ,empty_box_supply_status_id = {(int)EnumEmptyBoxSupplyStatus.Ready}
+                    WHERE 
+                        empty_box_supply_request_id = {@empty_box_supply_request_id}
+            ";
+            return sql;
         }
     }
 }

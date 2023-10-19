@@ -371,7 +371,12 @@ h3 {
 
 /*sweetalert2*/
 .swal2-confirm, .swal2-cancel {
-    width: 100px;
+    width: 140px;
+    height: 70px;
+}
+
+.swal2-actions {
+    font-size: 22px;
 }
 
 /*header*/
@@ -387,11 +392,11 @@ i.fa-home {
     background: #c4000b;
     color: #fff;
     border-radius: 7px;
-    font-size: 60px;
+    font-size: 30px;
     display: block;
     padding: 7px;
     height: 100%;
-    width: 85px;
+    width: 100%;
 }
 
 a > i.fa-home {
