@@ -59,6 +59,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                             ,ready_datetime AS ReadyDatetime
                             ,corrected_request_datetime AS CorrectedRequestDatetime
                             ,empty_box_supply_status_id AS EmptyBoxSupplyStatusId
+                            ,is_express AS IsExpress
                             FROM t_empty_box_supply_request 
                             WHERE ready_datetime is NULL AND is_deleted = 0 ORDER BY request_datetime ASC";
 

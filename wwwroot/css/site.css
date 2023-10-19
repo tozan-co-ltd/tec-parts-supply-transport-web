@@ -2,22 +2,6 @@
     font-size: 14px;
 }
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 914px) {
-    .transportContent {
-        display: block;
-    }
-
-    .col6-sp {
-        width: 100% !important;
-    }
-}
-
 html {
     position: relative;
     min-height: 100%;
@@ -25,6 +9,7 @@ html {
 
 body {
     margin-bottom: 60px;
+    overflow-x: hidden;
 }
 
 .cl-001E64 {
@@ -166,6 +151,10 @@ td {
     padding: 0.5rem 0.4rem !important;
 }
 
+.btn{
+    white-space: nowrap;
+}
+
 .btnEnd {
     animation-name: animation;
     animation-duration: 1.5s;
@@ -221,7 +210,7 @@ h3 {
 }
 
 .importTd {
-    /*width: 55px;*/
+    width: 40px;
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -259,7 +248,7 @@ h3 {
 
 .btnClose {
     height: 70px;
-    width: 57px;
+    width: 45px;
 }
 
 #overlay {
@@ -380,19 +369,18 @@ h3 {
     }
 }
 
-table {
-    white-space: nowrap;
-}
-
-
 /*sweetalert2*/
 .swal2-confirm, .swal2-cancel {
     width: 100px;
 }
 
 /*header*/
-.fa-times{
+.fa-xmark {
     font-size: 26px;
+}
+
+.home-icon{
+    margin-right: 0;
 }
 
 i.fa-home {
@@ -401,7 +389,9 @@ i.fa-home {
     border-radius: 7px;
     font-size: 60px;
     display: block;
+    padding: 7px;
     height: 100%;
+    width: 85px;
 }
 
 a > i.fa-home {
@@ -415,10 +405,6 @@ a > i.fa-home {
     }
 
 @media (max-width: 1180px) {
-    table tbody {
-        font-size: 23px;
-    }
-
     .col-6 {
         padding: 5px !important;
     }
@@ -429,9 +415,6 @@ a > i.fa-home {
     .container {
         width: 100% !important;
         max-width: 100% !important;
-    }
-    table tbody {
-        font-size: 20px;
     }
     .btnClose {
         height: 70px;
@@ -444,9 +427,74 @@ a > i.fa-home {
     }
 }
 
-@media (max-width: 914px) {
+@media (max-width: 1400px) {
+    table tbody {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 1280px) {
+    table tbody {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 1216px) {
+    table tbody {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 1200px) {
+    table tbody {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 1135px) {
+    table tbody {
+        font-size: 18px;
+    }
+
+    .btnCompletion, .btnRegister {
+        width: 70px;
+        height: 70px;
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 1080px) {
+    table tbody {
+        font-size: 18px;
+    }
+    .btnCompletion, .btnRegister {
+        width: 70px;
+        height: 70px;
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 1024px) {
+    table tbody {
+        font-size: 16px;
+    }
+    .btnCompletion, .btnRegister {
+        width: 70px;
+        height: 70px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 930px) {
     table tbody {
         font-size: 26px;
+    }
+    .transportContent {
+        display: block;
+    }
+
+    .col6-sp {
+        width: 100% !important;
     }
 }
 
@@ -460,10 +508,6 @@ a > i.fa-home {
         display: block;
     }
 
-    table tbody {
-        font-size: 24px;
-    }
-
     .col6-sp {
         width: 100%;
     }
@@ -472,14 +516,14 @@ a > i.fa-home {
     }
 }
 
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
 @media (max-width: 640px) {
     .table-content {
         display: block;
     }
-
-    table tbody {
-        font-size: 20px;
-    }
-
-
 }
