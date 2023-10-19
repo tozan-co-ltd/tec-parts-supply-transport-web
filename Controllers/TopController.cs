@@ -13,6 +13,10 @@ namespace tec_empty_box_supply_transport_web.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// トップ画面表示
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             return View();

@@ -29,7 +29,10 @@ namespace tec_empty_box_supply_transport_web.Models
         [Column("corrected_request_datetime")]
         public DateTime CorrectedRequestDatetime { get; set; }
 
-        [Column("is_deleted")]
+        [Column("is_express")]
+        public int IsExpress { get; set; }
+
+           [Column("is_deleted")]
         public int IsDeleted { get; set; }
         
         [Column("empty_box_supply_status_id")]

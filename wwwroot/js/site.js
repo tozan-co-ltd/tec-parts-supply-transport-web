@@ -101,23 +101,22 @@ function BindSupplysToGrid(supplys) {
                     var timeTmp = subResult.split(':');
                     var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
-                    if (supplys[i].important == 1) {
-                        //cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                        cell1.className = 'importTd';
-                    }
+                    //if (supplys[i].isExpress == 1) {
+                    //    cell1.innerHTML = `<p class="importantFlag">特急</p>`;
+                    //    cell1.className = 'importTd';
+                    //}
 
                     cell2.innerHTML = `${supplys[i].machineNum}`;
                     cell2.className = 'machine-number';
                     cell3.innerHTML = `${supplys[i].boxType}`;
                     cell3.className = 'boxType';
-
-                    // 異なるテキストの長さに応じて文字サイズを調整
                     var cellTextLength = cell3.innerText.length;
-                    var minFontSize = 12;
-                    var maxFontSize = 30;
-                    var fontSize = maxFontSize - (cellTextLength * 2);
-                    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    cell3.style.fontSize = fontSize + 'px';
+                    //var minFontSize = 24;
+                    //var maxFontSize = 28;
+                    //var fontSize = maxFontSize - (cellTextLength * 2);
+                    //fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
+                    //if (cellTextLength >= 8)
+                    //    cell3.style.fontSize = 24 + 'px';
 
                     cell4.innerHTML = `${supplys[i].boxCount}`;
                     cell4.className = 'boxCount';
@@ -290,18 +289,23 @@ function BindTransportsToGrid(transports) {
                     var timeTmp = subResult.split(':');
                     var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
-                    cell1.className = 'importTd';
+                    //if (transports[i].isExpress == 1) {
+                    //    cell1.innerHTML = `<p class="importantFlag">特急</p>`;
+                    //    cell1.className = 'importTd';
+                    //}
+
                     cell2.innerHTML = `${transports[i].machineNum}`;
                     cell3.innerHTML = `${transports[i].boxType}`;
                     cell3.className = 'boxType';
 
                     // 異なるテキストの長さに応じて文字サイズを調整
                     var cellTextLength = cell3.innerText.length;
-                    var minFontSize = 12;
-                    var maxFontSize = 30;
-                    var fontSize = maxFontSize - (cellTextLength * 2);
-                    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    cell3.style.fontSize = fontSize + 'px';
+                    //var minFontSize = 24;
+                    //var maxFontSize = 28;
+                    //var fontSize = maxFontSize - (cellTextLength * 2);
+                    //fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
+                    //if (cellTextLength >= 8)
+                    //    cell3.style.fontSize = 24 + 'px';
 
                     cell4.innerHTML = `${transports[i].boxCount}`;
                     cell4.className = 'boxCount';
@@ -324,7 +328,7 @@ function BindTransportsToGrid(transports) {
                     cell5.setAttribute("data-time", dataTime);
                     cell7.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
                     cell7.className = 'transportId';
-                    cell8.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa fa-window-close">X</i></button>`;
+                    cell8.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
                 }
             } else {
                 $(".transportContent").hide();
