@@ -478,6 +478,10 @@ a > i.fa-home {
     .col6-sp {
         width: 100% !important;
     }
+
+    .btn{
+        padding: 0;
+    }
 }
 
 @media (max-width: 864px) {
