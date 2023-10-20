@@ -166,7 +166,7 @@ td {
 }
 
 table tbody {
-    font-size: 28px;
+    font-size: 30px;
 }
 
 table thead th {
@@ -415,24 +415,19 @@ a > i.fa-home {
     }
 }
 
-
-@media (max-width: 1024px) {
-    .container {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-    .btnClose {
-        height: 70px;
-        width: 45px;
-    }
-    .btnCompletion, .btnRegister {
-        width: 65px;
-        height: 70px;
-        font-size: 23px;
+@media (max-width: 1460px) {
+    table tbody {
+        font-size: 28px;
     }
 }
 
 @media (max-width: 1400px) {
+    table tbody {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 1336px) {
     table tbody {
         font-size: 24px;
     }
@@ -444,55 +439,37 @@ a > i.fa-home {
     }
 }
 
-@media (max-width: 1216px) {
-    table tbody {
-        font-size: 21px;
-    }
-}
-
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
     table tbody {
         font-size: 20px;
     }
-}
 
-@media (max-width: 1135px) {
-    table tbody {
-        font-size: 18px;
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .btnClose {
+        height: 70px;
+        width: 45px;
     }
 
     .btnCompletion, .btnRegister {
-        width: 70px;
+        width: 65px;
         height: 70px;
-        font-size: 22px;
+        font-size: 23px;
     }
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 980px) {
     table tbody {
-        font-size: 18px;
-    }
-    .btnCompletion, .btnRegister {
-        width: 70px;
-        height: 70px;
-        font-size: 22px;
-    }
-}
-
-@media (max-width: 1024px) {
-    table tbody {
-        font-size: 16px;
-    }
-    .btnCompletion, .btnRegister {
-        width: 70px;
-        height: 70px;
         font-size: 18px;
     }
 }
 
-@media (max-width: 930px) {
+@media (max-width: 935px) {
     table tbody {
-        font-size: 26px;
+        font-size: 30px;
     }
     .transportContent {
         display: block;
@@ -500,6 +477,10 @@ a > i.fa-home {
 
     .col6-sp {
         width: 100% !important;
+    }
+
+    .btn{
+        padding: 0;
     }
 }
 
