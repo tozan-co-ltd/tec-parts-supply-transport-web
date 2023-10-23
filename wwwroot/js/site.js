@@ -110,13 +110,9 @@ function BindSupplysToGrid(supplys) {
                     cell2.className = 'machine-number';
                     cell3.innerHTML = `${supplys[i].boxType}`;
                     cell3.className = 'boxType';
-                    var cellTextLength = cell3.innerText.length;
-                    //var minFontSize = 24;
-                    //var maxFontSize = 28;
-                    //var fontSize = maxFontSize - (cellTextLength * 2);
-                    //fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    //if (cellTextLength >= 8)
-                    //    cell3.style.fontSize = 24 + 'px';
+
+                    // 異なるテキストの長さに応じて文字サイズを調整
+                    countLengthText(cell3);
 
                     cell4.innerHTML = `${supplys[i].boxCount}`;
                     cell4.className = 'boxCount';
@@ -299,13 +295,7 @@ function BindTransportsToGrid(transports) {
                     cell3.className = 'boxType';
 
                     // 異なるテキストの長さに応じて文字サイズを調整
-                    var cellTextLength = cell3.innerText.length;
-                    //var minFontSize = 24;
-                    //var maxFontSize = 28;
-                    //var fontSize = maxFontSize - (cellTextLength * 2);
-                    //fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-                    //if (cellTextLength >= 8)
-                    //    cell3.style.fontSize = 24 + 'px';
+                    countLengthText(cell3);
 
                     cell4.innerHTML = `${transports[i].boxCount}`;
                     cell4.className = 'boxCount';
@@ -465,7 +455,30 @@ function BindTransportsToGrid(transports) {
         });
     }
 }
+
 // ----------------------------------------------------------------------//
+
+// 異なるテキストの長さに応じて文字サイズを調整
+function countLengthText(cell3) {
+    var fullwidthCount = countFullwidthCharacters(cell3.innerText);
+    if (fullwidthCount == 18) {
+        cell3.style.fontSize = 13 + 'px';
+    }else if (fullwidthCount == 17 || fullwidthCount == 16) {
+        cell3.style.fontSize = 14 + 'px';
+    }else if (fullwidthCount == 15) {
+        cell3.style.fontSize = 16 + 'px';
+    }else if (fullwidthCount == 14) {
+        cell3.style.fontSize = 20 + 'px';
+    }else if (fullwidthCount == 13) {
+        cell3.style.fontSize = 18 + 'px';
+    }else if (fullwidthCount == 9) {
+        cell3.style.fontSize = 22 + 'px';
+    }else if (fullwidthCount >= 10 && fullwidthCount <= 12) {
+        cell3.style.fontSize = 20 + 'px';
+    }else if (fullwidthCount < 8) {
+        cell3.style.fontSize = 30 + 'px';
+    }
+}
 
 // カウントタイマー
 function counttimer(element) {
@@ -586,4 +599,19 @@ function updateDisplay(element, time) {
         minutes = 0;
     var seconds = Math.floor((time % 60000) / 1000);
     element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+
+// Hàm để tính độ dài fullwidth của chuỗi
+function countFullwidthCharacters(str) {
+    return Array.from(str).reduce(function (count, char) {
+        return count + (char.match(/[^\x00-\x7F]/) ? 2 : 1);
+    }, 0);
+}
+
+// 文字列の半角の長さを計算します
+function countHalfwidthCharacters(str) {
+    return Array.from(str).reduce(function (count, char) {
+        return count + (char.match(/[^\x00-\xFF]/) ? 1 : 0);
+    }, 0);
 }
