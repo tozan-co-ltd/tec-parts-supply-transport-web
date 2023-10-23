@@ -58,6 +58,10 @@ a {
     padding: 10px !important;
 }
 
+.min-width40 {
+    min-width: 40px;
+}
+
 .min-width48 {
     min-width: 48px;
 }
@@ -75,7 +79,7 @@ a {
 }
 
 .registerTh{
-    width: 90px;
+    width: 70px;
 }
 
 .prepare,
@@ -148,7 +152,7 @@ a {
 td {
     text-align: center;
     vertical-align: middle;
-    padding: 0.5rem 0.4rem !important;
+    padding: 0.5rem 0.2rem !important;
 }
 
 .btn{
@@ -217,14 +221,13 @@ h3 {
 
 .importantFlag {
     color: red;
-    width: 45px;
+    width: 35px;
     border: 1px solid #C1000B;
     border-radius: 5px;
     padding: 5px 1px;
     background: #fff !important;
-    font-size: 20px;
-    margin-bottom: 0;
-    margin-left: 5px;
+    font-size: 15px;
+    margin: 3px;
 }
 
 .transportId {
@@ -241,9 +244,9 @@ h3 {
 
 .btnCompletion,
 .btnRegister {
-    width: 80px;
+    width: 65px;
     height: 70px;
-    font-size: 26px;
+    font-size: 23px;
 }
 
 .btnClose {
@@ -409,41 +412,17 @@ a > i.fa-home {
         color: #C1000B;
     }
 
-@media (max-width: 1180px) {
-    .col-6 {
-        padding: 5px !important;
-    }
+.col-6 {
+    padding: 5px !important;
 }
 
-@media (max-width: 1460px) {
-    table tbody {
-        font-size: 28px;
-    }
-}
-
-@media (max-width: 1400px) {
-    table tbody {
-        font-size: 26px;
-    }
-}
-
-@media (max-width: 1336px) {
-    table tbody {
-        font-size: 24px;
-    }
-}
-
-@media (max-width: 1280px) {
-    table tbody {
-        font-size: 22px;
+@media (min-width: 1250px) {
+    .boxType {
+        font-size: 28px !important;
     }
 }
 
 @media (max-width: 1024px) {
-    table tbody {
-        font-size: 20px;
-    }
-
     .container {
         width: 100% !important;
         max-width: 100% !important;
@@ -453,23 +432,14 @@ a > i.fa-home {
         height: 70px;
         width: 45px;
     }
-
-    .btnCompletion, .btnRegister {
-        width: 65px;
-        height: 70px;
-        font-size: 23px;
-    }
-}
-
-@media (max-width: 980px) {
-    table tbody {
-        font-size: 18px;
-    }
 }
 
 @media (max-width: 935px) {
     table tbody {
         font-size: 30px;
+    }
+    .boxType {
+        font-size: 30px !important;
     }
     .transportContent {
         display: block;
@@ -497,14 +467,14 @@ a > i.fa-home {
     .col6-sp {
         width: 100%;
     }
-    .registerTh {
-        width: 80px;
-    }
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
     html {
         font-size: 16px;
+    }
+    .boxType {
+        font-size: 24px !important;
     }
 }
 
