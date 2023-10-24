@@ -16,14 +16,22 @@ $(function () {
     });
 });
 
+
+var closeConnectCount = 0;
 // 短い遅延後に再接続を試みる
 connectionSupply.onclose(function (error) {
     setTimeout(function () {
         connectionSupply.start().catch(function (err) {
             $(".connectionError").show();
         });
+        closeConnectCount += 1;
+        // 接続が2回以上失われた場合はページをリロード
+        if (closeConnectCount >= 2) 
+            window.location.reload();
+        
     }, 500);
 });
+
 
 // ハブのメソッドを呼び出す
 function InvokeSupplys() {
