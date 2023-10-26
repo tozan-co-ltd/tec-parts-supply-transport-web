@@ -242,6 +242,10 @@ h3 {
     margin: 20px 0;
 }
 
+.supplyContent .btnCompletion {
+    margin-right: 5px;
+}
+
 .btnCompletion,
 .btnRegister {
     width: 65px;
