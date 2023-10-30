@@ -1,6 +1,7 @@
 ﻿using tec_empty_box_supply_transport_web.Hubs;
 using tec_empty_box_supply_transport_web.Models;
 using TableDependency.SqlClient;
+using tec_empty_box_supply_transport_web.Commons;
 
 namespace tec_empty_box_supply_transport_web.SubscribeTableDependencies
 {
@@ -26,10 +27,17 @@ namespace tec_empty_box_supply_transport_web.SubscribeTableDependencies
         // 変更されたテーブルの依存関係
         private void TableDependency_OnChanged(object sender, TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<SupplyModel> e)
         {
-            // データを更新される時HUBのメソッドを呼びます
-            if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
+            try
             {
-                supplyHub.SendSupplys();
+                // データを更新される時HUBのメソッドを呼びます
+                if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
+                {
+                    supplyHub.SendSupplys();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 

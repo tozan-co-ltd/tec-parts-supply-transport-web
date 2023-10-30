@@ -28,7 +28,7 @@ namespace tec_empty_box_supply_transport_web.Hubs
                 if (Clients != null)
                     await Clients.All.SendAsync("ReceivedSupplys", listSupplys);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

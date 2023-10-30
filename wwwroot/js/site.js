@@ -1,41 +1,41 @@
 ﻿// -----------------------------------準備画面-----------------------------------//
+// url取得
 var baseUrl = window.location.origin;
 var pathName = window.location.pathname.split('/');
 if (pathName.length > 2)
     baseUrl = baseUrl + "/" + pathName[1];
 
-
 // SignalRを使用して接続を初期化する
 var connectionSupply = new signalR.HubConnectionBuilder().withUrl("supplyHub").build();
-
 $(function () {
     connectionSupply.start().then(function () {
         InvokeSupplys();
-    }).catch(function (err) {
+    }).catch(function (error) {
+        $(".connectionError").text("aaa");
         $(".connectionError").show();
     });
 });
 
-
-var closeConnectCount = 0;
 // 短い遅延後に再接続を試みる
+var closeConnectCount = 0;
 connectionSupply.onclose(function (error) {
     setTimeout(function () {
-        connectionSupply.start().catch(function (err) {
+        connectionSupply.start().catch(function (error) {
             $(".connectionError").show();
+            $(".connectionError").text("再接続" + closeConnectCount + "回目");
         });
         closeConnectCount += 1;
         // 接続が2回以上失われた場合はページをリロード
         if (closeConnectCount >= 2) 
             window.location.reload();
-        
     }, 500);
 });
 
-
 // ハブのメソッドを呼び出す
 function InvokeSupplys() {
-    connectionSupply.invoke("SendSupplys").catch(function (err) {
+    connectionSupply.invoke("SendSupplys").catch(function (error) {
+        // SQLServerエラー
+        $(".connectionError").text(error);
         $(".connectionError").show();
     });
 }
@@ -44,8 +44,6 @@ function InvokeSupplys() {
 connectionSupply.on("ReceivedSupplys", function (supplys) {
     BindSupplysToGrid(supplys);
 });
-
-var boxTypeLength = $(".boxType");
 
 // グリッドに依頼をバインドする
 function BindSupplysToGrid(supplys) {

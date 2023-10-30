@@ -46,7 +46,6 @@ namespace tec_empty_box_supply_transport_web.Controllers
             }
             catch (Exception ex)
             {
-                // log取得
                 var exceptionMessage = ex.Message;
                 var result = new { res = exceptionMessage };
 

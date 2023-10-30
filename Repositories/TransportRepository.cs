@@ -51,17 +51,19 @@ namespace tec_empty_box_supply_transport_web.Repositories
         {
             var sql = $@"SELECT 
                             empty_box_supply_request_id AS EmptyBoxSupplyRequestId
-                            ,machine_num AS MachineNum
-                            ,permanent_abbreviation AS PermanentAbbreviation
-                            ,box_type AS BoxType
-                            ,box_count AS BoxCount
-                            ,request_datetime AS RequestDatetime
-                            ,ready_datetime AS ReadyDatetime
+                            ,machine_num                AS MachineNum
+                            ,permanent_abbreviation     AS PermanentAbbreviation
+                            ,box_type                   AS BoxType
+                            ,box_count                  AS BoxCount
+                            ,request_datetime           AS RequestDatetime
                             ,corrected_request_datetime AS CorrectedRequestDatetime
+                            ,ready_datetime             AS ReadyDatetime
                             ,empty_box_supply_status_id AS EmptyBoxSupplyStatusId
-                            ,is_express AS IsExpress
-                            FROM t_empty_box_supply_request 
-                            WHERE is_deleted = 0 AND empty_box_supply_status_id != {(int)EnumEmptyBoxSupplyStatus.Requesting} AND empty_box_supply_status_id != {(int)EnumEmptyBoxSupplyStatus.TransportationEnd}";
+                            ,is_express                 AS IsExpress
+                        FROM t_empty_box_supply_request 
+                        WHERE is_deleted = 0 
+                            AND empty_box_supply_status_id != {(int)EnumEmptyBoxSupplyStatus.Requesting} 
+                            AND empty_box_supply_status_id != {(int)EnumEmptyBoxSupplyStatus.TransportationEnd}";
 
             return sql;
         }
