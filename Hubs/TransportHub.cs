@@ -30,7 +30,7 @@ namespace tec_empty_box_supply_transport_web.Hubs
             }
             catch (Exception)
             {
-                Clients.Caller.SendAsync("Error", "E4001 SQLServerでエラーが発生しました。");
+                Clients.Caller.SendAsync("Error", ErrorHandling.CreateErrorMessage("E4001"));
             }
         }
     }
