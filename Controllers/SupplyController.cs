@@ -56,7 +56,7 @@ namespace tec_empty_box_supply_transport_web.Controllers
             bool isUpdateEmptyBoxSupply = false;
 
             // SQL作成
-            var sql = CreateSQLToUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
+            var sql = SupplyRepository.CreateSQLToUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
 
             // DB接続
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
@@ -73,27 +73,6 @@ namespace tec_empty_box_supply_transport_web.Controllers
                 }
             }
             return isUpdateEmptyBoxSupply;
-        }
-
-
-        /// <summary>
-        /// 準備完了に更新するSQL作成
-        /// </summary>
-        /// <param name="empty_box_supply_request_id"></param>
-        /// <remarks>UPDATE文</remarks>
-        /// <returns>SQL</returns>
-        public static string CreateSQLToUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
-        {
-            var sql = $@"
-                    UPDATE
-                        t_empty_box_supply_request
-                    SET
-                        ready_datetime  = GETDATE()
-                        ,empty_box_supply_status_id = {(int)EnumEmptyBoxSupplyStatus.Ready}
-                    WHERE 
-                        empty_box_supply_request_id = {@empty_box_supply_request_id}
-            ";
-            return sql;
         }
     }
 }

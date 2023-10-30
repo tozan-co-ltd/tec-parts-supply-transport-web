@@ -10,23 +10,21 @@ var connectionSupply = new signalR.HubConnectionBuilder().withUrl("supplyHub").b
 $(function () {
     connectionSupply.start().then(function () {
         InvokeSupplys();
-    }).catch(function (error) {
-        $(".connectionError").text("aaa");
-        $(".connectionError").show();
-    });
+    })
 });
 
 // 短い遅延後に再接続を試みる
-var closeConnectCount = 0;
+var closeConnectSupplyCount = 0;
 connectionSupply.onclose(function (error) {
     setTimeout(function () {
-        connectionSupply.start().catch(function (error) {
-            $(".connectionError").show();
-            $(".connectionError").text("再接続" + closeConnectCount + "回目");
-        });
-        closeConnectCount += 1;
+        connectionSupply.start().then(function () {
+            InvokeSupplys();
+        })
+        closeConnectSupplyCount += 1;
+        $(".connectionSupplyError").text("再接続" + closeConnectSupplyCount + "回目");
+        $(".connectionSupplyError").show();
         // 接続が2回以上失われた場合はページをリロード
-        if (closeConnectCount >= 2) 
+        if (closeConnectSupplyCount >= 2) 
             window.location.reload();
     }, 500);
 });
@@ -35,10 +33,17 @@ connectionSupply.onclose(function (error) {
 function InvokeSupplys() {
     connectionSupply.invoke("SendSupplys").catch(function (error) {
         // SQLServerエラー
-        $(".connectionError").text(error);
-        $(".connectionError").show();
+        $(".connectionSupplyError").text(error);
+        $(".connectionSupplyError").show();
     });
 }
+
+// エラーが発生しました時
+connectionSupply.on("Error", (error) => {
+    $(".connectionSupplyError").text(error);
+    $(".connectionSupplyError").show();
+});
+
 
 // グリッドに依頼をバインドする
 connectionSupply.on("ReceivedSupplys", function (supplys) {
@@ -202,26 +207,39 @@ var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportH
 $(function () {
     connectionTransport.start().then(function () {
         InvokeTransports();
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
+    })
 });
 
+var closeConnectTransportCount = 0;
 // 短い遅延後に再接続を試みる
 connectionTransport.onclose(function (error) {
     setTimeout(function () {
-        connectionTransport.start().catch(function (err) {
-            console.error(err.toString());
-        });
+        connectionTransport.start().then(function () {
+            InvokeTransports();
+        })
+        closeConnectTransportCount += 1;
+        $(".connectionTransportError").text("再接続" + closeConnectTransportCount + "回目");
+        $(".connectionTransportError").show();
+        // 接続が2回以上失われた場合はページをリロード
+        if (closeConnectTransportCount >= 2)
+            window.location.reload();
     }, 500);
 });
 
 // ハブのメソッドを呼び出す
 function InvokeTransports() {
-    connectionTransport.invoke("SendTransports").catch(function (err) {
-        return console.error(err.toString());
+    connectionTransport.invoke("SendTransports").catch(function (error) {
+        // SQLServerエラー
+        $(".connectionTransportError").text(error);
+        $(".connectionTransportError").show();
     });
 }
+
+// エラーが発生しました時
+connectionTransport.on("Error", (error) => {
+    $(".connectionTransportError").text(error);
+    $(".connectionTransportError").show();
+});
 
 // グリッドに依頼をバインドする
 connectionTransport.on("ReceivedTransports", function (products) {
