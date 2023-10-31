@@ -52,27 +52,34 @@ namespace tec_empty_box_supply_transport_web.Controllers
         /// <returns>成功したらtrueを返す</returns>
         public bool UpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
         {
-            // 戻り値
-            bool isUpdateEmptyBoxSupply = false;
-
-            // SQL作成
-            var sql = SupplyRepository.CreateSQLToUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
-
-            // DB接続
-            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                connection.ConnectionString = connectionString;
-                connection.Open();
+                // 戻り値
+                bool isUpdateEmptyBoxSupply = false;
 
-                // 戻り値は処理件数
-                var update = connection.Execute(sql, empty_box_supply_request_id);
-                if (update >= 1)
+                // SQL作成
+                var sql = SupplyRepository.CreateSQLToUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
+
+                // DB接続
+                var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+                using (var connection = new SqlConnection(connectionString))
                 {
-                    isUpdateEmptyBoxSupply = true;
+                    connection.ConnectionString = connectionString;
+                    connection.Open();
+
+                    // 戻り値は処理件数
+                    var update = connection.Execute(sql, empty_box_supply_request_id);
+                    if (update >= 1)
+                    {
+                        isUpdateEmptyBoxSupply = true;
+                    }
                 }
+                return isUpdateEmptyBoxSupply;
             }
-            return isUpdateEmptyBoxSupply;
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

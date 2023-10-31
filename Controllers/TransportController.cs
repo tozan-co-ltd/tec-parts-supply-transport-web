@@ -32,15 +32,15 @@ namespace tec_empty_box_supply_transport_web.Controllers
         /// </summary>
         /// <param name="dataSupplyId"></param>
         /// <param name="statusBtn"></param>
-        /// <param name="isDelete"></param>
+        /// <param name="isCancelled"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId, string statusBtn, bool isDelete)
+        public IActionResult Complete(string dataSupplyId, string statusBtn, bool isCancelled)
         {
             try
             {
                 string emptyBoxSupplyRequestIid = dataSupplyId;
-                bool resUpdate = ChangeEmptyBoxSupplyStatus(emptyBoxSupplyRequestIid, statusBtn, isDelete);
+                bool resUpdate = ChangeEmptyBoxSupplyStatus(emptyBoxSupplyRequestIid, statusBtn, isCancelled);
                 var result = new { res = resUpdate };
 
                 return Json(result);
@@ -60,29 +60,36 @@ namespace tec_empty_box_supply_transport_web.Controllers
         /// </summary>
         /// <param name="empty_box_supply_request_id"></param>
         /// <returns>成功したらtrueを返す</returns>
-        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isDelete)
+        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isCancelled)
         {
-            // 戻り値
-            bool isUpdateEmptyBoxSupply = false;
-
-            // SQL作成
-            var sql = TransportRepository.CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isDelete);
-
-            // DB接続
-            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                connection.ConnectionString = connectionString;
-                connection.Open();
+                // 戻り値
+                bool isUpdateEmptyBoxSupply = false;
 
-                // 戻り値は処理件数
-                var update = connection.Execute(sql, empty_box_supply_request_id);
-                if (update >= 1)
+                // SQL作成
+                var sql = TransportRepository.CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isCancelled);
+
+                // DB接続
+                var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+                using (var connection = new SqlConnection(connectionString))
                 {
-                    isUpdateEmptyBoxSupply = true;
+                    connection.ConnectionString = connectionString;
+                    connection.Open();
+
+                    // 戻り値は処理件数
+                    var update = connection.Execute(sql, empty_box_supply_request_id);
+                    if (update >= 1)
+                    {
+                        isUpdateEmptyBoxSupply = true;
+                    }
                 }
+                return isUpdateEmptyBoxSupply;
             }
-            return isUpdateEmptyBoxSupply;
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

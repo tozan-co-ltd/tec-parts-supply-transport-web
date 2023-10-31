@@ -49,6 +49,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// <returns>SQL</returns>
         public string CreateSQLToGetSupplys()
         {
+            // "依頼中"のレコード
             var sql = $@"SELECT 
                             empty_box_supply_request_id AS EmptyBoxSupplyRequestId
                             ,machine_num                AS MachineNum
@@ -63,6 +64,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                         FROM t_empty_box_supply_request
                         WHERE ready_datetime is NULL 
                             AND is_deleted = 0 
+                            AND empty_box_supply_status_id = {(int)EnumEmptyBoxSupplyStatus.Requesting} 
                             ORDER BY request_datetime ASC";
 
             return sql;
