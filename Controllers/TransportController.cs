@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using tec_empty_box_supply_transport_web.Commons;
 using tec_empty_box_supply_transport_web.Models;
+using tec_empty_box_supply_transport_web.Repositories;
 
 namespace tec_empty_box_supply_transport_web.Controllers
 {
@@ -65,7 +66,7 @@ namespace tec_empty_box_supply_transport_web.Controllers
             bool isUpdateEmptyBoxSupply = false;
 
             // SQL作成
-            var sql = CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isDelete);
+            var sql = TransportRepository.CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isDelete);
 
             // DB接続
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
@@ -82,52 +83,6 @@ namespace tec_empty_box_supply_transport_web.Controllers
                 }
             }
             return isUpdateEmptyBoxSupply;
-        }
-
-
-        /// <summary>
-        /// 運搬開始・運搬終了に更新するSQL作成
-        /// </summary>
-        /// <param name="empty_box_supply_request_id"></param>
-        /// <param name="isDelete"></param>
-        /// <param name="status"></param>
-        /// <remarks>UPDATE文</remarks>
-        /// <returns>SQL</returns>
-        public static string CreateSQLChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string status, bool isDelete)
-        {
-            int statuId = 0;
-            var sql = $@"
-                    UPDATE
-                        t_empty_box_supply_request ";
-
-            if (isDelete)
-            {
-                if (status == "開始")
-                    statuId = 1; // 依頼中
-                if (status == "終了")
-                    statuId = 2; // 運搬開
-            }
-            else
-            {
-                if (status == "開始")
-                    statuId = 3; // 運搬開始
-                if (status == "終了")
-                    statuId = 4; // 運搬終了
-            }
-
-            sql += $@"SET
-                        empty_box_supply_status_id  = {statuId}";
-
-            if (!isDelete)
-            {
-                if (status == "開始")
-                    sql += $@", transportation_start_datetime = GETDATE()";
-                if (status == "終了")
-                    sql += $@", transportation_end_datetime = GETDATE(), is_completed = 1 ";
-            }
-
-            sql += $@"  WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
-            return sql;
         }
     }
 }

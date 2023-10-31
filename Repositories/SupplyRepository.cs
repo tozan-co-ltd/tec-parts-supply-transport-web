@@ -60,11 +60,33 @@ namespace tec_empty_box_supply_transport_web.Repositories
                             ,ready_datetime             AS ReadyDatetime
                             ,empty_box_supply_status_id AS EmptyBoxSupplyStatusId
                             ,is_express                 AS IsExpress
-                        FROM t_empty_box_supply_request 
+                        FROM t_empty_box_supply_request
                         WHERE ready_datetime is NULL 
                             AND is_deleted = 0 
                             ORDER BY request_datetime ASC";
 
+            return sql;
+        }
+
+
+
+        /// <summary>
+        /// 準備完了に更新するSQL作成
+        /// </summary>
+        /// <param name="empty_box_supply_request_id"></param>
+        /// <remarks>UPDATE文</remarks>
+        /// <returns>SQL</returns>
+        public static string CreateSQLToUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
+        {
+            var sql = $@"
+                    UPDATE
+                        t_empty_box_supply_request
+                    SET
+                        ready_datetime  = GETDATE()
+                        ,empty_box_supply_status_id = {(int)EnumEmptyBoxSupplyStatus.Ready}
+                    WHERE 
+                        empty_box_supply_request_id = {@empty_box_supply_request_id}
+            ";
             return sql;
         }
     }

@@ -30,7 +30,10 @@ namespace tec_empty_box_supply_transport_web.Hubs
             }
             catch (Exception)
             {
-                throw;
+                // エラーメッセージ作成
+                // 「SQLServerでエラーが発生しました。」
+                var errorMessage = ErrorHandling.CreateErrorMessage("E4001");
+                await Clients.Caller.SendAsync("Error", errorMessage);
             }
         }
     }

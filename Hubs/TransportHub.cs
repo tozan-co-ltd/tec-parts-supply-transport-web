@@ -28,9 +28,9 @@ namespace tec_empty_box_supply_transport_web.Hubs
                 if (Clients != null)
                     await Clients.All.SendAsync("ReceivedTransports", listTransports);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw;
+                Clients.Caller.SendAsync("Error", ErrorHandling.CreateErrorMessage("E4001"));
             }
         }
     }
