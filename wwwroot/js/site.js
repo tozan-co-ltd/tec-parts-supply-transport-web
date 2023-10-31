@@ -21,25 +21,26 @@ connectionSupply.onclose(function (error) {
             InvokeSupplys();
         })
         closeConnectSupplyCount += 1;
-        $(".connectionSupplyError").text("再接続" + closeConnectSupplyCount + "回目");
-        $(".connectionSupplyError").show();
+        console.log("Error - onclose 再接続" + closeConnectSupplyCount + "回目");
         // 接続が2回以上失われた場合はページをリロード
         if (closeConnectSupplyCount >= 2) 
             window.location.reload();
     }, 500);
 });
 
+
 // ハブのメソッドを呼び出す
 function InvokeSupplys() {
     connectionSupply.invoke("SendSupplys").catch(function (error) {
-        // SQLServerエラー
+        console.log("Error - invoke catch");
         $(".connectionSupplyError").text(error);
         $(".connectionSupplyError").show();
     });
 }
 
-// エラーが発生しました時
+// エラー発生時
 connectionSupply.on("Error", (error) => {
+    console.log("Error - on");
     $(".connectionSupplyError").text(error);
     $(".connectionSupplyError").show();
 });
