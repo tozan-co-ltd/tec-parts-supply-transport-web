@@ -185,7 +185,16 @@ function BindSupplysToGrid(supplys) {
                             url: baseUrl +'/Supply/Complete',
                             data: { dataSupplyId: dataSupplyId },
                             success: function (response) {
-                                console.log(response)
+                                if (response.res != true) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録ができません。`,
+                                            confirmButtonColor: '#0d6efd',
+                                            cancelButtonText: '閉じる',
+                                        })
+                                    }, 500);
+                                }
                             }
                         }).done(function () {
                             setTimeout(function () {
@@ -385,6 +394,15 @@ function BindTransportsToGrid(transports) {
                                 button.innerText = "終了";
                                 button.classList.remove('btn-warning');
                                 button.classList.add('btn-success');
+                            } else {
+                                setTimeout(function () {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>ステータスは変更できません。`,
+                                        confirmButtonColor: '#0d6efd',
+                                        cancelButtonText: '閉じる',
+                                    })
+                                }, 500);
                             }
                         }
                     }).done(function () {
@@ -411,7 +429,16 @@ function BindTransportsToGrid(transports) {
                                 url: baseUrl + '/Transport/Complete',
                                 data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
                                 success: function (response) {
-                                    console.log(response)
+                                    if (response.res != true) {
+                                        setTimeout(function () {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録ができません。`,
+                                                confirmButtonColor: '#0d6efd',
+                                                cancelButtonText: '閉じる',
+                                            })
+                                        }, 500);
+                                    }
                                 }
                             }).done(function () {
                                 setTimeout(function () {
@@ -449,6 +476,15 @@ function BindTransportsToGrid(transports) {
                                 tdWithbtnRegister.innerText = "開始";
                                 tdWithbtnRegister.classList.add('btn-warning');
                                 tdWithbtnRegister.classList.remove('btn-success');
+                            } else {
+                                setTimeout(function () {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬が削除できません。`,
+                                        confirmButtonColor: '#0d6efd',
+                                        cancelButtonText: '閉じる',
+                                    })
+                                }, 500);
                             }
                         }
                     }).done(function () {
@@ -468,6 +504,15 @@ function BindTransportsToGrid(transports) {
                                 tdWithbtnRegister.innerText = "開始";
                                 tdWithbtnRegister.classList.add('btn-warning');
                                 tdWithbtnRegister.classList.remove('btn-success');
+                            } else {
+                                setTimeout(function () {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>ステータスは変更できません。`,
+                                        confirmButtonColor: '#0d6efd',
+                                        cancelButtonText: '閉じる',
+                                    })
+                                }, 500);
                             }
                         }
                     }).done(function () {
