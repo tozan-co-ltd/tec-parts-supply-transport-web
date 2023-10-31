@@ -1,43 +1,56 @@
 ﻿// -----------------------------------準備画面-----------------------------------//
+// url取得
 var baseUrl = window.location.origin;
 var pathName = window.location.pathname.split('/');
 if (pathName.length > 2)
     baseUrl = baseUrl + "/" + pathName[1];
 
-
 // SignalRを使用して接続を初期化する
 var connectionSupply = new signalR.HubConnectionBuilder().withUrl("supplyHub").build();
-
 $(function () {
     connectionSupply.start().then(function () {
         InvokeSupplys();
-    }).catch(function (err) {
-        $(".connectionError").show();
-    });
+    })
 });
 
 // 短い遅延後に再接続を試みる
+var closeConnectSupplyCount = 0;
 connectionSupply.onclose(function (error) {
     setTimeout(function () {
-        connectionSupply.start().catch(function (err) {
-            $(".connectionError").show();
-        });
+        connectionSupply.start().then(function () {
+            InvokeSupplys();
+        })
+        closeConnectSupplyCount += 1;
+        console.log("Error - onclose 再接続" + closeConnectSupplyCount + "回目");
+        // 接続が2回以上失われた場合はページをリロード
+        if (closeConnectSupplyCount >= 2) 
+            window.location.reload();
     }, 500);
 });
 
+
 // ハブのメソッドを呼び出す
 function InvokeSupplys() {
-    connectionSupply.invoke("SendSupplys").catch(function (err) {
-        $(".connectionError").show();
+    connectionSupply.invoke("SendSupplys").catch(function (error) {
+        // Controllerに接続できない場合はエラー
+        console.log("Error - invoke catch");
+        $(".connectionSupplyError").text(error);
+        $(".connectionSupplyError").show();
     });
 }
+
+// エラー発生時
+connectionSupply.on("Error", (error) => {
+    console.log("Error - on");
+    $(".connectionSupplyError").text(error);
+    $(".connectionSupplyError").show();
+});
+
 
 // グリッドに依頼をバインドする
 connectionSupply.on("ReceivedSupplys", function (supplys) {
     BindSupplysToGrid(supplys);
 });
-
-var boxTypeLength = $(".boxType");
 
 // グリッドに依頼をバインドする
 function BindSupplysToGrid(supplys) {
@@ -101,11 +114,6 @@ function BindSupplysToGrid(supplys) {
                     var timeTmp = subResult.split(':');
                     var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
-                    //if (supplys[i].isExpress == 1) {
-                    //    cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                    //    cell1.className = 'importTd';
-                    //}
-
                     cell2.innerHTML = `${supplys[i].machineNum}`;
                     cell2.className = 'machine-number';
                     cell3.innerHTML = `${supplys[i].boxType}`;
@@ -157,7 +165,6 @@ function BindSupplysToGrid(supplys) {
                 var dataBoxType = tdWithBoxType.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
 
-                // sweetalert2
                 Swal.fire({
                     title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録を行います。<br>よろしいですか？`,
                     icon: 'warning',
@@ -173,7 +180,18 @@ function BindSupplysToGrid(supplys) {
                             url: baseUrl +'/Supply/Complete',
                             data: { dataSupplyId: dataSupplyId },
                             success: function (response) {
-                                console.log(response)
+                                if (response.res != true) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                            html: response.res,
+                                            confirmButtonColor: '#0d6efd',
+                                            confirmButtonText: '閉じる',
+                                            allowOutsideClick: false,
+                                        })
+                                    }, 500);
+                                }
                             }
                         }).done(function () {
                             setTimeout(function () {
@@ -196,26 +214,39 @@ var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportH
 $(function () {
     connectionTransport.start().then(function () {
         InvokeTransports();
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
+    })
 });
 
 // 短い遅延後に再接続を試みる
+var closeConnectTransportCount = 0;
 connectionTransport.onclose(function (error) {
     setTimeout(function () {
-        connectionTransport.start().catch(function (err) {
-            console.error(err.toString());
-        });
+        connectionTransport.start().then(function () {
+            InvokeTransports();
+        })
+        closeConnectTransportCount += 1;
+        console.log("Error - onclose 再接続" + closeConnectTransportCount + "回目");
+        // 接続が2回以上失われた場合はページをリロード
+        if (closeConnectTransportCount >= 2)
+            window.location.reload();
     }, 500);
 });
 
 // ハブのメソッドを呼び出す
 function InvokeTransports() {
-    connectionTransport.invoke("SendTransports").catch(function (err) {
-        return console.error(err.toString());
+    connectionTransport.invoke("SendTransports").catch(function (error) {
+        // Controllerに接続できない場合はエラー
+        $(".connectionTransportError").text(error);
+        $(".connectionTransportError").show();
     });
 }
+
+// エラー発生時
+connectionTransport.on("Error", (error) => {
+    console.log("Error - on");
+    $(".connectionTransportError").text(error);
+    $(".connectionTransportError").show();
+});
 
 // グリッドに依頼をバインドする
 connectionTransport.on("ReceivedTransports", function (products) {
@@ -285,11 +316,6 @@ function BindTransportsToGrid(transports) {
                     var timeTmp = subResult.split(':');
                     var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
-                    //if (transports[i].isExpress == 1) {
-                    //    cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                    //    cell1.className = 'importTd';
-                    //}
-
                     cell2.innerHTML = `${transports[i].machineNum}`;
                     cell3.innerHTML = `${transports[i].boxType}`;
                     cell3.className = 'boxType';
@@ -338,7 +364,7 @@ function BindTransportsToGrid(transports) {
         // ボタン押下時に確認ダイアログ表示
         buttons.forEach(function (button) {
             button.addEventListener('click', function () {
-                var isDelete = false;
+                var isCancelled = false;
                 var row = button.parentElement.parentElement;
                 var statusBtn = button.textContent || button.innerText;
                 var tdWithSupplyId = row.querySelector('.transportId');
@@ -350,16 +376,28 @@ function BindTransportsToGrid(transports) {
                 var dataBoxType = tdWithBoxType.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
 
+                // 開始ボタン押下時
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transport/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                         success: function (response) {
                             if (response.res == true) {
                                 button.innerText = "終了";
                                 button.classList.remove('btn-warning');
                                 button.classList.add('btn-success');
+                            } else {
+                                setTimeout(function () {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始登録ができませんでした。<br>再度お試しください。`,
+                                        html: response.res,
+                                        confirmButtonColor: '#0d6efd',
+                                        confirmButtonText: '閉じる',
+                                        allowOutsideClick: false,
+                                    })
+                                }, 500);
                             }
                         }
                     }).done(function () {
@@ -369,8 +407,8 @@ function BindTransportsToGrid(transports) {
                     });
                 }
 
+                // 終了ボタン押下時
                 if (statusBtn == "終了") {
-                    // sweetalert2
                     Swal.fire({
                         title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録を行います。<br>よろしいですか？`,
                         icon: 'warning',
@@ -384,9 +422,20 @@ function BindTransportsToGrid(transports) {
                             $.ajax({
                                 type: 'POST',
                                 url: baseUrl + '/Transport/Complete',
-                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                                 success: function (response) {
-                                    console.log(response)
+                                    if (response.res != true) {
+                                        setTimeout(function () {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録ができませんでした。<br>再度お試しください。`,
+                                                html: response.res,
+                                                confirmButtonColor: '#0d6efd',
+                                                confirmButtonText: '閉じる',
+                                                allowOutsideClick: false,
+                                            })
+                                        }, 500);
+                                    }
                                 }
                             }).done(function () {
                                 setTimeout(function () {
@@ -402,7 +451,7 @@ function BindTransportsToGrid(transports) {
         // ボタン押下時に確認ダイアログ表示
         buttonsClose.forEach(function (button) {
             button.addEventListener('click', function () {
-                var isDelete = true;
+                var isCancelled = true;
                 var row = button.parentElement.parentElement;
                 var tdWithSupplyId = row.querySelector('.transportId');
                 var tdWithBoxType = row.querySelector('.boxType');
@@ -414,16 +463,29 @@ function BindTransportsToGrid(transports) {
                 var dataBoxType = tdWithBoxType.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
                 var statusBtn = tdWithbtnRegister.textContent || tdWithbtnRegister.innerText;
+
+                // 開始ボタン隣の削除ボタン押下時
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transport/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                         success: function (response) {
                             if (response.res == true) {
                                 tdWithbtnRegister.innerText = "開始";
                                 tdWithbtnRegister.classList.add('btn-warning');
                                 tdWithbtnRegister.classList.remove('btn-success');
+                            } else {
+                                setTimeout(function () {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
+                                        html: response.res,
+                                        confirmButtonColor: '#0d6efd',
+                                        confirmButtonText: '閉じる',
+                                        allowOutsideClick: false,
+                                    })
+                                }, 500);
                             }
                         }
                     }).done(function () {
@@ -433,16 +495,28 @@ function BindTransportsToGrid(transports) {
                     });
                 }
 
+                // 終了ボタン隣の削除ボタン押下時
                 if (statusBtn == "終了") {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transport/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                         success: function (response) {
                             if (response.res == true) {
                                 tdWithbtnRegister.innerText = "開始";
                                 tdWithbtnRegister.classList.add('btn-warning');
                                 tdWithbtnRegister.classList.remove('btn-success');
+                            } else {
+                                setTimeout(function () {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了の取消ができませんでした。<br>再度お試しください。`,
+                                        html: response.res,
+                                        confirmButtonColor: '#0d6efd',
+                                        confirmButtonText: '閉じる',
+                                        allowOutsideClick: false,
+                                    })
+                                }, 500);
                             }
                         }
                     }).done(function () {
@@ -455,8 +529,8 @@ function BindTransportsToGrid(transports) {
         });
     }
 }
-
 // ----------------------------------------------------------------------//
+
 
 // 異なるテキストの長さに応じて文字サイズを調整
 function countLengthText(cell3) {

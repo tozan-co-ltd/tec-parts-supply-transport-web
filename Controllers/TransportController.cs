@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using tec_empty_box_supply_transport_web.Commons;
 using tec_empty_box_supply_transport_web.Models;
+using tec_empty_box_supply_transport_web.Repositories;
 
 namespace tec_empty_box_supply_transport_web.Controllers
 {
@@ -31,22 +32,21 @@ namespace tec_empty_box_supply_transport_web.Controllers
         /// </summary>
         /// <param name="dataSupplyId"></param>
         /// <param name="statusBtn"></param>
-        /// <param name="isDelete"></param>
+        /// <param name="isCancelled"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId, string statusBtn, bool isDelete)
+        public IActionResult Complete(string dataSupplyId, string statusBtn, bool isCancelled)
         {
             try
             {
                 string emptyBoxSupplyRequestIid = dataSupplyId;
-                bool resUpdate = ChangeEmptyBoxSupplyStatus(emptyBoxSupplyRequestIid, statusBtn, isDelete);
+                bool resUpdate = ChangeEmptyBoxSupplyStatus(emptyBoxSupplyRequestIid, statusBtn, isCancelled);
                 var result = new { res = resUpdate };
 
                 return Json(result);
             }
             catch (Exception ex)
             {
-                // log取得
                 var exceptionMessage = ex.Message;
                 var result = new { res = exceptionMessage };
 
@@ -60,75 +60,36 @@ namespace tec_empty_box_supply_transport_web.Controllers
         /// </summary>
         /// <param name="empty_box_supply_request_id"></param>
         /// <returns>成功したらtrueを返す</returns>
-        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isDelete)
+        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isCancelled)
         {
-            // 戻り値
-            bool isUpdateEmptyBoxSupply = false;
-
-            // SQL作成
-            var sql = CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isDelete);
-
-            // DB接続
-            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                connection.ConnectionString = connectionString;
-                connection.Open();
+                // 戻り値
+                bool isUpdateEmptyBoxSupply = false;
 
-                // 戻り値は処理件数
-                var update = connection.Execute(sql, empty_box_supply_request_id);
-                if (update >= 1)
+                // SQL作成
+                var sql = TransportRepository.CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isCancelled);
+
+                // DB接続
+                var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+                using (var connection = new SqlConnection(connectionString))
                 {
-                    isUpdateEmptyBoxSupply = true;
+                    connection.ConnectionString = connectionString;
+                    connection.Open();
+
+                    // 戻り値は処理件数
+                    var update = connection.Execute(sql, empty_box_supply_request_id);
+                    if (update >= 1)
+                    {
+                        isUpdateEmptyBoxSupply = true;
+                    }
                 }
+                return isUpdateEmptyBoxSupply;
             }
-            return isUpdateEmptyBoxSupply;
-        }
-
-
-        /// <summary>
-        /// 運搬開始・運搬終了に更新するSQL作成
-        /// </summary>
-        /// <param name="empty_box_supply_request_id"></param>
-        /// <param name="isDelete"></param>
-        /// <param name="status"></param>
-        /// <remarks>UPDATE文</remarks>
-        /// <returns>SQL</returns>
-        public static string CreateSQLChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string status, bool isDelete)
-        {
-            int statuId = 0;
-            var sql = $@"
-                    UPDATE
-                        t_empty_box_supply_request ";
-
-            if (isDelete)
+            catch (Exception)
             {
-                if (status == "開始")
-                    statuId = 1; // 依頼中
-                if (status == "終了")
-                    statuId = 2; // 運搬開
+                throw;
             }
-            else
-            {
-                if (status == "開始")
-                    statuId = 3; // 運搬開始
-                if (status == "終了")
-                    statuId = 4; // 運搬終了
-            }
-
-            sql += $@"SET
-                        empty_box_supply_status_id  = {statuId}";
-
-            if (!isDelete)
-            {
-                if (status == "開始")
-                    sql += $@", transportation_start_datetime = GETDATE()";
-                if (status == "終了")
-                    sql += $@", transportation_end_datetime = GETDATE(), is_completed = 1 ";
-            }
-
-            sql += $@"  WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
-            return sql;
         }
     }
 }

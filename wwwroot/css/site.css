@@ -238,8 +238,12 @@ h3 {
     display: none;
 }
 
-.noneDateMess {
+.noneDateMess, .connectionTransportError, .connectionSupplyError {
     margin: 20px 0;
+}
+
+.supplyContent .btnCompletion {
+    margin-right: 5px;
 }
 
 .btnCompletion,
