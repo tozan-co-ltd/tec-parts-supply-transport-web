@@ -228,8 +228,7 @@ connectionTransport.onclose(function (error) {
             InvokeTransports();
         })
         closeConnectTransportCount += 1;
-        $(".connectionTransportError").text("再接続" + closeConnectTransportCount + "回目");
-        $(".connectionTransportError").show();
+        console.log("Error - onclose 再接続" + closeConnectTransportCount + "回目");
         // 接続が2回以上失われた場合はページをリロード
         if (closeConnectTransportCount >= 2)
             window.location.reload();
