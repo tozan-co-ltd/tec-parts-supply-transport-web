@@ -32,6 +32,7 @@ connectionSupply.onclose(function (error) {
 // ハブのメソッドを呼び出す
 function InvokeSupplys() {
     connectionSupply.invoke("SendSupplys").catch(function (error) {
+        // Controllerに接続できない場合はエラー
         console.log("Error - invoke catch");
         $(".connectionSupplyError").text(error);
         $(".connectionSupplyError").show();
@@ -113,11 +114,6 @@ function BindSupplysToGrid(supplys) {
                     var timeTmp = subResult.split(':');
                     var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
-                    //if (supplys[i].isExpress == 1) {
-                    //    cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                    //    cell1.className = 'importTd';
-                    //}
-
                     cell2.innerHTML = `${supplys[i].machineNum}`;
                     cell2.className = 'machine-number';
                     cell3.innerHTML = `${supplys[i].boxType}`;
@@ -169,7 +165,6 @@ function BindSupplysToGrid(supplys) {
                 var dataBoxType = tdWithBoxType.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
 
-                // sweetalert2
                 Swal.fire({
                     title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録を行います。<br>よろしいですか？`,
                     icon: 'warning',
@@ -189,9 +184,11 @@ function BindSupplysToGrid(supplys) {
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録ができません。`,
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                            html: response.res,
                                             confirmButtonColor: '#0d6efd',
-                                            cancelButtonText: '閉じる',
+                                            confirmButtonText: '閉じる',
+                                            allowOutsideClick: false,
                                         })
                                     }, 500);
                                 }
@@ -220,8 +217,8 @@ $(function () {
     })
 });
 
-var closeConnectTransportCount = 0;
 // 短い遅延後に再接続を試みる
+var closeConnectTransportCount = 0;
 connectionTransport.onclose(function (error) {
     setTimeout(function () {
         connectionTransport.start().then(function () {
@@ -238,14 +235,15 @@ connectionTransport.onclose(function (error) {
 // ハブのメソッドを呼び出す
 function InvokeTransports() {
     connectionTransport.invoke("SendTransports").catch(function (error) {
-        // SQLServerエラー
+        // Controllerに接続できない場合はエラー
         $(".connectionTransportError").text(error);
         $(".connectionTransportError").show();
     });
 }
 
-// エラーが発生しました時
+// エラー発生時
 connectionTransport.on("Error", (error) => {
+    console.log("Error - on");
     $(".connectionTransportError").text(error);
     $(".connectionTransportError").show();
 });
@@ -318,11 +316,6 @@ function BindTransportsToGrid(transports) {
                     var timeTmp = subResult.split(':');
                     var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
 
-                    //if (transports[i].isExpress == 1) {
-                    //    cell1.innerHTML = `<p class="importantFlag">特急</p>`;
-                    //    cell1.className = 'importTd';
-                    //}
-
                     cell2.innerHTML = `${transports[i].machineNum}`;
                     cell3.innerHTML = `${transports[i].boxType}`;
                     cell3.className = 'boxType';
@@ -371,7 +364,7 @@ function BindTransportsToGrid(transports) {
         // ボタン押下時に確認ダイアログ表示
         buttons.forEach(function (button) {
             button.addEventListener('click', function () {
-                var isDelete = false;
+                var isCancelled = false;
                 var row = button.parentElement.parentElement;
                 var statusBtn = button.textContent || button.innerText;
                 var tdWithSupplyId = row.querySelector('.transportId');
@@ -383,11 +376,12 @@ function BindTransportsToGrid(transports) {
                 var dataBoxType = tdWithBoxType.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
 
+                // 開始ボタン押下時
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transport/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                         success: function (response) {
                             if (response.res == true) {
                                 button.innerText = "終了";
@@ -397,9 +391,11 @@ function BindTransportsToGrid(transports) {
                                 setTimeout(function () {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>ステータスは変更できません。`,
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始登録ができませんでした。<br>再度お試しください。`,
+                                        html: response.res,
                                         confirmButtonColor: '#0d6efd',
-                                        cancelButtonText: '閉じる',
+                                        confirmButtonText: '閉じる',
+                                        allowOutsideClick: false,
                                     })
                                 }, 500);
                             }
@@ -411,8 +407,8 @@ function BindTransportsToGrid(transports) {
                     });
                 }
 
+                // 終了ボタン押下時
                 if (statusBtn == "終了") {
-                    // sweetalert2
                     Swal.fire({
                         title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録を行います。<br>よろしいですか？`,
                         icon: 'warning',
@@ -426,15 +422,17 @@ function BindTransportsToGrid(transports) {
                             $.ajax({
                                 type: 'POST',
                                 url: baseUrl + '/Transport/Complete',
-                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                                 success: function (response) {
                                     if (response.res != true) {
                                         setTimeout(function () {
                                             Swal.fire({
                                                 icon: 'error',
-                                                title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録ができません。`,
+                                                title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録ができませんでした。<br>再度お試しください。`,
+                                                html: response.res,
                                                 confirmButtonColor: '#0d6efd',
-                                                cancelButtonText: '閉じる',
+                                                confirmButtonText: '閉じる',
+                                                allowOutsideClick: false,
                                             })
                                         }, 500);
                                     }
@@ -453,7 +451,7 @@ function BindTransportsToGrid(transports) {
         // ボタン押下時に確認ダイアログ表示
         buttonsClose.forEach(function (button) {
             button.addEventListener('click', function () {
-                var isDelete = true;
+                var isCancelled = true;
                 var row = button.parentElement.parentElement;
                 var tdWithSupplyId = row.querySelector('.transportId');
                 var tdWithBoxType = row.querySelector('.boxType');
@@ -465,11 +463,13 @@ function BindTransportsToGrid(transports) {
                 var dataBoxType = tdWithBoxType.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
                 var statusBtn = tdWithbtnRegister.textContent || tdWithbtnRegister.innerText;
+
+                // 開始ボタン隣の削除ボタン押下時
                 if (statusBtn == "開始") {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transport/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                         success: function (response) {
                             if (response.res == true) {
                                 tdWithbtnRegister.innerText = "開始";
@@ -479,9 +479,11 @@ function BindTransportsToGrid(transports) {
                                 setTimeout(function () {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬が削除できません。`,
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
+                                        html: response.res,
                                         confirmButtonColor: '#0d6efd',
-                                        cancelButtonText: '閉じる',
+                                        confirmButtonText: '閉じる',
+                                        allowOutsideClick: false,
                                     })
                                 }, 500);
                             }
@@ -493,11 +495,12 @@ function BindTransportsToGrid(transports) {
                     });
                 }
 
+                // 終了ボタン隣の削除ボタン押下時
                 if (statusBtn == "終了") {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transport/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isDelete: isDelete },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                         success: function (response) {
                             if (response.res == true) {
                                 tdWithbtnRegister.innerText = "開始";
@@ -507,9 +510,11 @@ function BindTransportsToGrid(transports) {
                                 setTimeout(function () {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>ステータスは変更できません。`,
+                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了の取消ができませんでした。<br>再度お試しください。`,
+                                        html: response.res,
                                         confirmButtonColor: '#0d6efd',
-                                        cancelButtonText: '閉じる',
+                                        confirmButtonText: '閉じる',
+                                        allowOutsideClick: false,
                                     })
                                 }, 500);
                             }
@@ -524,8 +529,8 @@ function BindTransportsToGrid(transports) {
         });
     }
 }
-
 // ----------------------------------------------------------------------//
+
 
 // 異なるテキストの長さに応じて文字サイズを調整
 function countLengthText(cell3) {
