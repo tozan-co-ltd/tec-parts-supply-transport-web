@@ -126,6 +126,15 @@ namespace tec_empty_box_supply_transport_web.Repositories
                 if (status == "終了")
                     sql += $@", transportation_end_datetime = GETDATE(), is_completed = 1 ";
             }
+            else
+            {
+                // 開始ボタンの場合
+                if (status == "開始")
+                    sql += $@", ready_datetime = NULL";
+                // 終了ボタンの場合は、完了フラグ=0
+                if (status == "終了")
+                    sql += $@", transportation_start_datetime = NULL, is_completed = 0 ";
+            }
 
 
             sql += $@"  WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
