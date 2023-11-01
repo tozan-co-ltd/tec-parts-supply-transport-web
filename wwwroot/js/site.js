@@ -1,4 +1,13 @@
-﻿// -----------------------------------準備画面-----------------------------------//
+﻿// ページが完全にロードされるまでアイコンのロードを表示
+$(document).ready(function () {
+    $('#overlay').fadeIn();
+
+    $(window).on('load', function() {
+        $("#overlay").fadeOut();
+    });
+});
+
+// -----------------------------------準備画面-----------------------------------//
 // url取得
 var baseUrl = window.location.origin;
 var pathName = window.location.pathname.split('/');
