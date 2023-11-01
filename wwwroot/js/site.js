@@ -1,8 +1,4 @@
-﻿// ページが完全にロードされるまでアイコンのロードを表示
-$(document).ready(function () {
-    $('#overlay').fadeIn();
-
-    // -----------------------------------準備画面-----------------------------------//
+﻿// -----------------------------------準備画面-----------------------------------//
     // url取得
     var baseUrl = window.location.origin;
     var pathName = window.location.pathname.split('/');
@@ -695,8 +691,10 @@ $(document).ready(function () {
     }
 
     // ページが完全にロードされるまでアイコンのロードを表示
-    $(window).on('load', function () {
-        console.log("b")
-        $("#overlay").fadeOut();
+    document.addEventListener("DOMContentLoaded", function () {
+        $("#overlay").fadeIn();
+
+        window.addEventListener("load", function () {
+            $("#overlay").fadeOut();
+        });
     });
-});
