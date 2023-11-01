@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using Dapper;
 using tec_empty_box_supply_transport_web.Commons;
+using System.Net;
 
 namespace tec_empty_box_supply_transport_web.Repositories
 {
@@ -82,6 +83,11 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// <returns>SQL</returns>
         public static string CreateSQLChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string status, bool isCancelled)
         {
+            string transportationIPaddress = Dns.GetHostEntry(Dns.GetHostName())
+                .AddressList
+                .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                ?.ToString() ?? "IPv4アドレスが見つかりません";
+
             int statuId = 0;
             var sql = $@"
                     UPDATE
@@ -107,7 +113,9 @@ namespace tec_empty_box_supply_transport_web.Repositories
             }
 
             sql += $@"SET
-                        empty_box_supply_status_id  = {statuId}";
+                        empty_box_supply_status_id  = {statuId}
+                        ,transportation_IPaddress = '{@transportationIPaddress}'
+                        ";
 
             if (!isCancelled)
             {
@@ -118,6 +126,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                 if (status == "終了")
                     sql += $@", transportation_end_datetime = GETDATE(), is_completed = 1 ";
             }
+
 
             sql += $@"  WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
             return sql;

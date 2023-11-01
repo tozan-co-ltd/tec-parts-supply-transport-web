@@ -4,6 +4,8 @@ using System.Data.SqlClient;
 using System.Globalization;
 using Dapper;
 using tec_empty_box_supply_transport_web.Commons;
+using Microsoft.AspNet.SignalR;
+using System.Net;
 
 namespace tec_empty_box_supply_transport_web.Repositories
 {
@@ -80,12 +82,18 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// <returns>SQL</returns>
         public static string CreateSQLToUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
         {
+            string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
+                .AddressList
+                .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                ?.ToString() ?? "IPv4アドレスが見つかりません";
+
             var sql = $@"
                     UPDATE
                         t_empty_box_supply_request
                     SET
                         ready_datetime  = GETDATE()
                         ,empty_box_supply_status_id = {(int)EnumEmptyBoxSupplyStatus.Ready}
+                        ,ready_IPaddress = '{@readyIpAddress}'
                     WHERE 
                         empty_box_supply_request_id = {@empty_box_supply_request_id}
             ";
