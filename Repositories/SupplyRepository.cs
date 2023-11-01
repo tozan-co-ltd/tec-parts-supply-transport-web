@@ -82,18 +82,19 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// <returns>SQL</returns>
         public static string CreateSQLToUpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
         {
+            // IPアドレス取得
             string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
                 .AddressList
                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                ?.ToString() ?? "IPv4アドレスが見つかりません";
+                ?.ToString() ?? "NotFound";
 
             var sql = $@"
                     UPDATE
                         t_empty_box_supply_request
                     SET
-                        ready_datetime  = GETDATE()
+                        ready_datetime              = GETDATE()
                         ,empty_box_supply_status_id = {(int)EnumEmptyBoxSupplyStatus.Ready}
-                        ,ready_IPaddress = '{@readyIpAddress}'
+                        ,ready_IPaddress            = '{@readyIpAddress}'
                     WHERE 
                         empty_box_supply_request_id = {@empty_box_supply_request_id}
             ";

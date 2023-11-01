@@ -83,10 +83,11 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// <returns>SQL</returns>
         public static string CreateSQLChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string status, bool isCancelled)
         {
+            // IPアドレス取得
             string transportationIPaddress = Dns.GetHostEntry(Dns.GetHostName())
                 .AddressList
                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                ?.ToString() ?? "IPv4アドレスが見つかりません";
+                ?.ToString() ?? "NotFound";
 
             int statuId = 0;
             var sql = $@"
@@ -114,30 +115,28 @@ namespace tec_empty_box_supply_transport_web.Repositories
 
             sql += $@"SET
                         empty_box_supply_status_id  = {statuId}
-                        ,transportation_IPaddress = '{@transportationIPaddress}'
-                        ";
+                        , transportation_IPaddress  = '{@transportationIPaddress}'";
 
-            if (!isCancelled)
+            if (isCancelled)
+            {
+                // 開始ボタンの隣の取消ボタンの場合は、準備完了日時をNULL
+                if (status == "開始")
+                    sql += $@", ready_datetime = NULL";
+                // 終了ボタンの隣の取消ボタンの場合は、運搬開始日時をNULL
+                if (status == "終了")
+                    sql += $@", transportation_start_datetime = NULL";
+            }
+            else
             {
                 // 開始ボタンの場合
                 if (status == "開始")
                     sql += $@", transportation_start_datetime = GETDATE()";
                 // 終了ボタンの場合は、完了フラグ=1
                 if (status == "終了")
-                    sql += $@", transportation_end_datetime = GETDATE(), is_completed = 1 ";
-            }
-            else
-            {
-                // 開始ボタンの場合
-                if (status == "開始")
-                    sql += $@", ready_datetime = NULL";
-                // 終了ボタンの場合は、完了フラグ=0
-                if (status == "終了")
-                    sql += $@", transportation_start_datetime = NULL, is_completed = 0 ";
+                    sql += $@", transportation_end_datetime = GETDATE(), is_completed = 1";
             }
 
-
-            sql += $@"  WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
+            sql += $@" WHERE empty_box_supply_request_id = {@empty_box_supply_request_id} ";
             return sql;
         }
     }
