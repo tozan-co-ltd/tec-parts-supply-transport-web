@@ -23,6 +23,9 @@ namespace tec_empty_box_supply_transport_web.Models
         [Column("request_datetime")]
         public DateTime RequestDatetime { get; set; }
 
+        [Column("transportation_IPaddress")]
+        public string TransportationIPaddress { get; set; }
+
         [Column("ready_datetime")]
         public DateTime ReadyDatetime { get; set; } 
         
