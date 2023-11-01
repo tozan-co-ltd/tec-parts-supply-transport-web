@@ -8,7 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(hubOptions => { 
+    hubOptions.EnableDetailedErrors = true;
+    hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(10); 
+    hubOptions.HandshakeTimeout = TimeSpan.FromSeconds(5);
+});
 
 // DI
 builder.Services.AddSingleton<SupplyHub>();
