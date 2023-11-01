@@ -663,7 +663,7 @@
 
     // ローディング表示
     $(document).ajaxSend(function () {
-        $("#overlay").fadeIn(300);
+        $("#overlay").fadeIn();
     });
 
     // 時間表示(mm:ss)を更新
@@ -676,21 +676,21 @@
     }
 
 
-    // 文字列の全角の長さを計算する関数
+    // 文字列の全角の長さを計算
     function countFullwidthCharacters(str) {
         return Array.from(str).reduce(function (count, char) {
             return count + (char.match(/[^\x00-\x7F]/) ? 2 : 1);
         }, 0);
     }
 
-    // 文字列の半角の長さを計算します
+    // 文字列の半角の長さを計算
     function countHalfwidthCharacters(str) {
         return Array.from(str).reduce(function (count, char) {
             return count + (char.match(/[^\x00-\xFF]/) ? 1 : 0);
         }, 0);
     }
 
-    // ページが完全にロードされるまでアイコンのロードを表示
+    // ページが完全にロードされるまでローディング表示
     document.addEventListener("DOMContentLoaded", function () {
         $("#overlay").fadeIn();
 
