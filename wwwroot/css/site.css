@@ -33,8 +33,16 @@ body {
     margin: 0 auto;
 }
 
+.container-fluid{
+    min-height: 54px;
+}
 .menu-top {
-    top: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.menu-top {
     border: 2px solid #ddd;
     border-radius: 15px;
     box-shadow: 0 0 8px gray;
