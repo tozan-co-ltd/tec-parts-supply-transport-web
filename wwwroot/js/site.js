@@ -680,7 +680,7 @@ $(document).ready(function () {
     }
 
 
-    // Hàm để tính độ dài fullwidth của chuỗi
+    // 文字列の全角の長さを計算する関数
     function countFullwidthCharacters(str) {
         return Array.from(str).reduce(function (count, char) {
             return count + (char.match(/[^\x00-\x7F]/) ? 2 : 1);
