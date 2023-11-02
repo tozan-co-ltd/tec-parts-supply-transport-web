@@ -101,11 +101,10 @@
 
                         // ミリ秒から時間、分変換
                         var minuteNum = Math.floor(differenceTime / (1000 * 60));
-                        var secondNum = Math.floor((differenceTime % (1000 * 60)) / 1000);
 
                         // mm:ss表記に変換
                         var subResult = "";
-                        //　60:00以上はデフォルト"59:59"
+                        // 60:00以上はデフォルト"59:59"
                         if (minuteNum >= 60)
                             subResult = "59:59";
                         else
@@ -303,7 +302,6 @@
 
                         // ミリ秒から時間、分変換
                         var minuteNum = Math.floor(differenceTime / (1000 * 60));
-                        var secondNum = Math.floor((differenceTime % (1000 * 60)) / 1000);
 
                         // mm:ss表記に変換
                         var subResult = "";
@@ -669,7 +667,6 @@
         var seconds = Math.floor((time % 60000) / 1000);
         element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
-
 
     // 文字列の全角の長さを計算
     function countFullwidthCharacters(str) {
