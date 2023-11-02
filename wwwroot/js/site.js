@@ -534,24 +534,19 @@
 
     // 異なるテキストの長さに応じて文字サイズを調整
     function countLengthText(cell3) {
-        var fullwidthCount = countFullwidthCharacters(cell3.innerText);
-        if (fullwidthCount == 18) {
-            cell3.style.fontSize = 13 + 'px';
-        }else if (fullwidthCount == 17 || fullwidthCount == 16) {
-            cell3.style.fontSize = 14 + 'px';
-        }else if (fullwidthCount == 15) {
-            cell3.style.fontSize = 16 + 'px';
-        }else if (fullwidthCount == 14) {
-            cell3.style.fontSize = 20 + 'px';
-        }else if (fullwidthCount == 13) {
-            cell3.style.fontSize = 18 + 'px';
-        }else if (fullwidthCount == 9) {
-            cell3.style.fontSize = 22 + 'px';
-        }else if (fullwidthCount >= 10 && fullwidthCount <= 12) {
-            cell3.style.fontSize = 20 + 'px';
-        }else if (fullwidthCount < 8) {
+        var fullwidthCount = cell3.innerText.length;
+         if (fullwidthCount  == 9) 
+             cell3.style.fontSize = 23 + 'px';
+         else if (fullwidthCount == 8)
+             cell3.style.fontSize = 25 + 'px';
+         else if (fullwidthCount == 7)
+             cell3.style.fontSize = 27 + 'px';
+         else if (fullwidthCount == 6)
+             cell3.style.fontSize = 28 + 'px';
+         else if (fullwidthCount == 5)
+             cell3.style.fontSize = 29 + 'px';
+         else if (fullwidthCount <= 4)
             cell3.style.fontSize = 30 + 'px';
-        }
     }
 
     // カウントタイマー
