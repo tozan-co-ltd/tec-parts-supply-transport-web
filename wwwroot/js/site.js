@@ -106,11 +106,10 @@
 
                         // ミリ秒から時間、分変換
                         var minuteNum = Math.floor(differenceTime / (1000 * 60));
-                        var secondNum = Math.floor((differenceTime % (1000 * 60)) / 1000);
 
                         // mm:ss表記に変換
                         var subResult = "";
-                        //　60:00以上はデフォルト"59:59"
+                        // 60:00以上はデフォルト"59:59"
                         if (minuteNum >= 60)
                             subResult = "59:59";
                         else
@@ -315,7 +314,6 @@
 
                         // ミリ秒から時間、分変換
                         var minuteNum = Math.floor(differenceTime / (1000 * 60));
-                        var secondNum = Math.floor((differenceTime % (1000 * 60)) / 1000);
 
                         // mm:ss表記に変換
                         var subResult = "";
@@ -546,24 +544,19 @@
 
     // 異なるテキストの長さに応じて文字サイズを調整
     function countLengthText(cell3) {
-        var fullwidthCount = countFullwidthCharacters(cell3.innerText);
-        if (fullwidthCount == 18) {
-            cell3.style.fontSize = 13 + 'px';
-        }else if (fullwidthCount == 17 || fullwidthCount == 16) {
-            cell3.style.fontSize = 14 + 'px';
-        }else if (fullwidthCount == 15) {
-            cell3.style.fontSize = 16 + 'px';
-        }else if (fullwidthCount == 14) {
-            cell3.style.fontSize = 20 + 'px';
-        }else if (fullwidthCount == 13) {
-            cell3.style.fontSize = 18 + 'px';
-        }else if (fullwidthCount == 9) {
-            cell3.style.fontSize = 22 + 'px';
-        }else if (fullwidthCount >= 10 && fullwidthCount <= 12) {
-            cell3.style.fontSize = 20 + 'px';
-        }else if (fullwidthCount < 8) {
+        var fullwidthCount = cell3.innerText.length;
+         if (fullwidthCount  == 9) 
+             cell3.style.fontSize = 23 + 'px';
+         else if (fullwidthCount == 8)
+             cell3.style.fontSize = 25 + 'px';
+         else if (fullwidthCount == 7)
+             cell3.style.fontSize = 27 + 'px';
+         else if (fullwidthCount == 6)
+             cell3.style.fontSize = 28 + 'px';
+         else if (fullwidthCount == 5)
+             cell3.style.fontSize = 29 + 'px';
+         else if (fullwidthCount <= 4)
             cell3.style.fontSize = 30 + 'px';
-        }
     }
 
     // カウントタイマー
@@ -686,7 +679,6 @@
         var seconds = Math.floor((time % 60000) / 1000);
         element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
-
 
     // 文字列の全角の長さを計算
     function countFullwidthCharacters(str) {

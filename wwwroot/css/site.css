@@ -41,8 +41,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-.menu-top {
+    width: 590px;
     border: 2px solid #ddd;
     border-radius: 15px;
     box-shadow: 0 0 8px gray;
@@ -52,11 +51,14 @@ body {
         margin: 0;
         padding: 0;
     }
+    .menu-top .mb-5 {
+        margin-bottom: 2rem !important;
+    }
 
-.system_logo {
-    width: 121px;
-    margin: 0 auto;
-}
+    .system_logo {
+        width: 121px;
+        margin: 0 auto;
+    }
 
 a {
     display: block;
@@ -105,9 +107,10 @@ a {
         opacity: 0.9;
     }
 
-.login-img{
+.login-img {
     width: 117px;
     height: 117px;
+    margin-top: 35px;
 }
 
 .supplyContent {
@@ -256,9 +259,13 @@ h3 {
 
 .btnCompletion,
 .btnRegister {
-    width: 65px;
+    width: 60px;
     height: 70px;
-    font-size: 23px;
+    font-size: 20px;
+}
+
+.statusBtn .btn{
+    padding: 0;
 }
 
 .btnClose {
