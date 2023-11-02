@@ -28,6 +28,11 @@
         }, 500);
     });
 
+    // ページを離れた時やリロードしたタイミングで接続を止める
+    window.addEventListener('unload', function () {
+        console.log("addEventListener - unload");
+        connectionSupply.stop();
+    });
 
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
@@ -232,10 +237,17 @@
         }, 500);
     });
 
+    // ページを離れた時やリロードしたタイミングで接続を止める
+    window.addEventListener('unload', function () {
+        console.log("addEventListener - unload");
+        connectionTransport.stop();
+    });
+
     // ハブのメソッドを呼び出す
     function InvokeTransports() {
         connectionTransport.invoke("SendTransports").catch(function (error) {
             // Controllerに接続できない場合はエラー
+            console.log("Error - invoke catch");
             $(".connectionTransportError").text(error);
             $(".connectionTransportError").show();
         });

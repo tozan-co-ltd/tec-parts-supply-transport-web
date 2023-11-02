@@ -39,6 +39,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseWebSockets();
+
 app.MapHub<SupplyHub>("supplyHub");
 app.MapHub<TransportHub>("transportHub");
 
