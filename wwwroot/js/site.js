@@ -29,6 +29,11 @@
     });
 
 
+    window.addEventListener('unload', function () {
+        connectionSupply.stop();
+    });
+
+
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
         connectionSupply.invoke("SendSupplys").catch(function (error) {
@@ -230,6 +235,10 @@
             if (closeConnectTransportCount >= 2)
                 window.location.reload();
         }, 500);
+    });
+
+    window.addEventListener('unload', function () {
+        connectionTransport.stop();
     });
 
     // ハブのメソッドを呼び出す
