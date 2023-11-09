@@ -1,6 +1,9 @@
 ﻿html {
     font-size: 14px;
 }
+main {
+    padding: 0;
+}
 
 html {
     position: relative;
@@ -33,10 +36,23 @@ body {
     margin: 0 auto;
 }
 
-.container-fluid{
+.card {
+    background: #212529;
+    border: 0;
+    border-radius: 0;
+}
+
+.table > :not(caption) > * > * {
+    background: black;
+}
+
+.container-fluid {
     min-height: 54px;
+    background: darkgray;
+    color: #fff;
 }
 .menu-top {
+    margin: 15px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -116,10 +132,6 @@ a {
 .supplyContent {
     width: 100%;
     margin: 0;
-}
-
-.nav-head {
-    background: #F7F9FF !important;
 }
 
 .navbar {
@@ -406,7 +418,14 @@ h3 {
     font-size: 26px;
 }
 
-.home-icon{
+.navbar-brand {
+    padding-top: 0.5125rem;
+    padding-bottom: 0.5125rem;
+}
+:root {
+    --bs-body-bg: unset;
+}
+.home-icon {
     margin-right: 0;
 }
 
@@ -419,6 +438,7 @@ i.fa-home {
     padding: 7px;
     height: 100%;
     width: 100%;
+    border: 0 !important;
 }
 
 a > i.fa-home {

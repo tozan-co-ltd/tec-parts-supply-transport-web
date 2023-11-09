@@ -21,11 +21,18 @@
     {
         <script src="~/lib/signalr/dist/browser/signalr.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <style>
+            html {
+                background: #212529;
+            }
+        </style>
     }
 }
+
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 nav-head">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow nav-head">
             <div class="container-fluid justify-content-between">
                 @{
                     if (@ViewData["Title"] == "準備" || @ViewData["Title"] == "運搬")
@@ -42,7 +49,7 @@
         </nav>
     </header>
     <div>
-        <main role="main" class="pb-3">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
