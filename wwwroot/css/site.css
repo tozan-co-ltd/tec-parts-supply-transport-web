@@ -42,10 +42,6 @@ body {
     border-radius: 0;
 }
 
-.table > :not(caption) > * > * {
-    background: black;
-}
-
 .container-fluid {
     min-height: 54px;
     background: darkgray;
@@ -450,6 +446,10 @@ a > i.fa-home {
         background: #fff;
         color: #C1000B;
     }
+
+.table-content {
+    background: #000000;
+}
 
 .col-6 {
     padding: 5px !important;
