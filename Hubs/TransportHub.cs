@@ -18,7 +18,7 @@ namespace tec_empty_box_supply_transport_web.Hubs
 
         public IConfiguration Configuration { get; }
 
-        public async Task SendTransports()
+        public async Task SendTransports(bool isChanged)
         {
             try
             {
@@ -26,7 +26,12 @@ namespace tec_empty_box_supply_transport_web.Hubs
                 var sql = transportRepository.CreateSQLToGetTransport();
                 List<TransportModel> listTransports = transportRepository.GetListTransports(sql);
                 if (Clients != null)
+                {
+                    if(isChanged)
+                        await Task.Delay(5000);
+
                     await Clients.All.SendAsync("ReceivedTransports", listTransports);
+                }
             }
             catch (Exception)
             {

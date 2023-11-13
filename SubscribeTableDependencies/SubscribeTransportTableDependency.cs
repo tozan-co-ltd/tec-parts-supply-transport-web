@@ -28,7 +28,8 @@ namespace tec_empty_box_supply_transport_web.SubscribeTableDependencies
             // データを更新される時HUBのメソッドを呼びます
             if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
             {
-                transportHub.SendTransports();
+                bool isChanged = true;
+                transportHub.SendTransports(isChanged);
             }
         }
 
