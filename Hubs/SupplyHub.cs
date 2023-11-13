@@ -18,7 +18,7 @@ namespace tec_empty_box_supply_transport_web.Hubs
 
         public IConfiguration Configuration { get; }
 
-        public async Task SendSupplys()
+        public async Task SendSupplys(bool isChanged)
         {
             try
             {
@@ -26,7 +26,12 @@ namespace tec_empty_box_supply_transport_web.Hubs
                 var sql = supplyRepository.CreateSQLToGetSupplys();
                 List<SupplyModel> listSupplys = supplyRepository.GetListSupplys(sql);
                 if (Clients != null)
+                {
+                    if (isChanged)
+                        await Task.Delay(5000);
+
                     await Clients.All.SendAsync("ReceivedSupplys", listSupplys);
+                }
             }
             catch (Exception)
             {

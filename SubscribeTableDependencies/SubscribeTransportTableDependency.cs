@@ -16,10 +16,17 @@ namespace tec_empty_box_supply_transport_web.SubscribeTableDependencies
         // サブスクライブテーブルの依存関係
         public void SubscribeTableDependency(string connectionString)
         {
-            tableDependency = new SqlTableDependency<TransportModel>(connectionString);
-            tableDependency.OnChanged += TableDependency_OnChanged;
-            tableDependency.OnError += TableDependency_OnError;
-            tableDependency.Start();
+            try
+            {
+                tableDependency = new SqlTableDependency<TransportModel>(connectionString);
+                tableDependency.OnChanged += TableDependency_OnChanged;
+                tableDependency.OnError += TableDependency_OnError;
+                tableDependency.Start();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // 変更されたテーブルの依存関係
@@ -28,7 +35,8 @@ namespace tec_empty_box_supply_transport_web.SubscribeTableDependencies
             // データを更新される時HUBのメソッドを呼びます
             if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
             {
-                transportHub.SendTransports();
+                bool isChanged = true;
+                transportHub.SendTransports(isChanged);
             }
         }
 
