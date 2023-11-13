@@ -36,7 +36,7 @@
 
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
-        connectionSupply.invoke("SendSupplys").catch(function (error) {
+        connectionSupply.invoke("SendSupplys", false).catch(function (error) {
             // Controllerに接続できない場合はエラー
             console.log("Error - invoke catch");
             $(".connectionSupplyError").text(error);
@@ -132,7 +132,6 @@
                         cell6.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">完了</button>`;
 
                         if (dataTime < 0) {
-                            row.className = "redBg";
                             cell5.className = 'timeCount redflag';
                         }
                         else
@@ -194,13 +193,13 @@
                                                 confirmButtonText: '閉じる',
                                                 allowOutsideClick: false,
                                             })
-                                        }, 500);
+                                        }, 5000);
                                     }
                                 }
                             }).done(function () {
                                 setTimeout(function () {
                                     $("#overlay").fadeOut(300);
-                                }, 500);
+                                }, 5000);
                             });
                         }
                     })
@@ -244,7 +243,7 @@
 
     // ハブのメソッドを呼び出す
     function InvokeTransports() {
-        connectionTransport.invoke("SendTransports").catch(function (error) {
+        connectionTransport.invoke("SendTransports", false).catch(function (error) {
             // Controllerに接続できない場合はエラー
             console.log("Error - invoke catch");
             $(".connectionTransportError").text(error);
@@ -345,7 +344,6 @@
                             cell6.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
 
                         if (dataTime < 0) {
-                            row.className = "redBg";
                             cell5.className = 'timeCount redflag';
                         }
                         else
@@ -394,9 +392,11 @@
                             data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                             success: function (response) {
                                 if (response.res == true) {
-                                    button.innerText = "終了";
-                                    button.classList.remove('btn-warning');
-                                    button.classList.add('btn-success');
+                                    setTimeout(function () {
+                                        button.innerText = "終了";
+                                        button.classList.remove('btn-warning');
+                                        button.classList.add('btn-success');
+                                    }, 5000);
                                 } else {
                                     setTimeout(function () {
                                         Swal.fire({
@@ -407,13 +407,13 @@
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
                                         })
-                                    }, 500);
+                                    }, 5000);
                                 }
                             }
                         }).done(function () {
                             setTimeout(function () {
                                 $("#overlay").fadeOut(300);
-                            }, 10);
+                            }, 5000);
                         });
                     }
 
@@ -444,13 +444,13 @@
                                                     confirmButtonText: '閉じる',
                                                     allowOutsideClick: false,
                                                 })
-                                            }, 500);
+                                            }, 5000);
                                         }
                                     }
                                 }).done(function () {
                                     setTimeout(function () {
                                         $("#overlay").fadeOut(300);
-                                    }, 500);
+                                    }, 5000);
                                 });
                             }
                         })
@@ -482,9 +482,11 @@
                             data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                             success: function (response) {
                                 if (response.res == true) {
-                                    tdWithbtnRegister.innerText = "開始";
-                                    tdWithbtnRegister.classList.add('btn-warning');
-                                    tdWithbtnRegister.classList.remove('btn-success');
+                                    setTimeout(function () {
+                                        tdWithbtnRegister.innerText = "開始";
+                                        tdWithbtnRegister.classList.add('btn-warning');
+                                        tdWithbtnRegister.classList.remove('btn-success');
+                                    }, 5000);
                                 } else {
                                     setTimeout(function () {
                                         Swal.fire({
@@ -495,13 +497,13 @@
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
                                         })
-                                    }, 500);
+                                    }, 5000);
                                 }
                             }
                         }).done(function () {
                             setTimeout(function () {
                                 $("#overlay").fadeOut(300);
-                            }, 10);
+                            }, 5000);
                         });
                     }
 
@@ -513,9 +515,11 @@
                             data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                             success: function (response) {
                                 if (response.res == true) {
-                                    tdWithbtnRegister.innerText = "開始";
-                                    tdWithbtnRegister.classList.add('btn-warning');
-                                    tdWithbtnRegister.classList.remove('btn-success');
+                                    setTimeout(function () {
+                                        tdWithbtnRegister.innerText = "開始";
+                                        tdWithbtnRegister.classList.add('btn-warning');
+                                        tdWithbtnRegister.classList.remove('btn-success');
+                                    }, 5000);
                                 } else {
                                     setTimeout(function () {
                                         Swal.fire({
@@ -526,13 +530,13 @@
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
                                         })
-                                    }, 500);
+                                    }, 5000);
                                 }
                             }
                         }).done(function () {
                             setTimeout(function () {
                                 $("#overlay").fadeOut(300);
-                            }, 10);
+                            }, 5000);
                         });
                     }
                 });
