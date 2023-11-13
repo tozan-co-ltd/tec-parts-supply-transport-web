@@ -132,7 +132,6 @@
                         cell6.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">完了</button>`;
 
                         if (dataTime < 0) {
-                            row.className = "redBg";
                             cell5.className = 'timeCount redflag';
                         }
                         else
@@ -345,7 +344,6 @@
                             cell6.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
 
                         if (dataTime < 0) {
-                            row.className = "redBg";
                             cell5.className = 'timeCount redflag';
                         }
                         else
