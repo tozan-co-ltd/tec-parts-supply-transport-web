@@ -39,8 +39,7 @@ namespace tec_empty_box_supply_transport_web.SubscribeTableDependencies
                 // データを更新される時HUBのメソッドを呼びます
                 if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
                 {
-                    bool isChanged = true;
-                    supplyHub.SendSupplys(isChanged);
+                    supplyHub.SendSupplys();
                 }
             }
             catch (Exception)
