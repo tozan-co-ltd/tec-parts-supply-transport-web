@@ -37,12 +37,12 @@
                 @{
                     if (@ViewData["Title"] == "準備" || @ViewData["Title"] == "運搬")
                     {
-                        <div class="d-flex justify-content-center align-items-center"><span class="navbar-brand text-bl">空箱供給運搬アプリ</span>-　@ViewData["Title"]</div>
+                        <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
                         <a class="navbar-brand home-icon" asp-area="" asp-controller="Top" asp-action="Index"><i class="fa fa-fw fa-home"></i></a>
                     }
                     else
                     {
-                        <div class="d-flex justify-content-center align-items-center"><span class="navbar-brand text-bl">空箱供給運搬アプリ</span>-　@ViewData["Title"]</div>
+                        <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
                     }
                 }
             </div>
