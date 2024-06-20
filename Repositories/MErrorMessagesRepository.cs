@@ -25,7 +25,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
             try
             {
                 // SQLServer接続文字列取得
-                var connectionString = ConnectToSQLServer.GetSQLServerConnectionStringForTecShippingManagement();
+                var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
                 // SQLServer接続
                 using (var connection = new SqlConnection())
                 {

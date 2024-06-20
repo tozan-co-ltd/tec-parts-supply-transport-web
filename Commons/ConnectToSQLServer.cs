@@ -18,19 +18,5 @@
             var configuration = builder.Build();
             return configuration.GetSection("connectionString").GetValue<string>(databaseName);
         }
-
-        /// <summary>
-        /// SQLServer接続文字列取得(集・出荷進捗管理システム)
-        /// </summary>
-        /// <returns></returns>
-        public static string GetSQLServerConnectionStringForTecShippingManagement()
-        {
-            var databaseName = "tec-shipping-management";
-            var builder = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", optional: false);
-            var configuration = builder.Build();
-            return configuration.GetSection("connectionString").GetValue<string>(databaseName);
-        }
     }
 }
