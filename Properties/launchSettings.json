@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "tec_empty_box_supply_transport_web": {
+    "tec_empty_box_preparation_transportation_web": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

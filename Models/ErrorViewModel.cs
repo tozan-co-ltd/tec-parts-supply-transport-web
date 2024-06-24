@@ -1,4 +1,4 @@
-namespace tec_empty_box_supply_transport_web.Models
+namespace tec_empty_box_preparation_transportation_web.Models
 {
     public class ErrorViewModel
     {

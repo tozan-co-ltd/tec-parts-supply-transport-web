@@ -1,4 +1,4 @@
-﻿namespace tec_empty_box_supply_transport_web.Commons
+﻿namespace tec_empty_box_preparation_transportation_web.Commons
 {
     /// <summary>
     /// SQLServer接続に関する関数

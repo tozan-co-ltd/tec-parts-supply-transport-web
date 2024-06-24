@@ -1,11 +1,11 @@
-﻿using tec_empty_box_supply_transport_web.Models;
+﻿using tec_empty_box_preparation_transportation_web.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using Dapper;
-using tec_empty_box_supply_transport_web.Commons;
+using tec_empty_box_preparation_transportation_web.Commons;
 
-namespace tec_empty_box_supply_transport_web.Repositories
+namespace tec_empty_box_preparation_transportation_web.Repositories
 {
     /// <summary>
     /// エラーメッセージテーブルに関する関数

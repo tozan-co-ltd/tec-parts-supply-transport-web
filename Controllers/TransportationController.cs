@@ -1,10 +1,10 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
-using tec_empty_box_supply_transport_web.Commons;
-using tec_empty_box_supply_transport_web.Repositories;
+using tec_empty_box_preparation_transportation_web.Commons;
+using tec_empty_box_preparation_transportation_web.Repositories;
 
-namespace tec_empty_box_supply_transport_web.Controllers
+namespace tec_empty_box_preparation_transportation_web.Controllers
 {
     public class TransportationController : Controller
     {
