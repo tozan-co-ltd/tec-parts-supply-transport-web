@@ -5,26 +5,26 @@ using tec_empty_box_supply_transport_web.Repositories;
 
 namespace tec_empty_box_supply_transport_web.Hubs
 {
-    public class SupplyHub : Hub
+    public class PreparationHub : Hub
     {
-        SupplyRepository supplyRepository;
+        PreparationRepository supplyRepository;
 
-        public SupplyHub(IConfiguration configuration)
+        public PreparationHub(IConfiguration configuration)
         {
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-            supplyRepository = new SupplyRepository(connectionString);
+            supplyRepository = new PreparationRepository(connectionString);
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
-        public async Task SendSupplys()
+        public async Task SendPreparations()
         {
             try
             {
                 // SQL作成
-                var sql = supplyRepository.CreateSQLToGetSupplys();
-                List<SupplyModel> listSupplys = supplyRepository.GetListSupplys(sql);
+                var sql = supplyRepository.CreateSQLToGetPreparations();
+                List<PreparationModel> listSupplys = supplyRepository.GetListSupplys(sql);
                 if (Clients != null)
                     await Clients.All.SendAsync("ReceivedSupplys", listSupplys);
             }

@@ -8,19 +8,19 @@ using System.Net;
 
 namespace tec_empty_box_supply_transport_web.Repositories
 {
-    public class TransportRepository
+    public class TransportationRepository
     {
         string connectionString;
 
-        public TransportRepository(string connectionString)
+        public TransportationRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        public List<TransportModel> GetListTransports(string sql)
+        public List<TransportationModel> GetListTransports(string sql)
         {
             // 戻り値
-            List<TransportModel> transports = new();
+            List<TransportationModel> transports = new();
 
             // DB接続
             try
@@ -33,7 +33,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                     connection.ConnectionString = connectionString;
                     connection.Open();
 
-                    transports = connection.Query<TransportModel>(sql).ToList();
+                    transports = connection.Query<TransportationModel>(sql).ToList();
                 }
                 return transports;
             }
@@ -48,7 +48,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// 運搬取得SQL作成
         /// </summary>
         /// <returns>SQL</returns>
-        public string CreateSQLToGetTransport()
+        public string CreateSQLToGetTransportation()
         {
             // "準備完了"、"運搬開始"のレコード
             var sql = $@"SELECT 

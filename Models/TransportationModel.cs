@@ -3,7 +3,7 @@
 namespace tec_empty_box_supply_transport_web.Models
 {
     [Table("t_empty_box_supply_request")]
-    public class TransportModel
+    public class TransportationModel
     {
         [Column("empty_box_supply_request_id")]
         public int EmptyBoxSupplyRequestId { get; set; }
