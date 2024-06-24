@@ -1,9 +1,9 @@
-﻿using tec_empty_box_preparation_transportation_web.Hubs;
-using tec_empty_box_preparation_transportation_web.Models;
+﻿using tec_pallet_preparation_transportation_web.Hubs;
+using tec_pallet_preparation_transportation_web.Models;
 using TableDependency.SqlClient;
-using tec_empty_box_preparation_transportation_web.Commons;
+using tec_pallet_preparation_transportation_web.Commons;
 
-namespace tec_empty_box_preparation_transportation_web.SubscribeTableDependencies
+namespace tec_pallet_preparation_transportation_web.SubscribeTableDependencies
 {
     public class SubscribePreparationTableDependency : ISubscribeTableDependency
     {

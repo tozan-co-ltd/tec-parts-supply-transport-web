@@ -1,4 +1,4 @@
-﻿namespace tec_empty_box_preparation_transportation_web.Commons
+﻿namespace tec_pallet_preparation_transportation_web.Commons
 {
     /// <summary>
     /// 空箱供給状態の列挙型
