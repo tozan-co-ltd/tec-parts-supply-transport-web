@@ -45,7 +45,7 @@ body {
 /*ヘッダー*/
 .container-fluid {
     min-height: 54px;
-    background: #f7f9ff;
+    background: #f7fcfc;
 }
 
 .header-title {
@@ -59,9 +59,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 590px;
-    border: 2px solid #ddd;
     border-radius: 15px;
-    box-shadow: 0 0 8px gray;
 }
 
 .menu-top a {
