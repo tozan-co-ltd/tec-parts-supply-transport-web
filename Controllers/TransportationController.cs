@@ -1,16 +1,22 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
-using tec_empty_box_supply_transport_web.Commons;
-using tec_empty_box_supply_transport_web.Repositories;
+using tec_pallet_supply_transport_web.Commons;
+using tec_pallet_supply_transport_web.Repositories;
 
-namespace tec_empty_box_supply_transport_web.Controllers
+namespace tec_pallet_supply_transport_web.Controllers
 {
-    public class SupplyController : Controller
+    public class TransportationController : Controller
     {
+        private readonly ILogger<TransportationController> _logger;
+
+        public TransportationController(ILogger<TransportationController> logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
-        /// 準備画面表示
+        /// 運搬画面表示
         /// </summary>
         /// <returns></returns>
         public IActionResult Index()
@@ -20,17 +26,19 @@ namespace tec_empty_box_supply_transport_web.Controllers
 
 
         /// <summary>
-        /// 準備完了登録
+        /// 運搬開始・運搬終了に更新
         /// </summary>
         /// <param name="dataSupplyId"></param>
+        /// <param name="statusBtn"></param>
+        /// <param name="isCancelled"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId)
+        public IActionResult Complete(string dataSupplyId, string statusBtn, bool isCancelled)
         {
             try
             {
                 string emptyBoxSupplyRequestIid = dataSupplyId;
-                bool resUpdate = UpdateEmptyBoxSupplyRequest(emptyBoxSupplyRequestIid);
+                bool resUpdate = ChangeEmptyBoxSupplyStatus(emptyBoxSupplyRequestIid, statusBtn, isCancelled);
                 var result = new { res = resUpdate };
 
                 return Json(result);
@@ -46,11 +54,11 @@ namespace tec_empty_box_supply_transport_web.Controllers
 
 
         /// <summary>
-        /// 準備完了に更新
+        /// 運搬開始・運搬終了に更新
         /// </summary>
         /// <param name="empty_box_supply_request_id"></param>
         /// <returns>成功したらtrueを返す</returns>
-        public bool UpdateEmptyBoxSupplyRequest(string empty_box_supply_request_id)
+        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isCancelled)
         {
             try
             {
@@ -58,7 +66,7 @@ namespace tec_empty_box_supply_transport_web.Controllers
                 bool isUpdateEmptyBoxSupply = false;
 
                 // SQL作成
-                var sql = SupplyRepository.CreateSQLToUpdateEmptyBoxSupplyRequest(empty_box_supply_request_id);
+                var sql = TransportationRepository.CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isCancelled);
 
                 // DB接続
                 var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();

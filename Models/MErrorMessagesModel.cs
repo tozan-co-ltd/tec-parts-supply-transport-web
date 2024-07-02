@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace tec_empty_box_supply_transport_web.Models
+namespace tec_pallet_supply_transport_web.Models
 {
     /// <summary>
     /// エラーメッセージテーブルのModel

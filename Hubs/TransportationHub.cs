@@ -1,0 +1,40 @@
+﻿using Microsoft.AspNetCore.SignalR;
+using tec_pallet_supply_transport_web.Commons;
+using tec_pallet_supply_transport_web.Models;
+using tec_pallet_supply_transport_web.Repositories;
+
+namespace tec_pallet_supply_transport_web.Hubs
+{
+    public class TransportationHub : Hub
+    {
+        TransportationRepository transportRepository;
+
+        public TransportationHub(IConfiguration configuration)
+        {
+            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+            transportRepository = new TransportationRepository(connectionString);
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public async Task SendTransportations()
+        {
+            try
+            {
+                // SQL作成
+                var sql = transportRepository.CreateSQLToGetTransportation();
+                List<TransportationModel> listTransports = transportRepository.GetListTransports(sql);
+                if (Clients != null)
+                    await Clients.All.SendAsync("ReceivedTransportations", listTransports);
+            }
+            catch (Exception)
+            {
+                // エラーメッセージ作成
+                // 「SQLServerでエラーが発生しました。」
+                var errorMessage = ErrorHandling.CreateErrorMessage("E4001");
+                await Clients.Caller.SendAsync("Error", errorMessage);
+            }
+        }
+    }
+}

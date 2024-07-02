@@ -6,7 +6,7 @@
         baseUrl = baseUrl + "/" + pathName[1];
 
     // SignalRを使用して接続を初期化する
-    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("supplyHub").build();
+    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("preparationHub").build();
     $(function () {
         connectionSupply.start().then(function () {
             InvokeSupplys();
@@ -36,7 +36,7 @@
 
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
-        connectionSupply.invoke("SendSupplys").catch(function (error) {
+        connectionSupply.invoke("SendPreparations").catch(function (error) {
             // Controllerに接続できない場合はエラー
             console.log("Error - invoke catch");
             $(".connectionSupplyError").text(error);
@@ -180,7 +180,7 @@
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: 'POST',
-                                url: baseUrl +'/Supply/Complete',
+                                url: baseUrl +'/Preparation/Complete',
                                 data: { dataSupplyId: dataSupplyId },
                                 success: function (response) {
                                     if (response.res != true) {
@@ -212,7 +212,7 @@
 
     // -----------------------------------運搬画面-----------------------------------//
     // SignalRを使用して接続を初期化する
-    var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportHub").build();
+    var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportationHub").build();
 
     $(function () {
         connectionTransport.start().then(function () {
@@ -243,7 +243,7 @@
 
     // ハブのメソッドを呼び出す
     function InvokeTransports() {
-        connectionTransport.invoke("SendTransports").catch(function (error) {
+        connectionTransport.invoke("SendTransportations").catch(function (error) {
             // Controllerに接続できない場合はエラー
             console.log("Error - invoke catch");
             $(".connectionTransportError").text(error);
@@ -259,7 +259,7 @@
     });
 
     // グリッドに依頼をバインドする
-    connectionTransport.on("ReceivedTransports", function (products) {
+    connectionTransport.on("ReceivedTransportations", function (products) {
         BindTransportsToGrid(products);
     });
 
@@ -388,7 +388,7 @@
                     if (statusBtn == "開始") {
                         $.ajax({
                             type: 'POST',
-                            url: baseUrl + '/Transport/Complete',
+                            url: baseUrl + '/Transportation/Complete',
                             data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                             success: function (response) {
                                 if (response.res == true) {
@@ -429,7 +429,7 @@
                             if (result.isConfirmed) {
                                 $.ajax({
                                     type: 'POST',
-                                    url: baseUrl + '/Transport/Complete',
+                                    url: baseUrl + '/Transportation/Complete',
                                     data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                                     success: function (response) {
                                         if (response.res != true) {
@@ -476,7 +476,7 @@
                     if (statusBtn == "開始") {
                         $.ajax({
                             type: 'POST',
-                            url: baseUrl + '/Transport/Complete',
+                            url: baseUrl + '/Transportation/Complete',
                             data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                             success: function (response) {
                                 if (response.res == true) {
@@ -487,7 +487,7 @@
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了の取消ができませんでした。<br>再度お試しください。`,
                                             html: response.res,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
@@ -507,7 +507,7 @@
                     if (statusBtn == "終了") {
                         $.ajax({
                             type: 'POST',
-                            url: baseUrl + '/Transport/Complete',
+                            url: baseUrl + '/Transportation/Complete',
                             data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
                             success: function (response) {
                                 if (response.res == true) {
@@ -518,7 +518,7 @@
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了の取消ができませんでした。<br>再度お試しください。`,
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
                                             html: response.res,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using tec_empty_box_supply_transport_web.Commons;
-using tec_empty_box_supply_transport_web.Hubs;
-using tec_empty_box_supply_transport_web.MiddlewareExtensions;
-using tec_empty_box_supply_transport_web.SubscribeTableDependencies;
+using tec_pallet_supply_transport_web.Commons;
+using tec_pallet_supply_transport_web.Hubs;
+using tec_pallet_supply_transport_web.MiddlewareExtensions;
+using tec_pallet_supply_transport_web.SubscribeTableDependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +15,10 @@ builder.Services.AddSignalR(hubOptions => {
 });
 
 // DI
-builder.Services.AddSingleton<SupplyHub>();
-builder.Services.AddSingleton<SubscribeSupplyTableDependency>();
-builder.Services.AddSingleton<TransportHub>();
-builder.Services.AddSingleton<SubscribeTransportTableDependency>();
+builder.Services.AddSingleton<PreparationHub>();
+builder.Services.AddSingleton<SubscribePreparationTableDependency>();
+builder.Services.AddSingleton<TransportationHub>();
+builder.Services.AddSingleton<SubscribeTransportationTableDependency>();
 
 var app = builder.Build();
 
@@ -41,8 +41,8 @@ app.UseAuthorization();
 
 app.UseWebSockets();
 
-app.MapHub<SupplyHub>("supplyHub");
-app.MapHub<TransportHub>("transportHub");
+app.MapHub<PreparationHub>("preparationHub");
+app.MapHub<TransportationHub>("transportationHub");
 
 app.UseEndpoints(endpoints =>
 {
@@ -51,7 +51,7 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Top}/{action=Index}/{id?}");
 });
 
-app.UseSqlTableDependency<SubscribeSupplyTableDependency>(connectionString);
-app.UseSqlTableDependency<SubscribeTransportTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribePreparationTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribeTransportationTableDependency>(connectionString);
 
 app.Run();
