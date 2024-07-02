@@ -487,7 +487,7 @@
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了の取消ができませんでした。<br>再度お試しください。`,
                                             html: response.res,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
@@ -518,7 +518,7 @@
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了の取消ができませんでした。<br>再度お試しください。`,
+                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
                                             html: response.res,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
