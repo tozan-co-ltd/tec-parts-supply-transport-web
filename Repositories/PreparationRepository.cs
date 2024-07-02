@@ -1,27 +1,27 @@
-﻿using tec_empty_box_supply_transport_web.Models;
+﻿using tec_pallet_preparation_transportation_web.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using Dapper;
-using tec_empty_box_supply_transport_web.Commons;
+using tec_pallet_preparation_transportation_web.Commons;
 using Microsoft.AspNet.SignalR;
 using System.Net;
 
-namespace tec_empty_box_supply_transport_web.Repositories
+namespace tec_pallet_preparation_transportation_web.Repositories
 {
-    public class SupplyRepository
+    public class PreparationRepository
     {
         string connectionString;
 
-        public SupplyRepository(string connectionString)
+        public PreparationRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        public List<SupplyModel> GetListSupplys(string sql)
+        public List<PreparationModel> GetListSupplys(string sql)
         {
             // 戻り値
-            List<SupplyModel> supplys = new();
+            List<PreparationModel> supplys = new();
 
             // DB接続
             try
@@ -34,7 +34,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
                     connection.ConnectionString = connectionString;
                     connection.Open();
 
-                    supplys = connection.Query<SupplyModel>(sql).ToList();
+                    supplys = connection.Query<PreparationModel>(sql).ToList();
                 }
                 return supplys;
             }
@@ -49,7 +49,7 @@ namespace tec_empty_box_supply_transport_web.Repositories
         /// 準備取得SQL作成
         /// </summary>
         /// <returns>SQL</returns>
-        public string CreateSQLToGetSupplys()
+        public string CreateSQLToGetPreparations()
         {
             // "依頼中"のレコード
             var sql = $@"SELECT 
