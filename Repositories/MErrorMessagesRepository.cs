@@ -1,11 +1,11 @@
-﻿using tec_pallet_preparation_transportation_web.Models;
+﻿using tec_pallet_supply_transport_web.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using Dapper;
-using tec_pallet_preparation_transportation_web.Commons;
+using tec_pallet_supply_transport_web.Commons;
 
-namespace tec_pallet_preparation_transportation_web.Repositories
+namespace tec_pallet_supply_transport_web.Repositories
 {
     /// <summary>
     /// エラーメッセージテーブルに関する関数

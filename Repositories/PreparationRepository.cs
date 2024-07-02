@@ -1,13 +1,13 @@
-﻿using tec_pallet_preparation_transportation_web.Models;
+﻿using tec_pallet_supply_transport_web.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using Dapper;
-using tec_pallet_preparation_transportation_web.Commons;
+using tec_pallet_supply_transport_web.Commons;
 using Microsoft.AspNet.SignalR;
 using System.Net;
 
-namespace tec_pallet_preparation_transportation_web.Repositories
+namespace tec_pallet_supply_transport_web.Repositories
 {
     public class PreparationRepository
     {

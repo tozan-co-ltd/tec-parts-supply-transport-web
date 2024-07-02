@@ -1,4 +1,4 @@
-﻿namespace tec_pallet_preparation_transportation_web.Commons
+﻿namespace tec_pallet_supply_transport_web.Commons
 {
     /// <summary>
     /// SQLServer接続に関する関数

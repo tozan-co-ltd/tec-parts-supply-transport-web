@@ -1,7 +1,7 @@
-﻿using tec_pallet_preparation_transportation_web.Models;
-using tec_pallet_preparation_transportation_web.Repositories;
+﻿using tec_pallet_supply_transport_web.Models;
+using tec_pallet_supply_transport_web.Repositories;
 
-namespace tec_pallet_preparation_transportation_web.Commons
+namespace tec_pallet_supply_transport_web.Commons
 {
     /// <summary>
     /// エラー処理に関する関数
