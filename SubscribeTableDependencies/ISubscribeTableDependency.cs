@@ -1,4 +1,4 @@
-﻿namespace tec_pallet_preparation_transportation_web.SubscribeTableDependencies
+﻿namespace tec_pallet_supply_transport_web.SubscribeTableDependencies
 {
     public interface ISubscribeTableDependency
     {

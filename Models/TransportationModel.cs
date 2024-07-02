@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace tec_pallet_preparation_transportation_web.Models
+namespace tec_pallet_supply_transport_web.Models
 {
     [Table("t_empty_box_supply_request")]
     public class TransportationModel
