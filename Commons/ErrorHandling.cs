@@ -32,7 +32,7 @@ namespace tec_pallet_supply_transport_web.Commons
                 // 表示用エラーメッセージ作成
                 if (getErrorMessages.Count == 0)
                 {
-                    errorMessage = "E4002 SQLServerでエラーが発生しました。";
+                    errorMessage = "E4001 SQLServerでエラーが発生しました。";
                 }
                 else
                 {
