@@ -188,7 +188,7 @@
                                             Swal.fire({
                                                 icon: 'error',
                                                 title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
-                                                html: response.res,
+                                                html: `<span style="color: red;">${response.res}</span>`,
                                                 confirmButtonColor: '#0d6efd',
                                                 confirmButtonText: '閉じる',
                                                 allowOutsideClick: false,
@@ -400,7 +400,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始登録ができませんでした。<br>再度お試しください。`,
-                                            html: response.res,
+                                            html: `<span style="color: red;">${response.res}</span>`,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
@@ -437,7 +437,7 @@
                                                 Swal.fire({
                                                     icon: 'error',
                                                     title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録ができませんでした。<br>再度お試しください。`,
-                                                    html: response.res,
+                                                    html: `<span style="color: red;">${response.res}</span>`,
                                                     confirmButtonColor: '#0d6efd',
                                                     confirmButtonText: '閉じる',
                                                     allowOutsideClick: false,
@@ -488,7 +488,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了の取消ができませんでした。<br>再度お試しください。`,
-                                            html: response.res,
+                                            html: `<span style="color: red;">${response.res}</span>`,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
@@ -519,7 +519,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
-                                            html: response.res,
+                                            html: `<span style="color: red;">${response.res}</span>`,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
