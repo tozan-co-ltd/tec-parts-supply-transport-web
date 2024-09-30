@@ -1,10 +1,68 @@
-﻿// -----------------------------------準備画面-----------------------------------//
-    // url取得
+﻿    // url取得
     var baseUrl = window.location.origin;
     var pathName = window.location.pathname.split('/');
     if (pathName.length > 2)
-        baseUrl = baseUrl + "/" + pathName[1];
+    baseUrl = baseUrl + "/" + pathName[1];
 
+    var connectionCountDown = new signalR.HubConnectionBuilder().withUrl("countdownHub").build();
+    $(function () {
+        connectionCountDown.start().then(function () {
+            InvokeMCountdown();
+        })
+    });
+
+    // ハブのメソッドを呼び出す
+    function InvokeMCountdown() {
+        connectionCountDown.invoke("SendMCountdown").catch(function (error) {
+            // Controllerに接続できない場合はエラー
+            console.log("Error - invoke catch");
+        });
+    }
+
+    // 短い遅延後に再接続を試みる
+    connectionCountDown.onclose(function (error) {
+        setTimeout(function () {
+            connectionCountDown.start().then(function () {
+                InvokeMCountdown();
+            });
+        }, 500);
+    });
+
+
+    // -----------------------------------カウントダウン時間取得------------------------------//
+    var countdownMinutesLocal = 0;
+
+    // localStorageのカウントダウン時間取得
+    if (localStorage.getItem('countdownMinutesLocal')) {
+        countdownMinutesLocal = parseInt(localStorage.getItem('countdownMinutesLocal'));
+    }
+
+    // localStorageとデータベースの値を比較し、異なる場合は画面再読み込み
+    connectionCountDown.on("ReceivedMCountdown", function (countdownMinutes) {
+        if (countdownMinutesLocal != countdownMinutes && countdownMinutesLocal != 0) {
+            Swal.fire({
+                title: 'カウントダウン時間が変更されました。<br>ページを再読み込みします。',
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                confirmButtonColor: "#0d6efd",
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        }
+
+        // localStorage更新
+        countdownMinutesLocal = countdownMinutes;
+        localStorage.setItem('countdownMinutesLocal', countdownMinutesLocal);
+
+    });
+// ----------------------------------------------------------------------//
+
+
+// -----------------------------------準備画面-----------------------------------//
     // SignalRを使用して接続を初期化する
     var connectionSupply = new signalR.HubConnectionBuilder().withUrl("preparationHub").build();
     $(function () {
