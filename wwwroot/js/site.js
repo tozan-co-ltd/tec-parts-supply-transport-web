@@ -713,15 +713,6 @@
         return subResult;
     }
 
-    // カウントアップ時に背景を変更
-    setInterval(function () {
-        var tdElements = document.querySelectorAll('td.redflag');
-        tdElements.forEach(function (tdElement) {
-            var trElement = tdElement.parentElement;
-            trElement.style.backgroundColor = '#FFC1C1';
-        });
-    }, 10);
-
     // ローディング表示
     $(document).ajaxSend(function () {
         $("#overlay").fadeIn();
