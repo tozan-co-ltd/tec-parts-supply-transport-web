@@ -1,10 +1,68 @@
-﻿// -----------------------------------準備画面-----------------------------------//
-    // url取得
+﻿    // url取得
     var baseUrl = window.location.origin;
     var pathName = window.location.pathname.split('/');
     if (pathName.length > 2)
-        baseUrl = baseUrl + "/" + pathName[1];
+    baseUrl = baseUrl + "/" + pathName[1];
 
+    var connectionCountDown = new signalR.HubConnectionBuilder().withUrl("countdownHub").build();
+    $(function () {
+        connectionCountDown.start().then(function () {
+            InvokeMCountdown();
+        })
+    });
+
+    // ハブのメソッドを呼び出す
+    function InvokeMCountdown() {
+        connectionCountDown.invoke("SendMCountdown").catch(function (error) {
+            // Controllerに接続できない場合はエラー
+            console.log("Error - invoke catch");
+        });
+    }
+
+    // 短い遅延後に再接続を試みる
+    connectionCountDown.onclose(function (error) {
+        setTimeout(function () {
+            connectionCountDown.start().then(function () {
+                InvokeMCountdown();
+            });
+        }, 500);
+    });
+
+
+    // -----------------------------------カウントダウン時間取得------------------------------//
+    var countdownMinutesLocal = 0;
+
+    // localStorageのカウントダウン時間取得
+    if (localStorage.getItem('countdownMinutesLocal')) {
+        countdownMinutesLocal = parseInt(localStorage.getItem('countdownMinutesLocal'));
+    }
+
+    // localStorageとデータベースの値を比較し、異なる場合は画面再読み込み
+    connectionCountDown.on("ReceivedMCountdown", function (countdownMinutes) {
+        if (countdownMinutesLocal != countdownMinutes && countdownMinutesLocal != 0) {
+            Swal.fire({
+                title: 'カウントダウン時間が変更されました。<br>ページを再読み込みします。',
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                confirmButtonColor: "#0d6efd",
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        }
+
+        // localStorage更新
+        countdownMinutesLocal = countdownMinutes;
+        localStorage.setItem('countdownMinutesLocal', countdownMinutesLocal);
+
+    });
+// ----------------------------------------------------------------------//
+
+
+// -----------------------------------準備画面-----------------------------------//
     // SignalRを使用して接続を初期化する
     var connectionSupply = new signalR.HubConnectionBuilder().withUrl("preparationHub").build();
     $(function () {
@@ -570,7 +628,7 @@
 
         // 経過時間が59:59でない場合はカウントダウンまたはカウントアップ
         if (timeLeft != 3599000) { // 3599000 (00:59:59)
-            // 経過時間が10分を超える場合はカウントアップ
+            // 経過時間がカウントダウン時間を超える場合はカウントアップ
             if (timeLeft < 0) {
                 timeLeft = -1 * timeLeft + 10 * 60000;
                 isCountingDown = false;
@@ -579,7 +637,7 @@
             // 時間表示(mm:ss)を更新
             updateDisplay(element, timeLeft);
 
-            // 経過時間が10分を超えていない場合はカウントダウン
+            // 経過時間がカウントダウン時間を超えていない場合はカウントダウン
             if (timeLeft > 0 && isCountingDown) {
                 // 1秒おきに更新
                 countdownInterval = setInterval(function () {
@@ -590,14 +648,14 @@
                     // 時間表示(mm:ss)を更新
                     updateDisplay(element, timeLeft);
 
-                    // 経過時間が10分以上になったら、カウントアップに変更
+                    // 経過時間がカウントダウン時間以上になったら、カウントアップに変更
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
 
                         // 初期の時間から再びカウントダウンを開始する
                         timeLeft = startTime;
                         isCountingDown = false;
-                        timeLeft = 10 * 60000;
+                        timeLeft = countdownMinutesLocal * 60000;
 
                         // 赤字で1秒ずつ加算
                         countupInterval = setInterval(function () {
@@ -614,7 +672,7 @@
                     }
                 }, 1000);
 
-            // 経過時間が10分を超えている場合はカウントアップ
+            // 経過時間がカウントダウン時間を超えている場合はカウントアップ
             } else {
                 isCountingDown = false;
 
@@ -651,18 +709,9 @@
         var secondResult = Math.floor((differenceTime % (1000 * 60)) / 1000);
 
         // 結果を 'HH:mm:ss' 形式の文字列にフォーマットする
-        subResult = `${(10 - minuteResult).toString().padStart(2, '0')}:${(0 - secondResult.toString().padStart(2, '0'))}`;
+        subResult = `${(countdownMinutesLocal - minuteResult).toString().padStart(2, '0')}:${(0 - secondResult.toString().padStart(2, '0'))}`;
         return subResult;
     }
-
-    // カウントアップ時に背景を変更
-    setInterval(function () {
-        var tdElements = document.querySelectorAll('td.redflag');
-        tdElements.forEach(function (tdElement) {
-            var trElement = tdElement.parentElement;
-            trElement.style.backgroundColor = '#FFC1C1';
-        });
-    }, 10);
 
     // ローディング表示
     $(document).ajaxSend(function () {
