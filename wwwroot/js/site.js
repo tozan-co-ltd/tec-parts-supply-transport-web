@@ -655,7 +655,7 @@
                         // 初期の時間から再びカウントダウンを開始する
                         timeLeft = startTime;
                         isCountingDown = false;
-                        timeLeft = 10 * 60000;
+                        timeLeft = countdownMinutesLocal * 60000;
 
                         // 赤字で1秒ずつ加算
                         countupInterval = setInterval(function () {
@@ -709,7 +709,7 @@
         var secondResult = Math.floor((differenceTime % (1000 * 60)) / 1000);
 
         // 結果を 'HH:mm:ss' 形式の文字列にフォーマットする
-        subResult = `${(10 - minuteResult).toString().padStart(2, '0')}:${(0 - secondResult.toString().padStart(2, '0'))}`;
+        subResult = `${(countdownMinutesLocal - minuteResult).toString().padStart(2, '0')}:${(0 - secondResult.toString().padStart(2, '0'))}`;
         return subResult;
     }
 
