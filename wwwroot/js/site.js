@@ -628,7 +628,7 @@
 
         // 経過時間が59:59でない場合はカウントダウンまたはカウントアップ
         if (timeLeft != 3599000) { // 3599000 (00:59:59)
-            // 経過時間が10分を超える場合はカウントアップ
+            // 経過時間がカウントダウン時間を超える場合はカウントアップ
             if (timeLeft < 0) {
                 timeLeft = -1 * timeLeft + 10 * 60000;
                 isCountingDown = false;
@@ -637,7 +637,7 @@
             // 時間表示(mm:ss)を更新
             updateDisplay(element, timeLeft);
 
-            // 経過時間が10分を超えていない場合はカウントダウン
+            // 経過時間がカウントダウン時間を超えていない場合はカウントダウン
             if (timeLeft > 0 && isCountingDown) {
                 // 1秒おきに更新
                 countdownInterval = setInterval(function () {
@@ -648,7 +648,7 @@
                     // 時間表示(mm:ss)を更新
                     updateDisplay(element, timeLeft);
 
-                    // 経過時間が10分以上になったら、カウントアップに変更
+                    // 経過時間がカウントダウン時間以上になったら、カウントアップに変更
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
 
@@ -672,7 +672,7 @@
                     }
                 }, 1000);
 
-            // 経過時間が10分を超えている場合はカウントアップ
+            // 経過時間がカウントダウン時間を超えている場合はカウントアップ
             } else {
                 isCountingDown = false;
 
