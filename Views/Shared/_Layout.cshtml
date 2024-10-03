@@ -54,6 +54,13 @@
         </main>
     </div>
 
+    @{
+        if (@ViewData["Title"] == "トップ")
+        {
+            <div class="version-info">ver.1.2</div>
+        }
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
