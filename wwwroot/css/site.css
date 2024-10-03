@@ -19,6 +19,15 @@ body {
     color: #001E64;
 }
 
+.version-info {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
 .active {
     color: #fff !important;
     background-color: #198754 !important;
