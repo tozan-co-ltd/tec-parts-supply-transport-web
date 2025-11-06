@@ -1,9 +1,9 @@
-﻿using tec_pallet_supply_transport_web.Hubs;
-using tec_pallet_supply_transport_web.Models;
+﻿using tec_parts_supply_transport_web.Hubs;
+using tec_parts_supply_transport_web.Models;
 using TableDependency.SqlClient;
-using tec_pallet_supply_transport_web.Commons;
+using tec_parts_supply_transport_web.Commons;
 
-namespace tec_pallet_supply_transport_web.SubscribeTableDependencies
+namespace tec_parts_supply_transport_web.SubscribeTableDependencies
 {
     public class SubscribePreparationTableDependency : ISubscribeTableDependency
     {

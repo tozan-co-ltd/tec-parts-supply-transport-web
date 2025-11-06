@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace tec_pallet_supply_transport_web.Commons
+namespace tec_parts_supply_transport_web.Commons
 {
     public static class Const
     {

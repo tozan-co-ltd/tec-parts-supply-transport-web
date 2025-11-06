@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using tec_pallet_supply_transport_web.Commons;
-using tec_pallet_supply_transport_web.Hubs;
-using tec_pallet_supply_transport_web.MiddlewareExtensions;
-using tec_pallet_supply_transport_web.SubscribeTableDependencies;
+using tec_parts_supply_transport_web.Commons;
+using tec_parts_supply_transport_web.Hubs;
+using tec_parts_supply_transport_web.MiddlewareExtensions;
+using tec_parts_supply_transport_web.SubscribeTableDependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 

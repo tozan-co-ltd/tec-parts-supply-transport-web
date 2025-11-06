@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace tec_pallet_supply_transport_web.Models
+namespace tec_parts_supply_transport_web.Models
 {
     [Table("m_countdown")]
     public class MCountdownModel

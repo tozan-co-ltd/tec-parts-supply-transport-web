@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using tec_pallet_supply_transport_web.Commons;
-using tec_pallet_supply_transport_web.Models;
-using tec_pallet_supply_transport_web.Repositories;
+using tec_parts_supply_transport_web.Commons;
+using tec_parts_supply_transport_web.Models;
+using tec_parts_supply_transport_web.Repositories;
 
-namespace tec_pallet_supply_transport_web.Hubs
+namespace tec_parts_supply_transport_web.Hubs
 {
     public class PreparationHub : Hub
     {

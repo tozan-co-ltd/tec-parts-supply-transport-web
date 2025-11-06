@@ -1,4 +1,4 @@
-# tec-pallet-supply-transport-web
+# tec-parts-supply-transport-web
 テクノエイト空箱供給運搬アプリ(WEB)
 
 SQL Server ブローカーを有効にする方法

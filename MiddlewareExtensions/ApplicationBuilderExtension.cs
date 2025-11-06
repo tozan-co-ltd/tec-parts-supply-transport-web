@@ -1,6 +1,6 @@
-﻿using tec_pallet_supply_transport_web.SubscribeTableDependencies;
+﻿using tec_parts_supply_transport_web.SubscribeTableDependencies;
 
-namespace tec_pallet_supply_transport_web.MiddlewareExtensions
+namespace tec_parts_supply_transport_web.MiddlewareExtensions
 {
     public static class ApplicationBuilderExtension
     {
