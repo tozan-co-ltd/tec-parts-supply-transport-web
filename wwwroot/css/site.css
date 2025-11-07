@@ -15,8 +15,8 @@ body {
     overflow-x: hidden;
 }
 
-.cl-001E64 {
-    color: #001E64;
+.cl-EF8A45 {
+    color: #EF8A45;
 }
 
 .version-info {
@@ -73,6 +73,12 @@ body {
     transform: translate(-50%, -50%);
     width: 590px;
     border-radius: 15px;
+}
+
+.system_setting {
+    position: absolute;
+    top: 5%;
+    right: 3%;
 }
 
 .menu-top a {
@@ -276,6 +282,10 @@ h3 {
 
 .supplyContent .btnCompletion {
     margin-right: 5px;
+}
+
+.btn-warning{
+    color: #fff;
 }
 
 .btnCompletion,
