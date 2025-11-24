@@ -1,6 +1,7 @@
 ﻿html {
     font-size: 14px;
 }
+
 main {
     padding: 0;
 }
@@ -15,8 +16,8 @@ body {
     overflow-x: hidden;
 }
 
-.cl-001E64 {
-    color: #001E64;
+.cl-EF8A45 {
+    color: #EF8A45;
 }
 
 .version-info {
@@ -75,13 +76,57 @@ body {
     border-radius: 15px;
 }
 
+    .menu-top .setting {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+
+        .menu-top .setting img {
+            width: 130px;
+        }
+
+.system_setting {
+    position: absolute;
+    top: 5%;
+    right: 3%;
+}
+
 .menu-top a {
     margin: 0;
     padding: 0;
 }
+
 .menu-top .mb-5 {
     margin-bottom: 2rem !important;
 }
+
+.option-list .option-item {
+    width: 250px;
+    background: #1A3D64;
+    color: #FFFF;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.machine {
+    margin-top: 20px;
+}
+
+    .machine .machine-table-content tr th {
+        font-size: 20px;
+    }
+
+    .machine .machine-table-content tr td {
+        font-size: 20px;
+    }
+
+.option-list .option-item a {
+    color: #FFFF;
+    text-decoration: none;
+    font-size: 18px;
+}
+
 
 .system_logo {
     width: 121px;
@@ -116,7 +161,7 @@ a {
     min-width: 130px;
 }
 
-.registerTh{
+.registerTh {
     width: 70px;
 }
 
@@ -130,10 +175,10 @@ a {
     /* Animation */
 }
 
-.zoom:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
+    .zoom:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
 
 .login-img {
     width: 117px;
@@ -187,7 +232,7 @@ td {
     padding: 0.5rem 0.2rem !important;
 }
 
-.btn{
+.btn {
     white-space: nowrap;
 }
 
@@ -208,6 +253,7 @@ table tbody {
 table thead th {
     font-size: 14px;
 }
+
 table thead tr {
     text-align: center;
 }
@@ -278,6 +324,10 @@ h3 {
     margin-right: 5px;
 }
 
+.btn-warning {
+    color: #fff;
+}
+
 .btnCompletion,
 .btnRegister {
     width: 60px;
@@ -285,7 +335,7 @@ h3 {
     font-size: 20px;
 }
 
-.statusBtn .btn{
+.statusBtn .btn {
     padding: 0;
 }
 
@@ -439,9 +489,11 @@ h3 {
     padding-top: 0.5125rem;
     padding-bottom: 0.5125rem;
 }
+
 :root {
     --bs-body-bg: unset;
 }
+
 .home-icon {
     margin-right: 0;
 }
@@ -498,9 +550,11 @@ a > i.fa-home {
     table tbody {
         font-size: 30px;
     }
+
     .boxType {
         font-size: 30px !important;
     }
+
     .transportContent {
         display: block;
     }
@@ -509,7 +563,7 @@ a > i.fa-home {
         width: 100% !important;
     }
 
-    .btn{
+    .btn {
         padding: 0;
     }
 }
@@ -533,6 +587,7 @@ a > i.fa-home {
     html {
         font-size: 16px;
     }
+
     .boxType {
         font-size: 24px !important;
     }
