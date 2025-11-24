@@ -67,7 +67,7 @@ namespace tec_parts_supply_transport_web.Repositories
                             ,machine_status.status                             AS Status
                             ,machine_status.end_time                           AS EndTime
                         FROM [dbo].[m_machine_number_basic_information] AS machine_number
-                        INNER JOIN [dbo].[t_machine_status] AS machine_status ON machine_number.machine_num = machine_status.machine_number
+                        INNER JOIN [dbo].[t_machine_status] AS machine_status ON machine_number.machine_num = machine_status.machine_num
                        ";
 
             return sql;

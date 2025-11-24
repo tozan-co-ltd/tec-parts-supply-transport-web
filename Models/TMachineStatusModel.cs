@@ -5,8 +5,8 @@ namespace tec_parts_supply_transport_web.Models
     [Table("t_machine_status")]
     public class TMachineStatusModel
     {
-        [Column("machine_number")]
-        public string MachineNumber { get; set; }
+        [Column("machine_num")]
+        public string MachineNum { get; set; }
 
         [Column("status")]
         public string Status { get; set; }
