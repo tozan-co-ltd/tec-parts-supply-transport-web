@@ -16,18 +16,6 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.31/dist/sweetalert2.all.min.js"></script>
-@{
-    if (@ViewData["Title"] != "トップ")
-    {
-        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <style>
-            html {
-                background: #000000;
-            }
-        </style>
-    }
-}
 
 
 <body>
@@ -64,3 +52,16 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+@{
+    if (@ViewData["Title"] != "トップ" && @ViewData["Title"] != "稼働状況 : 選択")
+    {
+        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <style>
+            html {
+                background: #000000;
+            }
+        </style>
+    }
+}
