@@ -1,4 +1,5 @@
-﻿@{
+﻿@model tec_parts_supply_transport_web.Models.MMachineModel;
+@{
     ViewData["Title"] = "稼働状況 : 選択";
 }
 <div class="zone">
@@ -15,17 +16,17 @@
                 </span>
             </div>
             <div class="option-list text-center mb-5 mt-2 d-block">
-                <div class="option-item my-3 py-2">
-                    <a asp-controller="Machine" asp-action="Status" asp-route-division="1">ゾーン：1</a>
-                </div>
-                <br />
-                <div class="option-item my-3 py-2">
-                    <a asp-controller="Machine" asp-action="Status" asp-route-division="2">ゾーン：2</a>
-                </div>
-                <br />
-                <div class="option-item my-3 py-2" ">
-                    <a asp-controller="Machine" asp-action="Status" asp-route-division="3">ゾーン：3</a>
-                </div>
+                @if (@Model != null && @Model.SearchList != null && @Model.SearchList.Count > 0)
+                    {
+                    @foreach (var item in @Model.SearchList)
+                    {
+                        <div class="my-3 py-2">
+                            <div class="option-item">
+                                <a asp-controller="Machine" asp-action="Status" asp-route-zone='@item.Zone'>@item.Zone</a>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>

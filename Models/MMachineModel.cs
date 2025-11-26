@@ -28,5 +28,6 @@ namespace tec_parts_supply_transport_web.Models
 
         public bool Status { get; set; }
         public DateTime EndTime { get; set; }
+        public List<MMachineModel> SearchList { get; set; }
     }
 }
