@@ -68,7 +68,26 @@ namespace tec_parts_supply_transport_web.Repositories
                             ,machine_status.end_time                           AS EndTime
                         FROM [dbo].[m_machine_number_basic_information] AS machine_number
                         INNER JOIN [dbo].[t_machine_status] AS machine_status ON machine_number.machine_num = machine_status.machine_num
+                        WHERE machine_number.division = 1;
                        ";
+
+            return sql;
+        }
+
+        /// <summary>
+        /// ゾーンSQL作成
+        /// </summary>
+        /// <returns>SQL</returns>
+        public string CreateSQLToGetZoneList()
+        {
+            // "依頼中"のレコード
+            var sql = $@"SELECT *
+                           FROM (
+                              SELECT machine_number_basic_information_id, machine_num, division, zone, ROW_NUMBER() OVER (PARTITION BY zone ORDER BY machine_number_basic_information_id) AS rn
+                              FROM [dbo].[m_machine_number_basic_information] 
+                           ) AS machine_number
+                            Where rn = 1 AND division = 1
+                        ";
 
             return sql;
         }
