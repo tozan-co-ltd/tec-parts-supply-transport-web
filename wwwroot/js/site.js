@@ -4,7 +4,7 @@ var pathName = window.location.pathname.split('/');
 if (pathName.length > 2)
     baseUrl = baseUrl + "/" + pathName[1];
 
-var connectionCountDown = new signalR.HubConnectionBuilder().withUrl("/countdownHub").build();
+var connectionCountDown = new signalR.HubConnectionBuilder().withUrl("countdownHub").build();
 $(function () {
     connectionCountDown.start().then(function () {
         InvokeMCountdown();
@@ -66,7 +66,7 @@ connectionCountDown.on("ReceivedMCountdown", function (countdownMinutes) {
 // SignalRを使用して接続を初期化する
 const isPreparationPage = document.getElementById("preparation-page");
 if (isPreparationPage) {
-    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/preparationHub").build();
+    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("preparationHub").build();
     $(function () {
         connectionSupply.start().then(function () {
             InvokeSupplys();
@@ -289,7 +289,7 @@ function BindSupplysToGrid(supplys) {
 // SignalRを使用して接続を初期化する
 const isTransportationPage = document.getElementById("transportation-page");
 if (isTransportationPage) {
-    var connectionTransport = new signalR.HubConnectionBuilder().withUrl("/transportationHub").build();
+    var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportationHub").build();
 
     $(function () {
         connectionTransport.start().then(function () {
@@ -783,7 +783,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // SignalRを使用して接続を初期化する
 const isMachinePage = document.getElementById("machine-page");
 if (isMachinePage) {
-    var connectionMachine = new signalR.HubConnectionBuilder().withUrl("/machineHub").build();
+    var connectionMachine = new signalR.HubConnectionBuilder().withUrl("machineHub").build();
 
     $(function () {
         connectionMachine.start().then(function () {

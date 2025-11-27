@@ -1,39 +1,24 @@
-﻿@model tec_parts_supply_transport_web.Models.MMachineModel;
-@{
-    ViewData["Title"] = "稼働状況 : 選択";
+﻿@{
+    ViewData["Title"] = "稼働状況";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="zone">
-    <div class="inner">
-        <div class="menu-top shadow-lg bg-white">
-            <div class="system_title text-center mt-4">
-                <span class="h3 cl-001E64 font-weight-bold">
-                    稼働状況
-                </span>
-            </div>
-            <div class="system_title text-center my-2">
-                <span class="font-weight-bold">
-                    稼働状況を確認するゾーンを選択してください
-                </span>
-            </div>
-            <div class="option-list text-center mb-5 mt-2 d-block">
-                @if (@Model != null && @Model.SearchList != null && @Model.SearchList.Count > 0)
-                    {
-                    @foreach (var item in @Model.SearchList)
-                    {
-                        <div class="my-3 py-2">
-                            <div class="option-item">
-                                <a asp-controller="Machine" asp-action="Status" asp-route-zone='@item.Zone'>@item.Zone</a>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
+<div class="machine" id="machine-page">
+    <div class="card text-white">
+        <div class="row machine-table-content" style="display: none">
+            <table id="machineTable" class="table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th>機番</th>
+                        <th>稼働状況</th>
+                        <th>終了時間</th>
+                    </tr>
+                </thead>
+                <tbody id="machine-table-row">
+                </tbody>
+            </table>
         </div>
+
+        <div class="noneDateMess text-center text-danger" style="display: none">E2007 該当データがありません。</div>
+        <div class="connectionTransportError text-center text-danger" style="display: none">E3003 ネットワークに接続できませんでした。</div>
     </div>
 </div>
-
-<style>
-    html {
-        background: #FFFF;
-    }
-</style>
