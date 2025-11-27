@@ -897,8 +897,8 @@ if (isMachinePage) {
 
     // グリッドに依頼をバインドする
     connectionMachine.on("ReceivedMachineStatusList", function (machines) {
-        const queryParam = new URLSearchParams(window.location.search).get("division");
-        var filterMachines = machines.filter((item) => item.division == queryParam);
+        const queryParam = new URLSearchParams(window.location.search).get("zone");
+        var filterMachines = machines.filter((item) => item.zone == queryParam);
         BindMachinesToGrid(filterMachines);
     });
 }
