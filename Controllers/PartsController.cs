@@ -104,7 +104,7 @@ namespace tec_parts_supply_transport_web.Controllers
             bool resUpdate = true;
             try
             {
-                var sqlGetParts = PartsRepository.CreateSQLToGetPartsByMachineNum(machineNum);
+                var sqlGetParts = PartsRepository.CreateSQLToGetPartsIdByMachineNum(machineNum);
                 var listParts = PartsRepository.GetListParts(sqlGetParts);
 
                 if (!listParts.Any())

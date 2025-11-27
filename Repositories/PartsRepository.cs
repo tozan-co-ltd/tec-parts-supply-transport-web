@@ -87,28 +87,11 @@ namespace tec_parts_supply_transport_web.Repositories
         /// 部品準備取得SQL作成
         /// </summary>
         /// <returns>SQL</returns>
-        public static string CreateSQLToGetPartsByMachineNum(string machineNum)
+        public static string CreateSQLToGetPartsIdByMachineNum(string machineNum)
         {
             // "依頼中"のレコード
             var sql = $@"SELECT 
-                                t.parts_supply_request_id AS PartsSupplyRequestId,
-                                t.machine_num AS MachineNum,
-                                t.parts_num AS PartsNum,
-                                t.box_type AS BoxType,
-                                t.required_quantity AS RequiredQuantity,
-                                t.request_datetime AS RequestDatetime,
-                                t.corrected_request_datetime AS CorrectedRequestDatetime,
-                                t.is_ready_order AS IsReadyOrder,
-                                t.ready_datetime AS ReadyDatetime,
-                                t.transportation_start_datetime AS TransportationStartDatetime,
-                                t.transportation_end_datetime AS TransportationEndDatetime,
-                                t.is_completed AS IsCompleted,
-                                t.is_out_of_stock AS IsOutOfStock,
-                                t.request_device_name AS RequestDeviceName,
-                                t.ready_IPaddress AS ReadyIPaddress,
-                                t.transportation_IPaddress AS TransportationIPaddress,
-                                t.is_deleted AS IsDeleted,
-                                t.address AS Address
+                                t.parts_supply_request_id AS PartsSupplyRequestId
                             FROM t_parts_supply_request AS t
                             WHERE t.is_deleted = 0
                               AND t.machine_num = {machineNum};
