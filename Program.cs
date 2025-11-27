@@ -17,6 +17,10 @@ builder.Services.AddSignalR(hubOptions => {
 // DI
 builder.Services.AddSingleton<PreparationHub>();
 builder.Services.AddSingleton<SubscribePreparationTableDependency>();
+
+builder.Services.AddSingleton<PartsHub>();
+builder.Services.AddSingleton<SubscribePartsTableDependency>();
+
 builder.Services.AddSingleton<TransportationHub>();
 builder.Services.AddSingleton<SubscribeTransportationTableDependency>();
 builder.Services.AddSingleton<CountdownHub>();
@@ -46,6 +50,7 @@ app.UseAuthorization();
 app.UseWebSockets();
 
 app.MapHub<PreparationHub>("preparationHub");
+app.MapHub<PartsHub>("partsHub");
 app.MapHub<TransportationHub>("transportationHub");
 app.MapHub<CountdownHub>("/countdownHub");
 app.MapHub<MachineHub>("/machineHub");
@@ -58,6 +63,7 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseSqlTableDependency<SubscribePreparationTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribePartsTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeTransportationTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeCountdownMasterTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeMachineTableDependency>(connectionString);

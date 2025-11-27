@@ -101,6 +101,45 @@ body {
     margin-bottom: 2rem !important;
 }
 
+
+
+.disabled {
+    color: gray;
+    pointer-events: none;
+}
+
+
+.preparation-selection-page {
+    margin: 15px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 590px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+    .preparation-selection-page a {
+        border: 1px solid transparent;
+        transition: 0.5s;
+        font-weight: bold;
+    }
+
+        .preparation-selection-page a:hover {
+            background: #fff;
+            color: #EF8A45;
+            border: 1px solid #EF8A45;
+        }
+
+
+.preparation-selection a{
+    background-color: #EF8A45;
+    color: #fff;
+    padding: 20px 0;
+    border-radius: 10px;
+}
+
 .option-list .option-item {
     width: 250px;
     background: #1A3D64;
@@ -320,8 +359,12 @@ h3 {
     margin: 20px 0;
 }
 
-.supplyContent .btnCompletion {
+.supplyContent .btnCompletion,
+.supplyContent .btnRegistered,
+.supplyContent .btnTotalRegister {
     margin-right: 5px;
+    font-size: 18px;
+    padding: 0;
 }
 
 .btn-warning {
@@ -329,19 +372,34 @@ h3 {
 }
 
 .btnCompletion,
+.btnTotalRegister,
+.btnRegistered,
 .btnRegister {
     width: 60px;
     height: 70px;
     font-size: 20px;
 }
 
+#parts-page .btnRegistered {
+    background-color: #A5A5A5;
+}
+
+#parts-page .btnTotalRegister {
+    background-color: #70AD47;
+}
+
 .statusBtn .btn {
     padding: 0;
 }
 
-.btnClose {
+.btnClose, .btnCloseDisable {
     height: 70px;
     width: 45px;
+}
+
+.btnCloseDisable {
+    background-color: #A5A5A5;
+    pointer-events: none;
 }
 
 #overlay {

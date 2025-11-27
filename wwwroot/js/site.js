@@ -28,45 +28,11 @@ connectionCountDown.onclose(function (error) {
     }, 500);
 });
 
-
-// -----------------------------------カウントダウン時間取得------------------------------//
-var countdownMinutesLocal = 0;
-
-// localStorageのカウントダウン時間取得
-if (localStorage.getItem('countdownMinutesLocal')) {
-    countdownMinutesLocal = parseInt(localStorage.getItem('countdownMinutesLocal'));
-}
-
-// localStorageとデータベースの値を比較し、異なる場合は画面再読み込み
-connectionCountDown.on("ReceivedMCountdown", function (countdownMinutes) {
-    if (countdownMinutesLocal != countdownMinutes && countdownMinutesLocal != 0) {
-        Swal.fire({
-            title: 'カウントダウン時間が変更されました。<br>ページを再読み込みします。',
-            icon: 'info',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            confirmButtonColor: "#0d6efd",
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.reload();
-            }
-        });
-    }
-
-    // localStorage更新
-    countdownMinutesLocal = countdownMinutes;
-    localStorage.setItem('countdownMinutesLocal', countdownMinutesLocal);
-
-});
-// ----------------------------------------------------------------------//
-
-
 // -----------------------------------準備画面-----------------------------------//
 // SignalRを使用して接続を初期化する
-const isPreparationPage = document.getElementById("preparation-page");
+const isPreparationPage = document.getElementById("parts-page");
 if (isPreparationPage) {
-    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/preparationHub").build();
+    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/partsHub").build();
     $(function () {
         connectionSupply.start().then(function () {
             InvokeSupplys();
@@ -96,7 +62,7 @@ if (isPreparationPage) {
 
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
-        connectionSupply.invoke("SendPreparations").catch(function (error) {
+        connectionSupply.invoke("SendParts").catch(function (error) {
             // Controllerに接続できない場合はエラー
             console.log("Error - invoke catch");
             $(".connectionSupplyError").text(error);
@@ -129,19 +95,22 @@ function BindSupplysToGrid(supplys) {
         var table = tableLeftDom.getElementsByTagName('tbody')[0];
         var table1 = tableRightDom.getElementsByTagName('tbody')[0];
 
+        const renderedTotalButtons = new Set();
+        const completedMachines = new Set();
+
         // 左のテーブル取得
         var supplys1 = supplys.slice(0, 6);
-        createTable(supplys1, table, 1);
+        createTable(supplys1, table);
 
         // 右のテーブル取得
         var supplysTmp = supplys.length - supplys1.length;
         if (supplysTmp > 0) {
             var supplys2 = supplys.slice(6, 12);
-            createTable(supplys2, table1, 2);
+            createTable(supplys2, table1);
         }
 
         // テーブルを作成
-        function createTable(supplys, table, side) {
+        function createTable(supplys, table) {
             if (supplys.length > 0) {
                 $(".supplyContent").show();
                 $(".noneDateMess").hide();
@@ -162,59 +131,74 @@ function BindSupplysToGrid(supplys) {
                     var today = new Date();
                     // 依頼時間
                     var resDateTime = new Date(supplys[i].correctedRequestDatetime);
+                    var elapsedMs = today - resDateTime; // 過ぎました時間
+                    var countdownMs = supplys[i].countDownTime * 60000; // カウント時間
+                    var remainingMs = countdownMs - elapsedMs; // 残り時間
+                    var dataTime = elapsedMs; // 経過時間
+                    var subResult;
 
-                    // 2つの日付のミリ秒単位の差を計算
-                    var differenceTime = Math.abs(today - resDateTime);
-
-                    // ミリ秒から時間、分変換
-                    var minuteNum = Math.floor(differenceTime / (1000 * 60));
-
-                    // mm:ss表記に変換
-                    var subResult = "";
-                    // 60:00以上はデフォルト"59:59"
-                    if (minuteNum >= 60)
+                    // 時間表示
+                    if (elapsedMs >= 60 * 60000) { // 1時間経過した場合、表示を「59:59」で固定
                         subResult = "59:59";
-                    else
-                        subResult = subtractTime(today, resDateTime, subResult);　// 時間を引く
-
-                    var timeTmp = subResult.split(':');
-                    var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
+                    } else if (remainingMs > 0) {　// カウントダウン中（残り時間がまだある）
+                        const minutes = Math.floor(remainingMs / 60000);
+                        const seconds = Math.floor((remainingMs % 60000) / 1000);
+                        subResult = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    } else {　// カウントアップ中（カウントダウン終了後の経過時間を表示）
+                        const totalMinutes = supplys[i].countDownTime + Math.floor((elapsedMs - countdownMs) / 60000);
+                        const seconds = Math.floor((elapsedMs % 60000) / 1000);
+                        const displayMinutes = Math.min(totalMinutes, 59);
+                        subResult = `${displayMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
 
                     cell2.innerHTML = `${supplys[i].machineNum}`;
                     cell2.className = 'machine-number';
 
                     //cell3.innerHTML = `${supplys[i].boxType}`;
-                    cell3.innerHTML = `301EB-43`;
+                    cell3.innerHTML = `${supplys[i].address}`;
                     cell3.className = 'address';
 
                     //cell4.innerHTML = `${supplys[i].boxType}`;
-                    cell4.innerHTML = `58151-52100`;
-                    cell4.className = 'boxType';
+                    cell4.innerHTML = `${supplys[i].partsNum}`;
+                    cell4.className = 'partsNum';
 
                     // 異なるテキストの長さに応じて文字サイズを調整
                     countLengthText(cell4);
 
-                    cell5.innerHTML = `${supplys[i].boxCount}`;
+                    cell5.innerHTML = `${supplys[i].requiredQuantity}`;
                     cell5.className = 'boxCount';
-                    cell6.innerHTML = `${subResult}`;
-                    if (side == 1 && i === 5 && supplys[i].emptyBoxSupplyRequestId != 64639)
-                        cell7.innerHTML = `<button type="button" class="btn btn-success btnCompletion">4/5</button>`;
-                    else if (side == 1 && i < 5 && i > 0 || i === 0 && supplys[i].emptyBoxSupplyRequestId != 64634)
-                        cell7.innerHTML = `<button type="button" class="btn btn-secondary btnCompletion">4/5</button>`;
-                    else
-                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnCompletion">0/5</button>`;
 
+                    cell6.innerHTML = subResult;
+                    cell6.setAttribute("data-time", dataTime); // 表示時間
+                    cell6.setAttribute("data-countdown", supplys[i].countDownTime);
+                    cell6.setAttribute("data-request-datetime", supplys[i].correctedRequestDatetime);
+                    cell6.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
-                    if (dataTime < 0) {
-                        cell6.className = 'timeCount redflag';
+                    const machine = supplys[i].machineNum; //　機番
+                    const hasReady = supplys[i].readyCount > 0;　//既に登録
+                    let isReadyOrder = supplys[i].isReadyOrder;　// 準備フラグ
+                    const isLastToComplete = (supplys[i].readyCount + 1) == supplys[i].totalCount;　//　完了前の最後の項目
+
+                    if (!isReadyOrder && isLastToComplete && !renderedTotalButtons.has(machine)) {
+                        //　全登録の最終行
+                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
+                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
+                        renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
                     }
-                    else
-                        cell6.className = 'timeCount';
+                    else if (hasReady && isReadyOrder) {
+                        // 登録済み』ボタン表示＋Closeボタン無効化
+                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnRegistered">${supplys[i].displayNumber}</button>`;
+                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnCloseDisable"><i class="fa-solid fa-xmark"></i></button>`;
+                    }
+                    else {
+                        // 未準備
+                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnRegister">${supplys[i].displayNumber}</button>`;
+                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
+                    }
 
-                    cell6.setAttribute("data-time", dataTime);
-                    cell8.innerHTML = `${supplys[i].emptyBoxSupplyRequestId}`;
+                    // ================================
+                    cell8.innerHTML = `${supplys[i].partsSupplyRequestId}`;
                     cell8.className = 'supplyId';
-                    cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
                 }
             } else {
                 $(".supplyContent").hide();
@@ -228,42 +212,107 @@ function BindSupplysToGrid(supplys) {
         tdElements.forEach(counttimer);
         tdElements1.forEach(counttimer);
 
-        var buttons = document.querySelectorAll('.btnCompletion');
+        var btnRegister = document.querySelectorAll('.btnRegister');　//　登録
+        var buttonsClose = document.querySelectorAll('.btnClose');　//　欠品
+        var btnRegistered = document.querySelectorAll('.btnRegistered');　//　既に登録
+        var btnTotalRegister = document.querySelectorAll('.btnTotalRegister');　//　全件登録
 
-        // ボタン押下時に確認ダイアログ表示
-        buttons.forEach(function (button) {
+        btnRegister.forEach(btn => handleRegister(btn, true));　//　登録
+        btnRegistered.forEach(btn => handleRegister(btn, false));　//　既に登録
+
+        //　全件登録
+        btnTotalRegister.forEach(function (button) {
             button.addEventListener('click', function () {
                 var row = button.parentElement.parentElement;
                 var tdWithSupplyId = row.querySelector('.supplyId');
-                var tdWithBoxType = row.querySelector('.boxType');
-                var tdWithBoxCount = row.querySelector('.boxCount');
+                var tdWithMachineNumber = row.querySelector('.machine-number');
+                var tdWithPartsNum = row.querySelector('.partsNum');
 
                 // td要素のdata-timeとidを含むテキスト値を取得する
                 var dataSupplyId = tdWithSupplyId.textContent;
-                var dataBoxType = tdWithBoxType.textContent;
-                var dataBoxCount = tdWithBoxCount.textContent;
+                var dataMachineNumber = tdWithMachineNumber.textContent;
+                var dataPartsNum = tdWithPartsNum.textContent;
 
                 Swal.fire({
-                    title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録を行います。<br>よろしいですか？`,
+                    title: `依頼をすべて完了で登録してもよろしいですか？`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#0d6efd',
-                    cancelButtonText: 'キャンセル',
-                    confirmButtonText: '完了',
+                    cancelButtonText: 'いいえ',
+                    confirmButtonText: 'はい',
                     allowOutsideClick: false,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'POST',
-                            url: baseUrl + '/Preparation/Complete',
-                            data: { dataSupplyId: dataSupplyId },
+                            url: baseUrl + '/Parts/Complete',
+                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber },
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                            title: `箱種 ${dataMachineNumber} 箱数 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
                                             html: `<span style="color: red;">${response.res}</span>`,
+                                            confirmButtonColor: '#0d6efd',
+                                            confirmButtonText: '閉じる',
+                                            allowOutsideClick: false,
+                                        });
+                                    }, 500);
+                                }
+                            }
+                        }).done(function () {
+                            setTimeout(function () {
+                                $("#overlay").fadeOut(300);
+                            }, 500);
+                        });
+                    }
+                });
+            });
+        });
+
+        //　欠品
+        buttonsClose.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var row = button.parentElement.parentElement;
+                var tdWithSupplyId = row.querySelector('.supplyId');
+                var tdWithMachineNumber = row.querySelector('.machine-number');
+                var tdWithPartsNum = row.querySelector('.partsNum');
+
+                // td要素のdata-timeとidを含むテキスト値を取得する
+                var dataSupplyId = tdWithSupplyId.textContent;
+                var dataMachineNumber = tdWithMachineNumber.textContent;
+                var dataPartsNum = tdWithPartsNum.textContent;
+
+                Swal.fire({
+                    title: '欠品の登録には職制のパスワードが必要です。',
+                    input: 'password',
+                    inputPlaceholder: 'パスワードを入力してください',
+                    showCancelButton: true,
+                    icon: 'warning',
+                    cancelButtonText: 'キャンセル',
+                    confirmButtonText: '欠品登録',
+                    allowOutsideClick: false,
+                    preConfirm: (value) => {
+                        if (!value) {
+                            Swal.showValidationMessage('パスワードを空にすることはできません');
+                            return false;
+                        }
+                        return value;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'POST',
+                            url: baseUrl + '/Parts/RegisterOutOfStock',
+                            data: { dataSupplyId: dataSupplyId, password: result.value },
+                            success: function (response) {
+                                if (response.res != true) {
+                                    setTimeout(function () {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: `機番 ${dataMachineNumber} 所番地 ${dataPartsNum}の<br>の欠品登録ができませんでした。<br>再度お試しください。`,
+                                            html: `<span style="color: red;">${response.errorMessage}</span>`,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
@@ -281,6 +330,40 @@ function BindSupplysToGrid(supplys) {
             });
         });
     }
+}
+
+//　登録検出
+function handleRegister(button, isRegister) {
+    button.addEventListener('click', function () {
+        var row = button.parentElement.parentElement;
+        var dataSupplyId = row.querySelector('.supplyId').textContent;
+        var dataMachineNumber = row.querySelector('.machine-number').textContent;
+        var dataPartsNum = row.querySelector('.partsNum').textContent;
+
+        $.ajax({
+            type: 'POST',
+            url: baseUrl + '/Parts/Register',
+            data: { dataSupplyId: dataSupplyId, isRegister: isRegister },
+            success: function (response) {
+                if (response.res != true) {
+                    setTimeout(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: `機番 ${dataMachineNumber} 所番地 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                            html: `<span style="color: red;">${response.res}</span>`,
+                            confirmButtonColor: '#0d6efd',
+                            confirmButtonText: '閉じる',
+                            allowOutsideClick: false,
+                        })
+                    }, 500);
+                }
+            }
+        }).done(function () {
+            setTimeout(function () {
+                $("#overlay").fadeOut(300);
+            }, 500);
+        });
+    });
 }
 // ----------------------------------------------------------------------//
 
@@ -383,25 +466,27 @@ function BindTransportsToGrid(transports) {
 
                     // 現在日時
                     var today = new Date();
+
                     // 依頼時間
                     var resDateTime = new Date(transports[i].correctedRequestDatetime);
+                    var elapsedMs = today - resDateTime;　// 残り時間
+                    var countdownMs = transports[i].countDownTime * 60000;　//カウント時間
+                    var remainingMs = countdownMs - elapsedMs;　// 経過時間
+                    var dataTime = elapsedMs;
+                    var subResult;
 
-                    // 2つの日付のミリ秒単位の差を計算
-                    var differenceTime = Math.abs(today - resDateTime);
-
-                    // ミリ秒から時間、分変換
-                    var minuteNum = Math.floor(differenceTime / (1000 * 60));
-
-                    // mm:ss表記に変換
-                    var subResult = "";
-                    // 60:00以上はデフォルト"59:59"
-                    if (minuteNum >= 60)
+                    if (elapsedMs >= 60 * 60000) { // 1時間経過した場合、表示を「59:59」で固定
                         subResult = "59:59";
-                    else
-                        subResult = subtractTime(today, resDateTime, subResult);　// 時間を引く
-
-                    var timeTmp = subResult.split(':');
-                    var dataTime = ((parseInt(timeTmp[0]) * 60) + (parseInt(timeTmp[1]))) * 1000;
+                    } else if (remainingMs > 0) { // カウントダウン中（残り時間がまだある）
+                        const minutes = Math.floor(remainingMs / 60000);
+                        const seconds = Math.floor((remainingMs % 60000) / 1000);
+                        subResult = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    } else { // カウントアップ中（カウントダウン終了後の経過時間を表示）
+                        const totalMinutes = transports[i].countDownTime + Math.floor((elapsedMs - countdownMs) / 60000);
+                        const seconds = Math.floor((elapsedMs % 60000) / 1000);
+                        const displayMinutes = Math.min(totalMinutes, 59);
+                        subResult = `${displayMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
 
                     cell2.innerHTML = `${transports[i].machineNum}`;
 
@@ -418,7 +503,6 @@ function BindTransportsToGrid(transports) {
 
                     cell5.innerHTML = `${transports[i].boxCount}`;
                     cell5.className = 'boxCount';
-                    cell6.innerHTML = `${subResult}`;
                     cell7.className = 'statusBtn';
 
                     if (transports[i].emptyBoxSupplyStatusId == 2)
@@ -427,13 +511,12 @@ function BindTransportsToGrid(transports) {
                     if (transports[i].emptyBoxSupplyStatusId == 3)
                         cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
 
-                    if (dataTime < 0) {
-                        cell6.className = 'timeCount redflag';
-                    }
-                    else
-                        cell6.className = 'timeCount';
+                    cell6.innerHTML = subResult;
+                    cell6.setAttribute("data-time", dataTime); // 表示時間
+                    cell6.setAttribute("data-countdown", supplys[i].countDownTime);
+                    cell6.setAttribute("data-request-datetime", supplys[i].correctedRequestDatetime);
+                    cell6.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
-                    cell6.setAttribute("data-time", dataTime);
                     cell8.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
                     cell8.className = 'transportId';
                 }
@@ -640,117 +723,138 @@ function countLengthText(cell3) {
         cell3.style.fontSize = 30 + 'px';
 }
 
-// カウントタイマー
+// data-time を毎秒更新
 function counttimer(element) {
-    // 表示されている時間を取得
-    const startTime = parseInt(element.getAttribute('data-time'), 10);
-    let timeLeft = startTime;
-    let isCountingDown = true;
+    // サーバーから元のデータを取得
+    if (element.dataset.timerStarted === "true") return;
+    element.dataset.timerStarted = "true";
 
-    // カウントダウン・カウントアップを開始する
-    let countdownInterval;
-    let countupInterval;
+    const requestTime = new Date(element.getAttribute('data-request-datetime')).getTime();
+    const countdownMinutes = parseInt(element.getAttribute("data-countdown"), 10) || 0;
+    const countdownMs = countdownMinutes * 60000;
 
-    // 経過時間が59:59でない場合はカウントダウンまたはカウントアップ
-    if (timeLeft != 3599000) { // 3599000 (00:59:59)
-        // 経過時間がカウントダウン時間を超える場合はカウントアップ
-        if (timeLeft < 0) {
-            timeLeft = -1 * timeLeft + 10 * 60000;
-            isCountingDown = false;
+    const interval = setInterval(() => {
+        const now = Date.now();
+        // 経過時間を計算する（リクエストから現在まで）
+        const elapsedMs = now - requestTime;
+        //  残り時間（マイナスになる場合もあります）
+        const remainingMs = countdownMs - elapsedMs;
+
+        // data-time は経過した時間（経過時間）を保持
+        const dataTime = elapsedMs;
+        element.setAttribute("data-time", dataTime);
+
+        if (elapsedMs >= 60 * 60000) {
+            element.textContent = "59:59";
+            element.className = 'timeCount redflag';
+            clearInterval(interval);
+            return;
         }
 
-        // 時間表示(mm:ss)を更新
-        updateDisplay(element, timeLeft);
+        let displayText;
+        // ステータスを決定
+        if (remainingMs > 0) {　// カウントダウン中（残り時間がまだある場合）
+            const minutes = Math.floor(remainingMs / 60000);
+            const seconds = Math.floor((remainingMs % 60000) / 1000);
+            displayText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            element.className = 'timeCount';
+        } else {　// カウントアップ中（カウントダウン終了後）
+            const overMs = elapsedMs - countdownMs;
+            const totalMinutes = countdownMinutes + Math.floor(overMs / 60000);
+            const seconds = Math.floor((overMs % 60000) / 1000);
+            const displayMinutes = Math.min(totalMinutes, 59);
 
-        // 経過時間がカウントダウン時間を超えていない場合はカウントダウン
-        if (timeLeft > 0 && isCountingDown) {
-            // 1秒おきに更新
-            countdownInterval = setInterval(function () {
-                // 1秒ずつ減算
-                if (timeLeft > 0)
-                    timeLeft -= 1000;
+            if (totalMinutes >= 59 && seconds >= 59) {　// 59:59 に到達した場合
+                displayText = "59:59";
+                element.className = 'timeCount redflag';
+                clearInterval(interval);
+            } else {　// 通常のカウントアップ表示
+                displayText = `${displayMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                element.className = 'timeCount redflag';
+            }
+        }
 
-                // 時間表示(mm:ss)を更新
-                updateDisplay(element, timeLeft);
+        element.textContent = displayText;
+    }, 1000);
+}
 
-                // 経過時間がカウントダウン時間以上になったら、カウントアップに変更
-                if (timeLeft <= 0) {
-                    clearInterval(countdownInterval);
+// ==================== 自動並び替え ==================== //
 
-                    // 初期の時間から再びカウントダウンを開始する
-                    timeLeft = startTime;
-                    isCountingDown = false;
-                    timeLeft = countdownMinutesLocal * 60000;
 
-                    // 赤字で1秒ずつ加算
-                    countupInterval = setInterval(function () {
-                        timeLeft += 1000;
-                        element.className = 'timeCount redflag'
+//　行を並べる
+function sortTableRows() {
+    // 供給ページか輸送ページかを判定
+    const isSupplyPage = !!document.querySelector("#tblSupplyLeft");
+    const isTransportPage = !!document.querySelector("#tblTransportLeft");
+    if (!isSupplyPage && !isTransportPage) return;　// 対象ページでなければ処理しない
 
-                        // 59:59になったらクリア
-                        if (timeLeft == 3599000)
-                            clearInterval(countupInterval);
+    // 左右のテーブルIDをページ種別に応じて設定
+    const leftTableId = isSupplyPage ? "#tblSupplyLeft" : "#tblTransportLeft";
+    const rightTableId = isSupplyPage ? "#tblSupplyRight" : "#tblTransportRight";
+    // 左右テーブルの tbody を取得
+    const leftTbody = document.querySelector(`${leftTableId} tbody`);
+    const rightTbody = document.querySelector(`${rightTableId} tbody`);
+    if (!leftTbody || !rightTbody) return;　// tbody が存在しなければ終了
 
-                        // 時間表示(mm:ss)を更新
-                        updateDisplay(element, timeLeft);
-                    }, 1000);
-                }
-            }, 1000);
+    // 左右両方のテーブルからすべての行（tr）を取得
+    const allRows = Array.from(document.querySelectorAll(`${leftTableId} tbody tr, ${rightTableId} tbody tr`));
+    if (allRows.length === 0) return;
 
-            // 経過時間がカウントダウン時間を超えている場合はカウントアップ
+    // 並び替え用に各行データをパース
+    const parsedRows = allRows.map(row => {
+        const tdTime = row.querySelector(".timeCount");　// 時間表示セル
+        const tdId = row.querySelector(isSupplyPage ? ".supplyId" : ".transportId");　// IDセル
+        const timeText = tdTime?.textContent.trim() || "00:00";　// 表示時間
+        const isCountUp = tdTime?.classList.contains("redflag"); // redflag = カウントアップ表示
+        const id = parseInt(tdId?.textContent || "0", 10);　// ID 数値変換
+        return { row, timeText, isCountUp, id };　// 並び替えに必要な情報を返す
+    });
+
+
+    // 並べる処理
+    parsedRows.sort((a, b) => {
+        // 「59:59」を最優先で先頭に並べる
+        if (a.timeText === "59:59" && b.timeText !== "59:59") return -1;
+        if (b.timeText === "59:59" && a.timeText !== "59:59") return 1;
+
+        // カウントアップをカウントダウンより優先して前に並べる
+        if (a.isCountUp && !b.isCountUp) return -1;
+        if (!a.isCountUp && b.isCountUp) return 1;
+
+        // 同じグループ内では時間を比較して並べる
+        const timeA = a.timeText.split(':').map(Number);
+        const timeB = b.timeText.split(':').map(Number);
+        const totalA = timeA[0] * 60 + timeA[1];
+        const totalB = timeB[0] * 60 + timeB[1];
+
+        if (a.isCountUp) {
+            // カウントアップ：時間の大きい順（降順）
+            if (totalA > totalB) return -1;
+            if (totalA < totalB) return 1;
         } else {
-            isCountingDown = false;
-
-            // 1秒おきに更新
-            countupInterval = setInterval(function () {
-                // 赤字で1秒ずつ加算
-                timeLeft += 1000;
-                element.className = 'timeCount redflag'
-
-                // 59:59になったらクリア
-                if (timeLeft == 3599000)
-                    clearInterval(countupInterval);
-
-                // 時間表示(mm:ss)を更新
-                updateDisplay(element, timeLeft);
-            }, 1000);
+            // カウントダウン：時間の小さい順（昇順）
+            if (totalA < totalB) return -1;
+            if (totalA > totalB) return 1;
         }
-    } else {
-        // 59:59の場合は赤字表示
-        countupInterval = setInterval(function () {
-            element.className = 'timeCount redflag'
-            // 時間表示(mm:ss)を更新
-            updateDisplay(element, timeLeft);
-        }, 10);
-    }
+
+        // 同値なら ID が大きい順
+        return b.id - a.id;
+    });
+
+    leftTbody.innerHTML = "";
+    rightTbody.innerHTML = "";
+    parsedRows.forEach((item, index) => {
+        if (index < 6) leftTbody.appendChild(item.row);
+        else rightTbody.appendChild(item.row);
+    });
 }
 
-// 現在時刻から依頼日時を引き、HH:mm:ssに変換
-function subtractTime(today, resDateTime, subResult) {
-    var differenceTime = Math.abs(today - resDateTime);
-
-    // ミリ秒から時間、分、秒に変換する
-    var minuteResult = Math.floor((differenceTime % (1000 * 60 * 60)) / (1000 * 60));
-    var secondResult = Math.floor((differenceTime % (1000 * 60)) / 1000);
-
-    // 結果を 'HH:mm:ss' 形式の文字列にフォーマットする
-    subResult = `${(countdownMinutesLocal - minuteResult).toString().padStart(2, '0')}:${(0 - secondResult.toString().padStart(2, '0'))}`;
-    return subResult;
-}
+setInterval(sortTableRows, 1000);
 
 // ローディング表示
 $(document).ajaxSend(function () {
     $("#overlay").fadeIn();
 });
-
-// 時間表示(mm:ss)を更新
-function updateDisplay(element, time) {
-    var minutes = Math.floor(time / 60000);
-    if (minutes >= 60)
-        minutes = 0;
-    var seconds = Math.floor((time % 60000) / 1000);
-    element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
 
 // 文字列の全角の長さを計算
 function countFullwidthCharacters(str) {
