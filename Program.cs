@@ -23,8 +23,7 @@ builder.Services.AddSingleton<SubscribePartsTableDependency>();
 
 builder.Services.AddSingleton<TransportationHub>();
 builder.Services.AddSingleton<SubscribeTransportationTableDependency>();
-builder.Services.AddSingleton<CountdownHub>();
-builder.Services.AddSingleton<SubscribeCountdownMasterTableDependency>();
+
 builder.Services.AddSingleton<MachineHub>();
 builder.Services.AddSingleton<SubscribeMachineTableDependency>();
 
@@ -52,8 +51,7 @@ app.UseWebSockets();
 app.MapHub<PreparationHub>("preparationHub");
 app.MapHub<PartsHub>("partsHub");
 app.MapHub<TransportationHub>("transportationHub");
-app.MapHub<CountdownHub>("/countdownHub");
-app.MapHub<MachineHub>("/machineHub");
+app.MapHub<MachineHub>("machineHub");
 
 app.UseEndpoints(endpoints =>
 {
@@ -65,7 +63,6 @@ app.UseEndpoints(endpoints =>
 app.UseSqlTableDependency<SubscribePreparationTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribePartsTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeTransportationTableDependency>(connectionString);
-app.UseSqlTableDependency<SubscribeCountdownMasterTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeMachineTableDependency>(connectionString);
 
 app.Run();

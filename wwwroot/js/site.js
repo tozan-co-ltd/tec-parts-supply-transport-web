@@ -4,30 +4,6 @@ var pathName = window.location.pathname.split('/');
 if (pathName.length > 2)
     baseUrl = baseUrl + "/" + pathName[1];
 
-var connectionCountDown = new signalR.HubConnectionBuilder().withUrl("/countdownHub").build();
-$(function () {
-    connectionCountDown.start().then(function () {
-        InvokeMCountdown();
-    })
-});
-
-// ハブのメソッドを呼び出す
-function InvokeMCountdown() {
-    connectionCountDown.invoke("SendMCountdown").catch(function (error) {
-        // Controllerに接続できない場合はエラー
-        console.log("Error - invoke catch");
-    });
-}
-
-// 短い遅延後に再接続を試みる
-connectionCountDown.onclose(function (error) {
-    setTimeout(function () {
-        connectionCountDown.start().then(function () {
-            InvokeMCountdown();
-        });
-    }, 500);
-});
-
 // -----------------------------------準備画面-----------------------------------//
 // SignalRを使用して接続を初期化する
 const isPreparationPage = document.getElementById("parts-page");
@@ -372,7 +348,7 @@ function handleRegister(button, isRegister) {
 // SignalRを使用して接続を初期化する
 const isTransportationPage = document.getElementById("transportation-page");
 if (isTransportationPage) {
-    var connectionTransport = new signalR.HubConnectionBuilder().withUrl("/transportationHub").build();
+    var connectionTransport = new signalR.HubConnectionBuilder().withUrl("transportationHub").build();
 
     $(function () {
         connectionTransport.start().then(function () {
@@ -887,7 +863,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // SignalRを使用して接続を初期化する
 const isMachinePage = document.getElementById("machine-page");
 if (isMachinePage) {
-    var connectionMachine = new signalR.HubConnectionBuilder().withUrl("/machineHub").build();
+    var connectionMachine = new signalR.HubConnectionBuilder().withUrl("machineHub").build();
 
     $(function () {
         connectionMachine.start().then(function () {
