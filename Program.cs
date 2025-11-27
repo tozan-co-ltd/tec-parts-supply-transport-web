@@ -47,8 +47,8 @@ app.UseWebSockets();
 
 app.MapHub<PreparationHub>("preparationHub");
 app.MapHub<TransportationHub>("transportationHub");
-app.MapHub<CountdownHub>("/countdownHub");
-app.MapHub<MachineHub>("/machineHub");
+app.MapHub<CountdownHub>("countdownHub");
+app.MapHub<MachineHub>("machineHub");
 
 app.UseEndpoints(endpoints =>
 {
