@@ -70,7 +70,8 @@ namespace tec_parts_supply_transport_web.Repositories
                                 t.transportation_IPaddress AS TransportationIPaddress,
                                 t.is_deleted AS IsDeleted,
                                 m.count_down_time AS CountDownTime,
-                                t.address AS Address
+                                t.address AS Address,
+                                t.supply_location AS SupplyLocation
                             FROM t_parts_supply_request AS t
                             LEFT JOIN m_machine_number_basic_information m
                                             ON t.machine_num = m.machine_num

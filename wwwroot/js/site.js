@@ -467,7 +467,7 @@ function BindTransportsToGrid(transports) {
                     cell2.innerHTML = `${transports[i].machineNum}`;
 
                     //cell3.innerHTML = `${transports[i].boxType}`;
-                    cell3.innerHTML = `${transports[i].address}`;
+                    cell3.innerHTML = `${transports[i].supplyLocation}`;
                     cell3.className = 'boxType';
 
                     //cell4.innerHTML = `${transports[i].boxType}`;
