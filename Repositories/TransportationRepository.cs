@@ -17,10 +17,10 @@ namespace tec_parts_supply_transport_web.Repositories
             this.connectionString = connectionString;
         }
 
-        public List<TransportationModel> GetListTransports(string sql)
+        public List<PartsModel> GetListTransports(string sql)
         {
             // 戻り値
-            List<TransportationModel> transports = new();
+            List<PartsModel> transports = new();
 
             // DB接続
             try
@@ -33,7 +33,7 @@ namespace tec_parts_supply_transport_web.Repositories
                     connection.ConnectionString = connectionString;
                     connection.Open();
 
-                    transports = connection.Query<TransportationModel>(sql).ToList();
+                    transports = connection.Query<PartsModel>(sql).ToList();
                 }
                 return transports;
             }
@@ -52,23 +52,30 @@ namespace tec_parts_supply_transport_web.Repositories
         {
             // "準備完了"、"運搬開始"のレコード
             var sql = $@"SELECT 
-                            empty_box_supply_request_id AS EmptyBoxSupplyRequestId
-                            ,machine_num                AS MachineNum
-                            ,permanent_abbreviation     AS PermanentAbbreviation
-                            ,box_type                   AS BoxType
-                            ,box_count                  AS BoxCount
-                            ,request_datetime           AS RequestDatetime
-                            ,corrected_request_datetime AS CorrectedRequestDatetime
-                            ,ready_datetime             AS ReadyDatetime
-                            ,empty_box_supply_status_id AS EmptyBoxSupplyStatusId
-                            ,is_express                 AS IsExpress
-                        FROM t_empty_box_supply_request 
-                        WHERE transportation_end_datetime is NULL 
-                            AND is_deleted = 0 
-                            AND empty_box_supply_status_id != {(int)EnumEmptyBoxSupplyStatus.Requesting} 
-                            AND empty_box_supply_status_id != {(int)EnumEmptyBoxSupplyStatus.TransportationEnd}
-                            ORDER BY request_datetime ASC";
-
+                                t.parts_supply_request_id AS PartsSupplyRequestId,
+                                t.machine_num AS MachineNum,
+                                t.parts_num AS PartsNum,
+                                t.box_type AS BoxType,
+                                t.required_quantity AS RequiredQuantity,
+                                t.request_datetime AS RequestDatetime,
+                                t.corrected_request_datetime AS CorrectedRequestDatetime,
+                                t.is_ready_order AS IsReadyOrder,
+                                t.ready_datetime AS ReadyDatetime,
+                                t.transportation_start_datetime AS TransportationStartDatetime,
+                                t.transportation_end_datetime AS TransportationEndDatetime,
+                                t.is_completed AS IsCompleted,
+                                t.is_out_of_stock AS IsOutOfStock,
+                                t.request_device_name AS RequestDeviceName,
+                                t.ready_IPaddress AS ReadyIPaddress,
+                                t.transportation_IPaddress AS TransportationIPaddress,
+                                t.is_deleted AS IsDeleted,
+                                m.count_down_time AS CountDownTime,
+                                t.address AS Address
+                            FROM t_parts_supply_request AS t
+                            LEFT JOIN m_machine_number_basic_information m
+                                            ON t.machine_num = m.machine_num
+                            WHERE t.is_deleted = 0 AND t.is_out_of_stock = 0;
+                        ";
             return sql;
         }
 
