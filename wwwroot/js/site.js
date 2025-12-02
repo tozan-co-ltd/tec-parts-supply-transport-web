@@ -467,30 +467,29 @@ function BindTransportsToGrid(transports) {
                     cell2.innerHTML = `${transports[i].machineNum}`;
 
                     //cell3.innerHTML = `${transports[i].boxType}`;
-                    cell3.innerHTML = `304H-15-2`;
+                    cell3.innerHTML = `${transports[i].address}`;
                     cell3.className = 'boxType';
 
                     //cell4.innerHTML = `${transports[i].boxType}`;
-                    cell4.innerHTML = `58151-52100`;
+                    cell4.innerHTML = `${transports[i].partsNum}`;
                     cell4.className = 'boxType';
 
                     // 異なるテキストの長さに応じて文字サイズを調整
                     countLengthText(cell3);
 
-                    cell5.innerHTML = `${transports[i].boxCount}`;
+                    cell5.innerHTML = `${transports[i].requiredQuantity}`;
                     cell5.className = 'boxCount';
                     cell7.className = 'statusBtn';
 
-                    if (transports[i].emptyBoxSupplyStatusId == 2)
+                    if (transports[i].readyDatetime != null) {
                         cell7.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
-
-                    if (transports[i].emptyBoxSupplyStatusId == 3)
+                    } else { 
                         cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
-
+                    }
                     cell6.innerHTML = subResult;
                     cell6.setAttribute("data-time", dataTime); // 表示時間
-                    cell6.setAttribute("data-countdown", supplys[i].countDownTime);
-                    cell6.setAttribute("data-request-datetime", supplys[i].correctedRequestDatetime);
+                    cell6.setAttribute("data-countdown", transports[i].countDownTime);
+                    cell6.setAttribute("data-request-datetime", transports[i].correctedRequestDatetime);
                     cell6.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
                     cell8.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
@@ -719,7 +718,6 @@ function counttimer(element) {
         // data-time は経過した時間（経過時間）を保持
         const dataTime = elapsedMs;
         element.setAttribute("data-time", dataTime);
-
         if (elapsedMs >= 60 * 60000) {
             element.textContent = "59:59";
             element.className = 'timeCount redflag';

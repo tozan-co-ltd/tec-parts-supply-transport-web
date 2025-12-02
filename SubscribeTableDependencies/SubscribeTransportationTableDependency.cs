@@ -6,7 +6,7 @@ namespace tec_parts_supply_transport_web.SubscribeTableDependencies
 {
     public class SubscribeTransportationTableDependency : ISubscribeTableDependency
     {
-        SqlTableDependency<TransportationModel> tableDependency;
+        SqlTableDependency<PartsModel> tableDependency;
         TransportationHub transportationHub;
 
         public SubscribeTransportationTableDependency(TransportationHub transportationHub)
@@ -19,7 +19,7 @@ namespace tec_parts_supply_transport_web.SubscribeTableDependencies
         {
             try
             {
-                tableDependency = new SqlTableDependency<TransportationModel>(connectionString);
+                tableDependency = new SqlTableDependency<PartsModel>(connectionString);
                 tableDependency.OnChanged += TableDependency_OnChanged;
                 tableDependency.OnError += TableDependency_OnError;
                 tableDependency.Start();
@@ -31,7 +31,7 @@ namespace tec_parts_supply_transport_web.SubscribeTableDependencies
         }
 
         // 変更されたテーブルの依存関係
-        private void TableDependency_OnChanged(object sender, TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<TransportationModel> e)
+        private void TableDependency_OnChanged(object sender, TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<PartsModel> e)
         {
             // データを更新される時HUBのメソッドを呼びます
             if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
@@ -43,7 +43,7 @@ namespace tec_parts_supply_transport_web.SubscribeTableDependencies
         // エラー時のテーブルの依存関係
         private void TableDependency_OnError(object sender, TableDependency.SqlClient.Base.EventArgs.ErrorEventArgs e)
         {
-            Console.WriteLine($"{nameof(TransportationModel)} SqlTableDependency error: {e.Error.Message}");
+            Console.WriteLine($"{nameof(PartsModel)} SqlTableDependency error: {e.Error.Message}");
         }
     }
 }
