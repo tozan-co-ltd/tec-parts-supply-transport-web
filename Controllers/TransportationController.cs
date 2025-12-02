@@ -45,7 +45,7 @@ namespace tec_parts_supply_transport_web.Controllers
             }
             catch (Exception ex)
             {
-                var exceptionMessage = ex.Message;
+                var exceptionMessage = "Incoming soon";
                 var result = new { res = exceptionMessage };
 
                 return Json(result);

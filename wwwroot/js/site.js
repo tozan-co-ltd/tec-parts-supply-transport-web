@@ -481,9 +481,9 @@ function BindTransportsToGrid(transports) {
                     cell5.className = 'boxCount';
                     cell7.className = 'statusBtn';
 
-                    if (transports[i].readyDatetime != null) {
+                    if (transports[i].transportationStartDatetime == null && transports[i].transportationEndDatetime == null) {
                         cell7.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
-                    } else { 
+                    } else if (transports[i].transportationStartDatetime != null && transports[i].transportationEndDatetime == null) { 
                         cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
                     }
                     cell6.innerHTML = subResult;

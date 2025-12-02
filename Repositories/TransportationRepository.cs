@@ -74,7 +74,7 @@ namespace tec_parts_supply_transport_web.Repositories
                             FROM t_parts_supply_request AS t
                             LEFT JOIN m_machine_number_basic_information m
                                             ON t.machine_num = m.machine_num
-                            WHERE t.is_deleted = 0 AND t.is_out_of_stock = 0;
+                            WHERE t.ready_datetime IS NOT NULL AND t.is_ready_order = 1 AND t.is_deleted = 0 AND t.is_completed = 0;
                         ";
             return sql;
         }
