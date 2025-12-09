@@ -57,6 +57,8 @@ namespace tec_parts_supply_transport_web.Models
         public int IsDeleted { get; set; }
 
         public string Address { get; set; }
+        [Column("supply_location")]
+        public string SupplyLocation { get; set; }
 
         [NotMapped]
         public string DisplayNumber { get; set; }

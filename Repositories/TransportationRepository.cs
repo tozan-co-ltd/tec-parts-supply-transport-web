@@ -70,11 +70,12 @@ namespace tec_parts_supply_transport_web.Repositories
                                 t.transportation_IPaddress AS TransportationIPaddress,
                                 t.is_deleted AS IsDeleted,
                                 m.count_down_time AS CountDownTime,
-                                t.address AS Address
+                                t.address AS Address,
+                                t.supply_location AS SupplyLocation
                             FROM t_parts_supply_request AS t
                             LEFT JOIN m_machine_number_basic_information m
                                             ON t.machine_num = m.machine_num
-                            WHERE t.is_deleted = 0 AND t.is_out_of_stock = 0;
+                            WHERE t.ready_datetime IS NOT NULL AND t.is_ready_order = 1 AND t.is_deleted = 0 AND t.is_completed = 0;
                         ";
             return sql;
         }
