@@ -549,6 +549,10 @@ h3 {
     padding-bottom: 0.5125rem;
 }
 
+.bg-grey-out {
+    background-color: #C5C7BC !important;
+}
+
 :root {
     --bs-body-bg: unset;
 }

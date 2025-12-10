@@ -8,7 +8,7 @@ if (pathName.length > 2)
 // SignalRを使用して接続を初期化する
 const isPreparationPage = document.getElementById("parts-page");
 if (isPreparationPage) {
-    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("/partsHub").build();
+    var connectionSupply = new signalR.HubConnectionBuilder().withUrl("partsHub").build();
     $(function () {
         connectionSupply.start().then(function () {
             InvokeSupplys();
