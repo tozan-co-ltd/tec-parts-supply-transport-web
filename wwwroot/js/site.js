@@ -154,12 +154,21 @@ function BindSupplysToGrid(supplys) {
                     const hasReady = supplys[i].readyCount > 0;　//既に登録
                     let isReadyOrder = supplys[i].isReadyOrder;　// 準備フラグ
                     const isLastToComplete = (supplys[i].readyCount + 1) == supplys[i].totalCount;　//　完了前の最後の項目
+                    const isNowExactlyFull = supplys[i].readyCount == supplys[i].totalCount;
 
                     if (!isReadyOrder && isLastToComplete && !renderedTotalButtons.has(machine)) {
                         //　全登録の最終行
                         cell7.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
                         cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
                         renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
+                    }
+                    else if (isReadyOrder && isNowExactlyFull && !renderedTotalButtons.has(machine)) {
+                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
+                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
+                        renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
+
+                        // 自動的登録
+                        autoRegister(supplys[i])
                     }
                     else if (hasReady && isReadyOrder) {
                         // 登録済み』ボタン表示＋Closeボタン無効化
@@ -307,6 +316,75 @@ function BindSupplysToGrid(supplys) {
         });
     }
 }
+
+// 自動的登録
+function autoRegister(item) {
+    setTimeout(() => {
+        const dataSupplyId = item.partsSupplyRequestId;
+        const machineNum = item.machineNum;
+
+        Swal.fire({
+            title: `機番：${machineNum}<br>依頼をすべて完了で登録してもよろしいですか？`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d6efd',
+            cancelButtonText: 'いいえ',
+            confirmButtonText: 'はい',
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + '/Parts/Complete',
+                    data: { dataSupplyId: dataSupplyId, machineNum: machineNum },
+                    success: function (response) {
+                        if (response.res != true) {
+                            setTimeout(function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: `箱種 ${machineNum} 箱数 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                    html: `<span style="color: red;">${response.res}</span>`,
+                                    confirmButtonColor: '#0d6efd',
+                                    confirmButtonText: '閉じる',
+                                    allowOutsideClick: false,
+                                });
+                            }, 500);
+                        }
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 500);
+                });
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + '/Parts/Register',
+                    data: { dataSupplyId: dataSupplyId, isRegister: false },
+                    success: function (response) {
+                        if (response.res != true) {
+                            setTimeout(function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: `機番 ${dataMachineNumber} 所番地 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                    html: `<span style="color: red;">${response.res}</span>`,
+                                    confirmButtonColor: '#0d6efd',
+                                    confirmButtonText: '閉じる',
+                                    allowOutsideClick: false,
+                                })
+                            }, 500);
+                        }
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 500);
+                });
+            }
+        });
+    }, 600); 
+}
+
 
 //　登録検出
 function handleRegister(button, isRegister) {
