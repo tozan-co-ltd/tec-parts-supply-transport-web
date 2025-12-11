@@ -131,13 +131,9 @@ function BindSupplysToGrid(supplys) {
 
                     cell2.innerHTML = `${supplys[i].address}`;
                     cell2.className = 'address';
-                    countLengthText(cell2);
 
                     cell3.innerHTML = `${supplys[i].partsNum}`;
                     cell3.className = 'partsNum';
-
-                    // 異なるテキストの長さに応じて文字サイズを調整
-                    countLengthText(cell3);
 
                     cell4.innerHTML = `${supplys[i].requiredQuantity}`;
                     cell4.className = 'boxCount';
@@ -545,13 +541,9 @@ function BindTransportsToGrid(transports) {
 
                     cell2.innerHTML = `${transports[i].address}`;
                     cell2.className = 'address';
-                    countLengthText(cell2);
 
                     cell3.innerHTML = `${transports[i].partsNum}`;
                     cell3.className = 'partsNum';
-
-                    // 異なるテキストの長さに応じて文字サイズを調整
-                    countLengthText(cell3);
 
                     cell4.innerHTML = `${transports[i].requiredQuantity}`;
                     cell4.className = 'boxCount';
