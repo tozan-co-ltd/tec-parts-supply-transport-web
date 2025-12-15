@@ -71,6 +71,7 @@ namespace tec_parts_supply_transport_web.Repositories
                                 t.transportation_IPaddress AS TransportationIPaddress,
                                 t.is_deleted AS IsDeleted,
                                 m.count_down_time AS CountDownTime,
+                                m.parts_supply_AGV AS PartsSupplyAGV,
                                 t.address AS Address
                             FROM t_parts_supply_request AS t
                             LEFT JOIN m_machine_number_basic_information m
@@ -87,18 +88,34 @@ namespace tec_parts_supply_transport_web.Repositories
         /// 部品準備取得SQL作成
         /// </summary>
         /// <returns>SQL</returns>
-        public static string CreateSQLToGetPartsIdByMachineNum(string machineNum)
+        public static string CreateSQLToGetPartsIdByMachineNum(
+    string machineNum,
+    string workType)
         {
-            // "依頼中"のレコード
-            var sql = $@"SELECT 
-                                t.parts_supply_request_id AS PartsSupplyRequestId
-                            FROM t_parts_supply_request AS t
-                            WHERE t.is_deleted = 0
-                              AND t.machine_num = {machineNum};
-                        ";
+            string boxTypeCondition = string.Empty;
+
+            if (workType == Const.C_WORK_LIFT)
+                // box_type が TP 以外
+                boxTypeCondition = "AND t.box_type NOT LIKE 'TP%'";
+            else if (workType == Const.C_WORK_TAGNOVA)
+                // box_type が TP
+                boxTypeCondition = "AND t.box_type LIKE 'TP%'";
+
+            var sql = $@"
+                SELECT 
+                    t.parts_supply_request_id AS PartsSupplyRequestId,
+                    m.parts_supply_AGV AS PartsSupplyAGV
+                FROM t_parts_supply_request AS t
+                LEFT JOIN m_machine_number_basic_information AS m
+                       ON t.machine_num = m.machine_num
+                WHERE t.is_deleted = 0
+                  AND t.machine_num = {machineNum}
+                  {boxTypeCondition};
+            ";
 
             return sql;
         }
+
 
 
 
@@ -124,6 +141,56 @@ namespace tec_parts_supply_transport_web.Repositories
                 ";
             return sql;
         }
+
+
+        /// <summary>
+        /// 部品準備に更新するSQL作成
+        /// </summary>
+        /// <param name="parts_supply_request_id"></param>
+        /// <remarks>UPDATE文</remarks>
+        /// <returns>SQL</returns>
+        public static string CreateSQLToUpdateCompletePartsSupplyAGV(int parts_supply_request_id, string workType)
+        {
+            // IPアドレス取得
+            string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
+                .AddressList
+                .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                ?.ToString() ?? "NotFound";
+
+            string boxTypeCondition = string.Empty;
+
+            if (workType == Const.C_WORK_LIFT)
+                // box_type が TP 以外
+                boxTypeCondition = "AND box_type NOT LIKE 'TP%'";
+            else if (workType == Const.C_WORK_TAGNOVA)
+                // box_type が TP
+                boxTypeCondition = "AND box_type LIKE 'TP%'";
+
+            var sql = $@"
+                UPDATE t_parts_supply_request
+                SET is_ready_order = 1,
+                    ready_datetime = GETDATE(),
+                    transportation_start_datetime =
+                        CASE 
+                            WHEN transportation_start_datetime IS NULL THEN GETDATE()
+                            ELSE transportation_start_datetime 
+                        END,
+                    transportation_end_datetime =
+                        CASE 
+                            WHEN transportation_end_datetime IS NULL THEN GETDATE()
+                            ELSE transportation_end_datetime 
+                        END,
+                    is_completed = 1,
+                    transportation_IPaddress = '{readyIpAddress}',
+                    ready_IPaddress = '{readyIpAddress}'
+                WHERE parts_supply_request_id = {parts_supply_request_id}
+                {boxTypeCondition};
+            ";
+
+            return sql;
+        }
+
+
 
 
         /// <summary>

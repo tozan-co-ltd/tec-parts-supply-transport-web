@@ -15,14 +15,20 @@ namespace tec_parts_supply_transport_web.Hubs
 
         public IConfiguration Configuration { get; }
 
-        public async Task SendParts()
+        public async Task SendParts(string workType)
         {
             try
             {
                 // SQL作成
                 var sql = PartsRepository.CreateSQLToGetParts();
                 List<PartsModel> listSupplys = PartsRepository.GetListParts(sql);
-                listSupplys = listSupplys.Where(x => x.BoxType != null && !x.BoxType.StartsWith("TP")).ToList();
+
+                // ---- 分岐処理 ----
+                if (workType == Const.C_WORK_LIFT)
+                    listSupplys = listSupplys.Where(x => x.BoxType != null && !x.BoxType.StartsWith("TP")).ToList();
+                else if (workType == Const.C_WORK_TAGNOVA)
+                    listSupplys = listSupplys.Where(x => x.BoxType != null && x.BoxType.StartsWith("TP")).ToList();
+
                 if (listSupplys.Any())
                 {
                     var machineStats = listSupplys
@@ -55,7 +61,7 @@ namespace tec_parts_supply_transport_web.Hubs
                 }
 
                 if (Clients != null)
-                    await Clients.All.SendAsync("ReceivedSupplys", listSupplys);
+                    await Clients.Group(workType).SendAsync("ReceivedSupplys", listSupplys);
             }
             catch (Exception)
             {
@@ -64,6 +70,11 @@ namespace tec_parts_supply_transport_web.Hubs
                 var errorMessage = ErrorHandling.CreateErrorMessage("E4001");
                 await Clients.Caller.SendAsync("Error", errorMessage);
             }
+        }
+
+        public async Task JoinGroup(string workType)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, workType);
         }
     }
 }

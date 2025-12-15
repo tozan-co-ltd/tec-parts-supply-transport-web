@@ -1,4 +1,7 @@
-﻿// url取得
+﻿const urlParams = new URLSearchParams(window.location.search);
+const workType = urlParams.get("type");
+
+// url取得
 var baseUrl = window.location.origin;
 var pathName = window.location.pathname.split('/');
 if (pathName.length > 2)
@@ -9,19 +12,29 @@ if (pathName.length > 2)
 const isPreparationPage = document.getElementById("parts-page");
 if (isPreparationPage) {
     var connectionSupply = new signalR.HubConnectionBuilder().withUrl("partsHub").build();
+
     $(function () {
         connectionSupply.start().then(function () {
+            connectionSupply.invoke("JoinGroup", workType); 
             InvokeSupplys();
         })
     });
+
+    connectionSupply.on("NotifyPartsChanged", function (type) {
+        if (type === workType) {
+            InvokeSupplys();
+        }
+    });
+
 
     // 短い遅延後に再接続を試みる
     var closeConnectSupplyCount = 0;
     connectionSupply.onclose(function (error) {
         setTimeout(function () {
             connectionSupply.start().then(function () {
+                connectionSupply.invoke("JoinGroup", workType); 
                 InvokeSupplys();
-            })
+            });
             closeConnectSupplyCount += 1;
             console.log("Error - onclose 再接続" + closeConnectSupplyCount + "回目");
             // 接続が2回以上失われた場合はページをリロード
@@ -38,13 +51,13 @@ if (isPreparationPage) {
 
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
-        connectionSupply.invoke("SendParts").catch(function (error) {
-            // Controllerに接続できない場合はエラー
+        connectionSupply.invoke("SendParts", workType).catch(function (error) {
             console.log("Error - invoke catch");
             $(".connectionSupplyError").text(error);
             $(".connectionSupplyError").show();
         });
     }
+
 
     // エラー発生時
     connectionSupply.on("Error", (error) => {
@@ -59,6 +72,7 @@ if (isPreparationPage) {
         BindSupplysToGrid(supplys);
     });
 }
+
 // グリッドに依頼をバインドする
 function BindSupplysToGrid(supplys) {
     $('#tblSupplyLeft tbody').empty();
@@ -101,6 +115,7 @@ function BindSupplysToGrid(supplys) {
                     var cell6 = row.insertCell(5);
                     var cell7 = row.insertCell(6);
                     var cell8 = row.insertCell(7);
+                    var cell9 = row.insertCell(8);
 
                     // 現在日時
                     var today = new Date();
@@ -226,7 +241,7 @@ function BindSupplysToGrid(supplys) {
                         $.ajax({
                             type: 'POST',
                             url: baseUrl + '/Parts/Complete',
-                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber },
+                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber, workType: workType},
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {
@@ -331,7 +346,7 @@ function autoRegister(item) {
                 $.ajax({
                     type: 'POST',
                     url: baseUrl + '/Parts/Complete',
-                    data: { dataSupplyId: dataSupplyId, machineNum: machineNum },
+                    data: { dataSupplyId: dataSupplyId, machineNum: machineNum, workType: workType},
                     success: function (response) {
                         if (response.res != true) {
                             setTimeout(function () {
