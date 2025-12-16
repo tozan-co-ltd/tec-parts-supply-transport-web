@@ -932,7 +932,7 @@ function BindMachinesToGrid(machines) {
 
                     cell1.innerHTML = `${machines[i].machineNum}`;
                     cell2.innerHTML = `${machines[i].status ? '稼働中' : '停止'}`;
-                    cell3.innerHTML = `${formatDate(machines[i].endTime)}`;
+                    cell3.innerHTML = !isDotNetMinDate(machines[i].endTime) ? `${formatDate(machines[i].endTime)}` : "-";
                     if (machines[i].status) {
                         cell2.style.color = 'orange';
                     } else {
@@ -943,6 +943,10 @@ function BindMachinesToGrid(machines) {
                 $(".machine-table-content").hide();
                 $(".noneDateMess").show();
             }
+        }
+        function isDotNetMinDate(value) {
+            return value === "0001-01-01T00:00:00" ||
+                value.startsWith("0001-01-01");
         }
     }
 }
