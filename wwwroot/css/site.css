@@ -168,6 +168,18 @@ body {
 }
 
 
+.equal-col {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.equal-cols th,
+.equal-cols td {
+    width: 33.33% !important;
+    text-align: center; /* optional */
+}
+
+
 .system_logo {
     width: 121px;
     margin: 0 auto;
