@@ -1,4 +1,7 @@
-﻿// url取得
+﻿const urlParams = new URLSearchParams(window.location.search);
+const workType = urlParams.get("type");
+
+// url取得
 var baseUrl = window.location.origin;
 var pathName = window.location.pathname.split('/');
 if (pathName.length > 2)
@@ -9,19 +12,29 @@ if (pathName.length > 2)
 const isPreparationPage = document.getElementById("parts-page");
 if (isPreparationPage) {
     var connectionSupply = new signalR.HubConnectionBuilder().withUrl("partsHub").build();
+
     $(function () {
         connectionSupply.start().then(function () {
+            connectionSupply.invoke("JoinGroup", workType); 
             InvokeSupplys();
         })
     });
+
+    connectionSupply.on("NotifyPartsChanged", function (type) {
+        if (type === workType) {
+            InvokeSupplys();
+        }
+    });
+
 
     // 短い遅延後に再接続を試みる
     var closeConnectSupplyCount = 0;
     connectionSupply.onclose(function (error) {
         setTimeout(function () {
             connectionSupply.start().then(function () {
+                connectionSupply.invoke("JoinGroup", workType); 
                 InvokeSupplys();
-            })
+            });
             closeConnectSupplyCount += 1;
             console.log("Error - onclose 再接続" + closeConnectSupplyCount + "回目");
             // 接続が2回以上失われた場合はページをリロード
@@ -38,13 +51,13 @@ if (isPreparationPage) {
 
     // ハブのメソッドを呼び出す
     function InvokeSupplys() {
-        connectionSupply.invoke("SendParts").catch(function (error) {
-            // Controllerに接続できない場合はエラー
+        connectionSupply.invoke("SendParts", workType).catch(function (error) {
             console.log("Error - invoke catch");
             $(".connectionSupplyError").text(error);
             $(".connectionSupplyError").show();
         });
     }
+
 
     // エラー発生時
     connectionSupply.on("Error", (error) => {
@@ -59,6 +72,7 @@ if (isPreparationPage) {
         BindSupplysToGrid(supplys);
     });
 }
+
 // グリッドに依頼をバインドする
 function BindSupplysToGrid(supplys) {
     $('#tblSupplyLeft tbody').empty();
@@ -127,49 +141,53 @@ function BindSupplysToGrid(supplys) {
                         subResult = `${displayMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                     }
 
-                    cell2.innerHTML = `${supplys[i].machineNum}`;
-                    cell2.className = 'machine-number';
+                    cell1.innerHTML = `${supplys[i].machineNum}`;
+                    cell1.className = 'machine-number';
 
-                    //cell3.innerHTML = `${supplys[i].boxType}`;
-                    cell3.innerHTML = `${supplys[i].address}`;
-                    cell3.className = 'address';
+                    cell2.innerHTML = `${supplys[i].address}`;
+                    cell2.className = 'address';
 
-                    //cell4.innerHTML = `${supplys[i].boxType}`;
-                    cell4.innerHTML = `${supplys[i].partsNum}`;
-                    cell4.className = 'partsNum';
+                    cell3.innerHTML = `${supplys[i].partsNum}`;
+                    cell3.className = 'partsNum';
 
-                    // 異なるテキストの長さに応じて文字サイズを調整
-                    countLengthText(cell4);
+                    cell4.innerHTML = `${supplys[i].requiredQuantity}`;
+                    cell4.className = 'boxCount';
 
-                    cell5.innerHTML = `${supplys[i].requiredQuantity}`;
-                    cell5.className = 'boxCount';
-
-                    cell6.innerHTML = subResult;
-                    cell6.setAttribute("data-time", dataTime); // 表示時間
-                    cell6.setAttribute("data-countdown", supplys[i].countDownTime);
-                    cell6.setAttribute("data-request-datetime", supplys[i].correctedRequestDatetime);
-                    cell6.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
+                    cell5.innerHTML = subResult;
+                    cell5.setAttribute("data-time", dataTime); // 表示時間
+                    cell5.setAttribute("data-countdown", supplys[i].countDownTime);
+                    cell5.setAttribute("data-request-datetime", supplys[i].correctedRequestDatetime);
+                    cell5.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
                     const machine = supplys[i].machineNum; //　機番
                     const hasReady = supplys[i].readyCount > 0;　//既に登録
                     let isReadyOrder = supplys[i].isReadyOrder;　// 準備フラグ
                     const isLastToComplete = (supplys[i].readyCount + 1) == supplys[i].totalCount;　//　完了前の最後の項目
+                    const isNowExactlyFull = supplys[i].readyCount == supplys[i].totalCount;
 
                     if (!isReadyOrder && isLastToComplete && !renderedTotalButtons.has(machine)) {
                         //　全登録の最終行
-                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
-                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
+                        cell6.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
+                        cell7.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
                         renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
+                    }
+                    else if (isReadyOrder && isNowExactlyFull && !renderedTotalButtons.has(machine)) {
+                        cell6.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
+                        cell7.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
+                        renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
+
+                        // 自動的登録
+                        autoRegister(supplys[i])
                     }
                     else if (hasReady && isReadyOrder) {
                         // 登録済み』ボタン表示＋Closeボタン無効化
-                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnRegistered">${supplys[i].displayNumber}</button>`;
-                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnCloseDisable"><i class="fa-solid fa-xmark"></i></button>`;
+                        cell6.innerHTML = `<button type="button" class="btn btn-primary btnRegistered">${supplys[i].displayNumber}</button>`;
+                        cell7.innerHTML = `<button type="button" class="btn btn-secondary btnCloseDisable"><i class="fa-solid fa-xmark"></i></button>`;
                     }
                     else {
                         // 未準備
-                        cell7.innerHTML = `<button type="button" class="btn btn-primary btnRegister">${supplys[i].displayNumber}</button>`;
-                        cell9.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
+                        cell6.innerHTML = `<button type="button" class="btn btn-primary btnRegister">${supplys[i].displayNumber}</button>`;
+                        cell7.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
                     }
 
                     // ================================
@@ -181,6 +199,7 @@ function BindSupplysToGrid(supplys) {
                 $(".noneDateMess").show();
             }
         }
+
 
         // 各tdを繰り返し、各tdにカウントダウン関数を適用する
         const tdElements = document.querySelectorAll('#tblSupplyLeft td.timeCount');
@@ -222,7 +241,7 @@ function BindSupplysToGrid(supplys) {
                         $.ajax({
                             type: 'POST',
                             url: baseUrl + '/Parts/Complete',
-                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber },
+                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber, workType: workType},
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {
@@ -307,6 +326,75 @@ function BindSupplysToGrid(supplys) {
         });
     }
 }
+
+// 自動的登録
+function autoRegister(item) {
+    setTimeout(() => {
+        const dataSupplyId = item.partsSupplyRequestId;
+        const machineNum = item.machineNum;
+
+        Swal.fire({
+            title: `機番：${machineNum}<br>依頼をすべて完了で登録してもよろしいですか？`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d6efd',
+            cancelButtonText: 'いいえ',
+            confirmButtonText: 'はい',
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + '/Parts/Complete',
+                    data: { dataSupplyId: dataSupplyId, machineNum: machineNum, workType: workType},
+                    success: function (response) {
+                        if (response.res != true) {
+                            setTimeout(function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: `箱種 ${machineNum} 箱数 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                    html: `<span style="color: red;">${response.res}</span>`,
+                                    confirmButtonColor: '#0d6efd',
+                                    confirmButtonText: '閉じる',
+                                    allowOutsideClick: false,
+                                });
+                            }, 500);
+                        }
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 500);
+                });
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + '/Parts/Register',
+                    data: { dataSupplyId: dataSupplyId, isRegister: false },
+                    success: function (response) {
+                        if (response.res != true) {
+                            setTimeout(function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: `機番 ${dataMachineNumber} 所番地 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                    html: `<span style="color: red;">${response.res}</span>`,
+                                    confirmButtonColor: '#0d6efd',
+                                    confirmButtonText: '閉じる',
+                                    allowOutsideClick: false,
+                                })
+                            }, 500);
+                        }
+                    }
+                }).done(function () {
+                    setTimeout(function () {
+                        $("#overlay").fadeOut(300);
+                    }, 500);
+                });
+            }
+        });
+    }, 600); 
+}
+
 
 //　登録検出
 function handleRegister(button, isRegister) {
@@ -438,7 +526,6 @@ function BindTransportsToGrid(transports) {
                     var cell5 = row.insertCell(4);
                     var cell6 = row.insertCell(5);
                     var cell7 = row.insertCell(6);
-                    var cell8 = row.insertCell(7);
 
                     // 現在日時
                     var today = new Date();
@@ -464,42 +551,42 @@ function BindTransportsToGrid(transports) {
                         subResult = `${displayMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                     }
 
-                    cell2.innerHTML = `${transports[i].machineNum}`;
+                    cell1.innerHTML = `${transports[i].machineNum}`;
+                    cell1.className = 'machineNum';
 
-                    //cell3.innerHTML = `${transports[i].boxType}`;
-                    cell3.innerHTML = `${transports[i].supplyLocation}`;
-                    cell3.className = 'boxType';
+                    cell2.innerHTML = `${transports[i].address}`;
+                    cell2.className = 'address';
 
-                    //cell4.innerHTML = `${transports[i].boxType}`;
-                    cell4.innerHTML = `${transports[i].partsNum}`;
-                    cell4.className = 'boxType';
+                    cell3.innerHTML = `${transports[i].partsNum}`;
+                    cell3.className = 'partsNum';
 
-                    // 異なるテキストの長さに応じて文字サイズを調整
-                    countLengthText(cell3);
+                    cell4.innerHTML = `${transports[i].requiredQuantity}`;
+                    cell4.className = 'boxCount';
 
-                    cell5.innerHTML = `${transports[i].requiredQuantity}`;
-                    cell5.className = 'boxCount';
-                    cell7.className = 'statusBtn';
+                    cell5.innerHTML = subResult;
+                    cell5.setAttribute("data-time", dataTime); // 表示時間
+                    cell5.setAttribute("data-countdown", transports[i].countDownTime);
+                    cell5.setAttribute("data-request-datetime", transports[i].correctedRequestDatetime);
+                    cell5.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
+                    // statusBtn
+                    cell6.className = 'statusBtn';
                     if (transports[i].transportationStartDatetime == null && transports[i].transportationEndDatetime == null) {
-                        cell7.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
-                    } else if (transports[i].transportationStartDatetime != null && transports[i].transportationEndDatetime == null) { 
-                        cell7.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
+                        cell6.innerHTML = `<button type="button" class="btn btn-warning btnRegister">開始</button>`;
+                    } else if (transports[i].transportationStartDatetime != null && transports[i].transportationEndDatetime == null) {
+                        cell6.innerHTML = `<button type="button" class="btn btn-success btnRegister btnEnd">終了</button>`;
                     }
-                    cell6.innerHTML = subResult;
-                    cell6.setAttribute("data-time", dataTime); // 表示時間
-                    cell6.setAttribute("data-countdown", transports[i].countDownTime);
-                    cell6.setAttribute("data-request-datetime", transports[i].correctedRequestDatetime);
-                    cell6.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
-                    cell8.innerHTML = `${transports[i].emptyBoxSupplyRequestId}`;
-                    cell8.className = 'transportId';
+                    // transportId
+                    cell7.innerHTML = `${transports[i].partsSupplyRequestId}`;
+                    cell7.className = 'transportId';
                 }
             } else {
                 $(".transportContent").hide();
                 $(".noneDateMess").show();
             }
         }
+
 
         // 各tdを繰り返し、各tdにカウントダウン関数を適用する
         const tdElements = document.querySelectorAll('#tblTransportLeft td.timeCount');
@@ -508,21 +595,19 @@ function BindTransportsToGrid(transports) {
         tdElements1.forEach(counttimer);
 
         var buttons = document.querySelectorAll('.btnRegister');
-        var buttonsClose = document.querySelectorAll('.btnClose');
 
         // ボタン押下時に確認ダイアログ表示
         buttons.forEach(function (button) {
             button.addEventListener('click', function () {
-                var isCancelled = false;
                 var row = button.parentElement.parentElement;
                 var statusBtn = button.textContent || button.innerText;
                 var tdWithSupplyId = row.querySelector('.transportId');
-                var tdWithBoxType = row.querySelector('.boxType');
+                var tdWithMachineNum = row.querySelector('.machineNum');
                 var tdWithBoxCount = row.querySelector('.boxCount');
 
                 // td要素のdata-timeとidを含むテキスト値を取得
                 var dataSupplyId = tdWithSupplyId.textContent;
-                var dataBoxType = tdWithBoxType.textContent;
+                var dataMachineNum = tdWithMachineNum.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
 
                 // 開始ボタン押下時
@@ -530,7 +615,7 @@ function BindTransportsToGrid(transports) {
                     $.ajax({
                         type: 'POST',
                         url: baseUrl + '/Transportation/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
+                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn},
                         success: function (response) {
                             if (response.res == true) {
                                 button.innerText = "終了";
@@ -540,7 +625,7 @@ function BindTransportsToGrid(transports) {
                                 setTimeout(function () {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始登録ができませんでした。<br>再度お試しください。`,
+                                        title: `機番 ${dataMachineNum} 箱数 ${dataBoxCount}の<br>運搬開始登録ができませんでした。<br>再度お試しください。`,
                                         html: `<span style="color: red;">${response.res}</span>`,
                                         confirmButtonColor: '#0d6efd',
                                         confirmButtonText: '閉じる',
@@ -559,7 +644,7 @@ function BindTransportsToGrid(transports) {
                 // 終了ボタン押下時
                 if (statusBtn == "終了") {
                     Swal.fire({
-                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録を行います。<br>よろしいですか？`,
+                        title: `機番 ${dataMachineNum} 箱数 ${dataBoxCount}の<br>運搬終了登録を行います。<br>よろしいですか？`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#198754',
@@ -571,13 +656,13 @@ function BindTransportsToGrid(transports) {
                             $.ajax({
                                 type: 'POST',
                                 url: baseUrl + '/Transportation/Complete',
-                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
+                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn},
                                 success: function (response) {
                                     if (response.res != true) {
                                         setTimeout(function () {
                                             Swal.fire({
                                                 icon: 'error',
-                                                title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬終了登録ができませんでした。<br>再度お試しください。`,
+                                                title: `機番 ${dataMachineNum} 箱数 ${dataBoxCount}の<br>運搬終了登録ができませんでした。<br>再度お試しください。`,
                                                 html: `<span style="color: red;">${response.res}</span>`,
                                                 confirmButtonColor: '#0d6efd',
                                                 confirmButtonText: '閉じる',
@@ -596,106 +681,26 @@ function BindTransportsToGrid(transports) {
                 }
             });
         });
-
-        // ボタン押下時に確認ダイアログ表示
-        buttonsClose.forEach(function (button) {
-            button.addEventListener('click', function () {
-                var isCancelled = true;
-                var row = button.parentElement.parentElement;
-                var tdWithSupplyId = row.querySelector('.transportId');
-                var tdWithBoxType = row.querySelector('.boxType');
-                var tdWithBoxCount = row.querySelector('.boxCount');
-                var tdWithbtnRegister = row.querySelector('.btnRegister');
-
-                // td要素のdata-timeとidを含むテキスト値を取得する
-                var dataSupplyId = tdWithSupplyId.textContent;
-                var dataBoxType = tdWithBoxType.textContent;
-                var dataBoxCount = tdWithBoxCount.textContent;
-                var statusBtn = tdWithbtnRegister.textContent || tdWithbtnRegister.innerText;
-
-                // 開始ボタン隣の削除ボタン押下時
-                if (statusBtn == "開始") {
-                    $.ajax({
-                        type: 'POST',
-                        url: baseUrl + '/Transportation/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
-                        success: function (response) {
-                            if (response.res == true) {
-                                tdWithbtnRegister.innerText = "開始";
-                                tdWithbtnRegister.classList.add('btn-warning');
-                                tdWithbtnRegister.classList.remove('btn-success');
-                            } else {
-                                setTimeout(function () {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>準備完了の取消ができませんでした。<br>再度お試しください。`,
-                                        html: `<span style="color: red;">${response.res}</span>`,
-                                        confirmButtonColor: '#0d6efd',
-                                        confirmButtonText: '閉じる',
-                                        allowOutsideClick: false,
-                                    })
-                                }, 500);
-                            }
-                        }
-                    }).done(function () {
-                        setTimeout(function () {
-                            $("#overlay").fadeOut(300);
-                        }, 10);
-                    });
-                }
-
-                // 終了ボタン隣の削除ボタン押下時
-                if (statusBtn == "終了") {
-                    $.ajax({
-                        type: 'POST',
-                        url: baseUrl + '/Transportation/Complete',
-                        data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn, isCancelled: isCancelled },
-                        success: function (response) {
-                            if (response.res == true) {
-                                tdWithbtnRegister.innerText = "開始";
-                                tdWithbtnRegister.classList.add('btn-warning');
-                                tdWithbtnRegister.classList.remove('btn-success');
-                            } else {
-                                setTimeout(function () {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: `箱種 ${dataBoxType} 箱数 ${dataBoxCount}の<br>運搬開始の取消ができませんでした。<br>再度お試しください。`,
-                                        html: `<span style="color: red;">${response.res}</span>`,
-                                        confirmButtonColor: '#0d6efd',
-                                        confirmButtonText: '閉じる',
-                                        allowOutsideClick: false,
-                                    })
-                                }, 500);
-                            }
-                        }
-                    }).done(function () {
-                        setTimeout(function () {
-                            $("#overlay").fadeOut(300);
-                        }, 10);
-                    });
-                }
-            });
-        });
     }
 }
 // ----------------------------------------------------------------------//
 
 
 // 異なるテキストの長さに応じて文字サイズを調整
-function countLengthText(cell3) {
-    var fullwidthCount = cell3.innerText.length;
-    if (fullwidthCount == 9)
-        cell3.style.fontSize = 23 + 'px';
+function countLengthText(cell) {
+    var fullwidthCount = cell.innerText.length;
+    if (fullwidthCount == 14)
+        cell.style.fontSize = 23 + 'px';
+    else if (fullwidthCount == 12)
+        cell.style.fontSize = 25 + 'px';
     else if (fullwidthCount == 8)
-        cell3.style.fontSize = 25 + 'px';
+        cell.style.fontSize = 27 + 'px';
     else if (fullwidthCount == 7)
-        cell3.style.fontSize = 27 + 'px';
-    else if (fullwidthCount == 6)
-        cell3.style.fontSize = 28 + 'px';
+        cell.style.fontSize = 28 + 'px';
     else if (fullwidthCount == 5)
         cell3.style.fontSize = 29 + 'px';
     else if (fullwidthCount <= 4)
-        cell3.style.fontSize = 30 + 'px';
+        cell.style.fontSize = 30 + 'px';
 }
 
 // data-time を毎秒更新

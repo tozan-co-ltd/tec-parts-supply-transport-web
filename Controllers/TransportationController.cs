@@ -33,20 +33,19 @@ namespace tec_parts_supply_transport_web.Controllers
         /// <param name="isCancelled"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId, string statusBtn, bool isCancelled)
+        public IActionResult Complete(string dataSupplyId, string statusBtn)
         {
             try
             {
-                string emptyBoxSupplyRequestIid = dataSupplyId;
-                bool resUpdate = ChangeEmptyBoxSupplyStatus(emptyBoxSupplyRequestIid, statusBtn, isCancelled);
+                string partsSupplyRequestIid = dataSupplyId;
+                bool resUpdate = UpdatePartsSupplyRequest(partsSupplyRequestIid, statusBtn);
                 var result = new { res = resUpdate };
 
                 return Json(result);
             }
             catch (Exception ex)
             {
-                var exceptionMessage = "Incoming soon";
-                var result = new { res = exceptionMessage };
+                var result = new { res = ex.Message };
 
                 return Json(result);
             }
@@ -58,7 +57,7 @@ namespace tec_parts_supply_transport_web.Controllers
         /// </summary>
         /// <param name="empty_box_supply_request_id"></param>
         /// <returns>成功したらtrueを返す</returns>
-        public bool ChangeEmptyBoxSupplyStatus(string empty_box_supply_request_id, string statuId, bool isCancelled)
+        public bool UpdatePartsSupplyRequest(string empty_box_supply_request_id, string status)
         {
             try
             {
@@ -66,7 +65,7 @@ namespace tec_parts_supply_transport_web.Controllers
                 bool isUpdateEmptyBoxSupply = false;
 
                 // SQL作成
-                var sql = TransportationRepository.CreateSQLChangeEmptyBoxSupplyStatus(empty_box_supply_request_id, statuId, isCancelled);
+                var sql = TransportationRepository.CreateSQLUpdatePartsSupplyRequest(empty_box_supply_request_id, status);
 
                 // DB接続
                 var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
@@ -84,7 +83,7 @@ namespace tec_parts_supply_transport_web.Controllers
                 }
                 return isUpdateEmptyBoxSupply;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }

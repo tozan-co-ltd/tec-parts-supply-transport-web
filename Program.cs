@@ -18,7 +18,6 @@ builder.Services.AddSignalR(hubOptions => {
 builder.Services.AddSingleton<PreparationHub>();
 builder.Services.AddSingleton<SubscribePreparationTableDependency>();
 
-builder.Services.AddSingleton<PartsHub>();
 builder.Services.AddSingleton<SubscribePartsTableDependency>();
 
 builder.Services.AddSingleton<TransportationHub>();

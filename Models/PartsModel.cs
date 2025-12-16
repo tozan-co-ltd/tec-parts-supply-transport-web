@@ -71,5 +71,8 @@ namespace tec_parts_supply_transport_web.Models
         public int CountDownTime { get; set; }
 
         public int IsTotalRegister { get; set; }
+
+        public string PartsSupplyAGV { get; set; }
+
     }
 }
