@@ -23,15 +23,17 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow nav-head">
             <div class="container-fluid justify-content-between">
                 @{
-                    if (@ViewData["Title"] == "部品準備" || @ViewData["Title"] == "部品運搬")
-                    {
+                    // if (@ViewData["Title"] == "部品準備" || @ViewData["Title"] == "部品運搬")
+                    // {
+                    //     <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
+                    //     <a class="navbar-brand home-icon" asp-area="" asp-controller="Top" asp-action="Index"><i class="fa fa-fw fa-home"></i></a>
+                    // }
+                    // else
+                    // {
+                    //     <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
+                    // }
                         <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
                         <a class="navbar-brand home-icon" asp-area="" asp-controller="Top" asp-action="Index"><i class="fa fa-fw fa-home"></i></a>
-                    }
-                    else
-                    {
-                        <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
-                    }
                 }
             </div>
         </nav>
