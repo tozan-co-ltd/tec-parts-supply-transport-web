@@ -15,7 +15,7 @@ namespace tec_parts_supply_transport_web.Controllers
         /// 準備画面表示
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index()
+        public IActionResult Index(string type)
         {
             return View();
         }
@@ -91,7 +91,7 @@ namespace tec_parts_supply_transport_web.Controllers
         /// <param name="machineNum"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId, string machineNum)
+        public IActionResult Complete(string dataSupplyId, string machineNum, string workType)
         {
             if (string.IsNullOrEmpty(machineNum))
                 return Json(new { success = false, message = "機械番号がありません。" });
@@ -104,7 +104,7 @@ namespace tec_parts_supply_transport_web.Controllers
             bool resUpdate = true;
             try
             {
-                var sqlGetParts = PartsRepository.CreateSQLToGetPartsIdByMachineNum(machineNum);
+                var sqlGetParts =PartsRepository.CreateSQLToGetPartsIdByMachineNum(machineNum, workType);
                 var listParts = PartsRepository.GetListParts(sqlGetParts);
 
                 if (!listParts.Any())
@@ -112,7 +112,10 @@ namespace tec_parts_supply_transport_web.Controllers
 
                 foreach (var parts in listParts)
                 {
-                    string sqlUpdate =PartsRepository.CreateSQLToUpdateCompletePartsSupplyRequest(parts.PartsSupplyRequestId);
+                    int agv = int.Parse(parts.PartsSupplyAGV);
+                    string sqlUpdate = string.Empty;
+
+                    sqlUpdate = PartsRepository.CreateSQLToUpdateCompletePartsSupplyAGV(parts.PartsSupplyRequestId, workType);
 
                     int update = connection.Execute(sqlUpdate, transaction: transaction);
 

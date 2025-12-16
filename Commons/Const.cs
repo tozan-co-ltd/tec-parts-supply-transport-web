@@ -10,5 +10,10 @@ namespace tec_parts_supply_transport_web.Commons
     {
         // エリア
         public const int C_AREA_KUBUN = 1; // 1 組立課, 2 プレス課
+
+        public const string C_WORK_LIFT = "Lift"; 
+
+        public const string C_WORK_TAGNOVA= "TagNova"; 
+
     }
 }

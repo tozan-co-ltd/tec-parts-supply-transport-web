@@ -2,17 +2,18 @@
 using tec_parts_supply_transport_web.Models;
 using TableDependency.SqlClient;
 using tec_parts_supply_transport_web.Commons;
+using Microsoft.AspNetCore.SignalR;
 
 namespace tec_parts_supply_transport_web.SubscribeTableDependencies
 {
     public class SubscribePartsTableDependency : ISubscribeTableDependency
     {
+        private readonly IHubContext<PartsHub> hubContext;
         SqlTableDependency<PartsModel> tableDependency;
-        PartsHub partsHub;
 
-        public SubscribePartsTableDependency(PartsHub partsHub)
+        public SubscribePartsTableDependency(IHubContext<PartsHub> hubContext)
         {
-            this.partsHub = partsHub;
+            this.hubContext = hubContext;
         }
 
         // サブスクライブテーブルの依存関係
@@ -31,15 +32,23 @@ namespace tec_parts_supply_transport_web.SubscribeTableDependencies
             }
         }
 
-        // 変更されたテーブルの依存関係
-        private void TableDependency_OnChanged(object sender, TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<PartsModel> e)
+        private async void TableDependency_OnChanged(
+    object sender,
+    TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<PartsModel> e)
         {
             try
             {
-                // データを更新される時HUBのメソッドを呼びます
                 if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
                 {
-                    partsHub.SendParts();
+                    // Lift
+                    await hubContext.Clients
+                        .Group("Lift")
+                        .SendAsync("NotifyPartsChanged", "Lift");
+
+                    // TagNova
+                    await hubContext.Clients
+                        .Group("TagNova")
+                        .SendAsync("NotifyPartsChanged", "TagNova");
                 }
             }
             catch (Exception)
@@ -47,6 +56,7 @@ namespace tec_parts_supply_transport_web.SubscribeTableDependencies
                 throw;
             }
         }
+
 
         // エラー時のテーブルの依存関係
         private void TableDependency_OnError(object sender, TableDependency.SqlClient.Base.EventArgs.ErrorEventArgs e)
