@@ -149,7 +149,7 @@ namespace tec_parts_supply_transport_web.Repositories
         /// <param name="parts_supply_request_id"></param>
         /// <remarks>UPDATE文</remarks>
         /// <returns>SQL</returns>
-        public static string CreateSQLToUpdateCompletePartsSupplyAGV(int parts_supply_request_id, string workType)
+        public static string CreateSQLToUpdateCompletePartsSupplyAGV(int parts_supply_request_id, string workType, int agv)
         {
             // IPアドレス取得
             string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
@@ -166,27 +166,42 @@ namespace tec_parts_supply_transport_web.Repositories
                 // box_type が TP
                 boxTypeCondition = "AND box_type LIKE 'TP%'";
 
-            var sql = $@"
-                UPDATE t_parts_supply_request
-                SET is_ready_order = 1,
-                    ready_datetime = GETDATE(),
-                    transportation_start_datetime =
-                        CASE 
-                            WHEN transportation_start_datetime IS NULL THEN GETDATE()
-                            ELSE transportation_start_datetime 
-                        END,
-                    transportation_end_datetime =
-                        CASE 
-                            WHEN transportation_end_datetime IS NULL THEN GETDATE()
-                            ELSE transportation_end_datetime 
-                        END,
-                    is_completed = 1,
-                    transportation_IPaddress = '{readyIpAddress}',
-                    ready_IPaddress = '{readyIpAddress}'
-                WHERE parts_supply_request_id = {parts_supply_request_id}
-                {boxTypeCondition};
-            ";
+            string sql;
 
+            // AGV = 0 →  ready_datetimeのみ登録
+            if (agv == 0)
+            {
+                sql = $@"
+                    UPDATE t_parts_supply_request
+                    SET ready_datetime = GETDATE()
+                    WHERE parts_supply_request_id = {parts_supply_request_id}
+                    {boxTypeCondition};
+                    ";
+            }
+            else
+            {
+                // 🚚 AGV ≠ 0
+                sql = $@"
+                        UPDATE t_parts_supply_request
+                        SET is_ready_order = 1,
+                            ready_datetime = GETDATE(),
+                            transportation_start_datetime =
+                                CASE 
+                                    WHEN transportation_start_datetime IS NULL THEN GETDATE()
+                                    ELSE transportation_start_datetime 
+                                END,
+                            transportation_end_datetime =
+                                CASE 
+                                    WHEN transportation_end_datetime IS NULL THEN GETDATE()
+                                    ELSE transportation_end_datetime 
+                                END,
+                            is_completed = 1,
+                            transportation_IPaddress = '{readyIpAddress}',
+                            ready_IPaddress = '{readyIpAddress}'
+                        WHERE parts_supply_request_id = {parts_supply_request_id}
+                        {boxTypeCondition};
+                    ";
+                }
             return sql;
         }
 
