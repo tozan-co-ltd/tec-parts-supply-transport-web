@@ -113,10 +113,7 @@ namespace tec_parts_supply_transport_web.Controllers
                 foreach (var parts in listParts)
                 {
                     int agv = int.Parse(parts.PartsSupplyAGV);
-                    string sqlUpdate = string.Empty;
-
-                    sqlUpdate = PartsRepository.CreateSQLToUpdateCompletePartsSupplyAGV(parts.PartsSupplyRequestId, workType);
-
+                    string sqlUpdate = PartsRepository.CreateSQLToUpdateCompletePartsSupplyAGV(parts.PartsSupplyRequestId, workType, agv);
                     int update = connection.Execute(sqlUpdate, transaction: transaction);
 
                     if (update <= 0)
