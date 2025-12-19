@@ -159,28 +159,41 @@ namespace tec_parts_supply_transport_web.Repositories
 
             string boxTypeCondition = string.Empty;
 
+            bool canComplete = false;
+
             if (workType == Const.C_WORK_LIFT)
+            {
                 // box_type が TP 以外
                 boxTypeCondition = "AND box_type NOT LIKE 'TP%'";
+                // リフト：AGV = 1 or 3
+                canComplete = (agv == 1 || agv == 3);
+            }
+             
             else if (workType == Const.C_WORK_TAGNOVA)
+            {
                 // box_type が TP
                 boxTypeCondition = "AND box_type LIKE 'TP%'";
-
+                // タグノバ：AGV = 1 or 2
+                canComplete = (agv == 1 || agv == 2);
+            }
+              
             string sql;
 
-            // AGV = 0 →  ready_datetimeのみ登録
-            if (agv == 0)
+            // ready_datetimeのみ登録
+            if (!canComplete)
             {
                 sql = $@"
                     UPDATE t_parts_supply_request
-                    SET ready_datetime = GETDATE()
+                    SET ready_datetime = GETDATE(),
+                     is_ready_order   = 1,
+                     ready_IPaddress  = '{readyIpAddress}'
                     WHERE parts_supply_request_id = {parts_supply_request_id}
                     {boxTypeCondition};
                     ";
             }
             else
             {
-                // 🚚 AGV ≠ 0
+                // 完了
                 sql = $@"
                         UPDATE t_parts_supply_request
                         SET is_ready_order = 1,
@@ -235,10 +248,11 @@ namespace tec_parts_supply_transport_web.Repositories
         /// <summary>
         /// 部品準備に更新するSQL作成
         /// </summary>
-        /// <param name="parts_supply_request_id"></param>
-        /// <remarks>UPDATE文</remarks>
-        /// <returns>SQL</returns>
-        public static string CreateSQLToUpdateUpdateOutOfStock(int parts_supply_request_id)
+        /// <param name="dataMachineNumber"></param>
+        /// <param name="workType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType)
         {
             // IPアドレス取得
             string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
@@ -246,12 +260,35 @@ namespace tec_parts_supply_transport_web.Repositories
                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 ?.ToString() ?? "NotFound";
 
+            string whereCondition;
+
+            if (workType == Const.C_WORK_LIFT)
+            {
+                // LIFT：machine_num = xxx AND box_type NOT LIKE 'TP%'
+                whereCondition = $@"
+                    machine_num = {dataMachineNumber}
+                    AND box_type NOT LIKE 'TP%'";
+                }
+            else if (workType == Const.C_WORK_TAGNOVA)
+            {
+                // TAGNOVA：machine_num = xxx AND box_type LIKE 'TP%'
+                whereCondition = $@"
+                    machine_num = {dataMachineNumber}
+                    AND box_type LIKE 'TP%'";
+                }
+            else
+            {
+                // 念のため（想定外のworkType）
+                throw new ArgumentException($"Invalid workType: {workType}");
+            }
+
             var sql = $@"
-                    UPDATE t_parts_supply_request
-                    SET is_out_of_stock   = 1,
-                           ready_IPaddress  = '{readyIpAddress}'
-                    WHERE  parts_supply_request_id = {parts_supply_request_id};
-                ";
+                UPDATE t_parts_supply_request
+                SET is_out_of_stock  = 1,
+                    ready_IPaddress = '{readyIpAddress}'
+                WHERE {whereCondition};
+            ";
+
             return sql;
         }
     }

@@ -270,12 +270,10 @@ function BindSupplysToGrid(supplys) {
         buttonsClose.forEach(function (button) {
             button.addEventListener('click', function () {
                 var row = button.parentElement.parentElement;
-                var tdWithSupplyId = row.querySelector('.supplyId');
                 var tdWithMachineNumber = row.querySelector('.machine-number');
                 var tdWithPartsNum = row.querySelector('.partsNum');
 
                 // td要素のdata-timeとidを含むテキスト値を取得する
-                var dataSupplyId = tdWithSupplyId.textContent;
                 var dataMachineNumber = tdWithMachineNumber.textContent;
                 var dataPartsNum = tdWithPartsNum.textContent;
 
@@ -300,7 +298,7 @@ function BindSupplysToGrid(supplys) {
                         $.ajax({
                             type: 'POST',
                             url: baseUrl + '/Parts/RegisterOutOfStock',
-                            data: { dataSupplyId: dataSupplyId, password: result.value },
+                            data: { dataMachineNumber: dataMachineNumber, password: result.value, workType: workType },
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {
