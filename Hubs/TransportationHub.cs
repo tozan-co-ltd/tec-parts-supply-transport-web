@@ -25,7 +25,6 @@ namespace tec_parts_supply_transport_web.Hubs
                 // SQL作成
                 var sql = transportRepository.CreateSQLToGetTransportation();
                 List<PartsModel> listTransports = transportRepository.GetListTransports(sql);
-                listTransports = listTransports.Where(x => x.BoxType != null && !x.BoxType.StartsWith("TP")).ToList();
                 if (listTransports.Any())
                 {
                     var machineStats = listTransports
