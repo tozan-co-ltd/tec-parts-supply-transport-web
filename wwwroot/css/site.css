@@ -108,6 +108,11 @@ body {
     pointer-events: none;
 }
 
+.temp-disabled {
+    background-color: #ccc !important;
+    color: black !important;
+    pointer-events: none;
+}
 
 .preparation-selection-page {
     margin: 15px;
