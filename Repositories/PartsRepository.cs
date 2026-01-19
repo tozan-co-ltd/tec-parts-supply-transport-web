@@ -254,7 +254,7 @@ namespace tec_parts_supply_transport_web.Repositories
         /// <param name="workType"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType)
+        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType, string dataIsPartsOnlyOder, string dataSupplyId)
         {
             // IPアドレス取得
             string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
@@ -262,26 +262,34 @@ namespace tec_parts_supply_transport_web.Repositories
                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 ?.ToString() ?? "NotFound";
 
+            int supplyId = int.Parse(dataSupplyId); // 空箱供給依頼id
+            int isPartsOnlyOder = int.Parse(dataIsPartsOnlyOder); // 部品のみフラグ
+
             string whereCondition;
 
-            if (workType == Const.C_WORK_LIFT)
+            if (isPartsOnlyOder == 1)
+                whereCondition = $"parts_supply_request_id = {supplyId}";
+            else
             {
-                // LIFT：machine_num = xxx AND box_type NOT LIKE 'TP%'
-                whereCondition = $@"
+                if (workType == Const.C_WORK_LIFT)
+                {
+                    // LIFT：machine_num = xxx AND box_type NOT LIKE 'TP%'
+                    whereCondition = $@"
                     machine_num = {dataMachineNumber}
                     AND box_type NOT LIKE 'TP%'";
                 }
-            else if (workType == Const.C_WORK_TAGNOVA)
-            {
-                // TAGNOVA：machine_num = xxx AND box_type LIKE 'TP%'
-                whereCondition = $@"
+                else if (workType == Const.C_WORK_TAGNOVA)
+                {
+                    // TAGNOVA：machine_num = xxx AND box_type LIKE 'TP%'
+                    whereCondition = $@"
                     machine_num = {dataMachineNumber}
                     AND box_type LIKE 'TP%'";
                 }
-            else
-            {
-                // 念のため（想定外のworkType）
-                throw new ArgumentException($"Invalid workType: {workType}");
+                else
+                {
+                    // 念のため（想定外のworkType）
+                    throw new ArgumentException($"Invalid workType: {workType}");
+                }
             }
 
             var sql = $@"
