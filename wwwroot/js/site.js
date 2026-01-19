@@ -198,6 +198,9 @@ function BindSupplysToGrid(supplys) {
                     // ================================
                     cell8.innerHTML = `${supplys[i].partsSupplyRequestId}`;
                     cell8.className = 'supplyId';
+
+                    cell9.innerHTML = `${supplys[i].isPartsOnlyOder}`;
+                    cell9.className = 'isPartsOnlyOder';
                 }
             } else {
                 $(".supplyContent").hide();
@@ -277,10 +280,14 @@ function BindSupplysToGrid(supplys) {
                 var row = button.parentElement.parentElement;
                 var tdWithMachineNumber = row.querySelector('.machine-number');
                 var tdWithPartsNum = row.querySelector('.partsNum');
+                var tdWithIsPartsOnlyOder = row.querySelector('.isPartsOnlyOder');
+                var tdWithSupplyId = row.querySelector('.supplyId');
 
                 // td要素のdata-timeとidを含むテキスト値を取得する
                 var dataMachineNumber = tdWithMachineNumber.textContent;
                 var dataPartsNum = tdWithPartsNum.textContent;
+                var dataIsPartsOnlyOder = tdWithIsPartsOnlyOder.textContent;
+                var dataSupplyId = tdWithSupplyId.textContent;
 
                 Swal.fire({
                     title: '欠品の登録には職制のパスワードが必要です。',
@@ -303,7 +310,7 @@ function BindSupplysToGrid(supplys) {
                         $.ajax({
                             type: 'POST',
                             url: baseUrl + '/Parts/RegisterOutOfStock',
-                            data: { dataMachineNumber: dataMachineNumber, password: result.value, workType: workType },
+                            data: { dataMachineNumber: dataMachineNumber, password: result.value, workType: workType, dataIsPartsOnlyOder: dataIsPartsOnlyOder, dataSupplyId: dataSupplyId },
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {
