@@ -160,12 +160,14 @@ function BindSupplysToGrid(supplys) {
                     cell5.className = remainingMs > 0 ? 'timeCount' : 'timeCount redflag';
 
                     const machine = supplys[i].machineNum; //　機番
+                    const emptyBoxId = supplys[i].emptyBoxId;　//空箱供給依頼id
+                    const renderKey = `${machine}_${emptyBoxId}`;　//　キー
                     const hasReady = supplys[i].readyCount > 0;　//既に登録
                     let isReadyOrder = supplys[i].isReadyOrder;　// 準備フラグ
                     const isLastToComplete = (supplys[i].readyCount + 1) == supplys[i].totalCount;　//　完了前の最後の項目
                     const isNowExactlyFull = supplys[i].readyCount == supplys[i].totalCount;
 
-                    if (!isReadyOrder && isLastToComplete && !renderedTotalButtons.has(machine)) {
+                    if (!isReadyOrder && isLastToComplete && !renderedTotalButtons.has(renderKey)) {
                         //　全登録の最終行
                         cell6.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
                         cell7.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
