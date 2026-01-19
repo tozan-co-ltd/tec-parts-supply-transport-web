@@ -161,7 +161,10 @@ function BindSupplysToGrid(supplys) {
 
                     const machine = supplys[i].machineNum; //　機番
                     const emptyBoxId = supplys[i].emptyBoxId;　//空箱供給依頼id
-                    const renderKey = `${machine}_${emptyBoxId}`;　//　キー
+                    const isPartsOnlyOder = supplys[i].isPartsOnlyOder;　//空箱供給依頼id
+                    const renderKey = isPartsOnlyOder == 1
+                        ? `partsOnly_${supplys[i].partsSupplyRequestId}` // 各レコードに1つのキー
+                        : `${machine}_${emptyBoxId}`;　//　キー
                     const hasReady = supplys[i].readyCount > 0;　//既に登録
                     let isReadyOrder = supplys[i].isReadyOrder;　// 準備フラグ
                     const isLastToComplete = (supplys[i].readyCount + 1) == supplys[i].totalCount;　//　完了前の最後の項目
@@ -171,12 +174,12 @@ function BindSupplysToGrid(supplys) {
                         //　全登録の最終行
                         cell6.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
                         cell7.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
-                        renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
+                        renderedTotalButtons.add(renderKey); // この機番に集約ボタンが表示済みであることをマーク
                     }
-                    else if (isReadyOrder && isNowExactlyFull && !renderedTotalButtons.has(machine)) {
+                    else if (isReadyOrder && isNowExactlyFull && !renderedTotalButtons.has(renderKey)) {
                         cell6.innerHTML = `<button type="button" class="btn btn-primary btnTotalRegister">${supplys[i].displayNumber}</button>`;
                         cell7.innerHTML = `<button type="button" class="btn btn-secondary btnClose"><i class="fa-solid fa-xmark"></i></button>`;
-                        renderedTotalButtons.add(machine); // この機番に集約ボタンが表示済みであることをマーク
+                        renderedTotalButtons.add(renderKey); // この機番に集約ボタンが表示済みであることをマーク
 
                         // 自動的登録
                         autoRegister(supplys[i])
