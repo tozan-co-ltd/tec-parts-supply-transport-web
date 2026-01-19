@@ -74,5 +74,8 @@ namespace tec_parts_supply_transport_web.Models
 
         public string PartsSupplyAGV { get; set; }
 
+        public int EmptyBoxId { get; set; }    
+
+        public int IsPartsOnlyOder { get; set; }    
     }
 }

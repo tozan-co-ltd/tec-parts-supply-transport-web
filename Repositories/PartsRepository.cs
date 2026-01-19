@@ -54,6 +54,8 @@ namespace tec_parts_supply_transport_web.Repositories
             // "依頼中"のレコード
             var sql = $@"SELECT 
                                 t.parts_supply_request_id AS PartsSupplyRequestId,
+                                t.empty_box_id AS EmptyBoxId,
+                                t.is_parts_only_order AS IsPartsOnlyOder,
                                 t.machine_num AS MachineNum,
                                 t.parts_num AS PartsNum,
                                 t.box_type AS BoxType,
