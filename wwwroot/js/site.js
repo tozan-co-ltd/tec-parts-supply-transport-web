@@ -116,6 +116,7 @@ function BindSupplysToGrid(supplys) {
                     var cell7 = row.insertCell(6);
                     var cell8 = row.insertCell(7);
                     var cell9 = row.insertCell(8);
+                    var cell10 = row.insertCell(9);
 
                     // 現在日時
                     var today = new Date();
@@ -201,6 +202,9 @@ function BindSupplysToGrid(supplys) {
 
                     cell9.innerHTML = `${supplys[i].isPartsOnlyOder}`;
                     cell9.className = 'isPartsOnlyOder';
+
+                    cell10.innerHTML = `${supplys[i].emptyBoxId}`;
+                    cell10.className = 'emptyBoxId';
                 }
             } else {
                 $(".supplyContent").hide();
@@ -282,12 +286,14 @@ function BindSupplysToGrid(supplys) {
                 var tdWithPartsNum = row.querySelector('.partsNum');
                 var tdWithIsPartsOnlyOder = row.querySelector('.isPartsOnlyOder');
                 var tdWithSupplyId = row.querySelector('.supplyId');
+                var tdWithEmptyBoxId = row.querySelector('.emptyBoxId');
 
                 // td要素のdata-timeとidを含むテキスト値を取得する
                 var dataMachineNumber = tdWithMachineNumber.textContent;
                 var dataPartsNum = tdWithPartsNum.textContent;
                 var dataIsPartsOnlyOder = tdWithIsPartsOnlyOder.textContent;
                 var dataSupplyId = tdWithSupplyId.textContent;
+                var dataEmptyBoxId = tdWithEmptyBoxId.textContent;
 
                 Swal.fire({
                     title: '欠品の登録には職制のパスワードが必要です。',
@@ -310,7 +316,7 @@ function BindSupplysToGrid(supplys) {
                         $.ajax({
                             type: 'POST',
                             url: baseUrl + '/Parts/RegisterOutOfStock',
-                            data: { dataMachineNumber: dataMachineNumber, password: result.value, workType: workType, dataIsPartsOnlyOder: dataIsPartsOnlyOder, dataSupplyId: dataSupplyId },
+                            data: { dataMachineNumber: dataMachineNumber, password: result.value, workType: workType, dataIsPartsOnlyOder: dataIsPartsOnlyOder, dataSupplyId: dataSupplyId, dataEmptyBoxId: dataEmptyBoxId },
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {

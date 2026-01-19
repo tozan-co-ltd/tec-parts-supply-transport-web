@@ -252,9 +252,12 @@ namespace tec_parts_supply_transport_web.Repositories
         /// </summary>
         /// <param name="dataMachineNumber"></param>
         /// <param name="workType"></param>
+        /// <param name="dataIsPartsOnlyOder"></param>
+        /// <param name="dataSupplyId"></param>
+        /// <param name="dataEmptyBoxId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType, string dataIsPartsOnlyOder, string dataSupplyId)
+        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType, string dataIsPartsOnlyOder, string dataSupplyId, string dataEmptyBoxId)
         {
             // IPアドレス取得
             string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
@@ -262,8 +265,9 @@ namespace tec_parts_supply_transport_web.Repositories
                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 ?.ToString() ?? "NotFound";
 
-            int supplyId = int.Parse(dataSupplyId); // 空箱供給依頼id
+            int supplyId = int.Parse(dataSupplyId); // 部品id
             int isPartsOnlyOder = int.Parse(dataIsPartsOnlyOder); // 部品のみフラグ
+            int emptyBoxId = int.Parse(dataEmptyBoxId); // 空箱供給依頼id
 
             string whereCondition;
 
@@ -275,14 +279,14 @@ namespace tec_parts_supply_transport_web.Repositories
                 {
                     // LIFT：machine_num = xxx AND box_type NOT LIKE 'TP%'
                     whereCondition = $@"
-                    machine_num = {dataMachineNumber}
+                    machine_num = {dataMachineNumber}　AND　empty_box_id = {emptyBoxId}
                     AND box_type NOT LIKE 'TP%'";
                 }
                 else if (workType == Const.C_WORK_TAGNOVA)
                 {
                     // TAGNOVA：machine_num = xxx AND box_type LIKE 'TP%'
                     whereCondition = $@"
-                    machine_num = {dataMachineNumber}
+                    machine_num = {dataMachineNumber}　AND　empty_box_id = {emptyBoxId}
                     AND box_type LIKE 'TP%'";
                 }
                 else
