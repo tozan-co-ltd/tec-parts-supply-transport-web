@@ -145,7 +145,7 @@ namespace tec_parts_supply_transport_web.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> RegisterOutOfStock(string dataMachineNumber, string password, string workType)
+        public async Task<IActionResult> RegisterOutOfStock(string dataMachineNumber, string password, string workType, string dataIsPartsOnlyOder, string dataSupplyId, string dataEmptyBoxId)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace tec_parts_supply_transport_web.Controllers
                     return Json(new { res = false, errorMessage = error });
 
                 // SQL作成
-                string sqlUpdate = PartsRepository.CreateSQLToUpdateUpdateOutOfStock(dataMachineNumber, workType);
+                string sqlUpdate = PartsRepository.CreateSQLToUpdateUpdateOutOfStock(dataMachineNumber, workType, dataIsPartsOnlyOder, dataSupplyId, dataEmptyBoxId);
 
                 bool isUpdatePartsSupply = false;
 

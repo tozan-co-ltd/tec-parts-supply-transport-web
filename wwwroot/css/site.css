@@ -369,7 +369,7 @@ h3 {
     display: none;
 }
 
-.supplyId {
+.supplyId, .isPartsOnlyOder, .emptyBoxId {
     display: none;
 }
 

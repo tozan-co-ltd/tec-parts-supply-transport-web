@@ -29,33 +29,53 @@ namespace tec_parts_supply_transport_web.Hubs
                 else if (workType == Const.C_WORK_TAGNOVA)
                     listSupplys = listSupplys.Where(x => x.BoxType != null && x.BoxType.StartsWith("TP")).ToList();
 
-                if (listSupplys.Any())
-                {
+                if(listSupplys.Any())
+{
+                    // 空箱のレコード
                     var machineStats = listSupplys
-                        .GroupBy(x => x.MachineNum)
+                        .Where(x => x.IsPartsOnlyOder != 1)
+                        .GroupBy(x => new { x.MachineNum, x.EmptyBoxId })
                         .Select(g => new
                         {
-                            MachineNum = g.Key,
+                            g.Key.MachineNum,
+                            g.Key.EmptyBoxId,
                             Total = g.Count(),
                             ReadyCount = g.Count(x => x.IsReadyOrder == 1)
                         })
-                        .ToDictionary(x => x.MachineNum, x => x);
+                        .ToDictionary(
+                            x => (x.MachineNum, x.EmptyBoxId),
+                            x => x
+                        );
 
                     foreach (var item in listSupplys)
                     {
-                        if (machineStats.TryGetValue(item.MachineNum, out var stat))
+                        // 部品なら分母が増えない
+                        if (item.IsPartsOnlyOder == 1)
                         {
-                            item.DisplayNumber = $"{stat.ReadyCount}/{stat.Total}";
-                            item.ReadyCount = stat.ReadyCount;
+                            item.TotalCount = 1;
+                            item.ReadyCount = item.IsReadyOrder == 1 ? 1 : 0;
+                            item.DisplayNumber = $"{item.ReadyCount}/1";
+                            item.IsTotalRegister = 1; 
+                            continue;
+                        }
+
+                        // 空箱なら分母が増える
+                        var key = (item.MachineNum, item.EmptyBoxId);
+
+                        if (machineStats.TryGetValue(key, out var stat))
+                        {
                             item.TotalCount = stat.Total;
+                            item.ReadyCount = stat.ReadyCount;
+                            item.DisplayNumber = $"{stat.ReadyCount}/{stat.Total}";
+
                             if (stat.ReadyCount + 1 == stat.Total)
                                 item.IsTotalRegister = 1;
                         }
                         else
                         {
-                            item.DisplayNumber = "0/0";
-                            item.ReadyCount = 0;
                             item.TotalCount = 0;
+                            item.ReadyCount = 0;
+                            item.DisplayNumber = "0/0";
                         }
                     }
                 }

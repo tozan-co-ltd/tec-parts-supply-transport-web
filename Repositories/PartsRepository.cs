@@ -54,6 +54,8 @@ namespace tec_parts_supply_transport_web.Repositories
             // "依頼中"のレコード
             var sql = $@"SELECT 
                                 t.parts_supply_request_id AS PartsSupplyRequestId,
+                                t.empty_box_id AS EmptyBoxId,
+                                t.is_parts_only_order AS IsPartsOnlyOder,
                                 t.machine_num AS MachineNum,
                                 t.parts_num AS PartsNum,
                                 t.box_type AS BoxType,
@@ -250,9 +252,12 @@ namespace tec_parts_supply_transport_web.Repositories
         /// </summary>
         /// <param name="dataMachineNumber"></param>
         /// <param name="workType"></param>
+        /// <param name="dataIsPartsOnlyOder"></param>
+        /// <param name="dataSupplyId"></param>
+        /// <param name="dataEmptyBoxId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType)
+        public static string CreateSQLToUpdateUpdateOutOfStock(string dataMachineNumber, string workType, string dataIsPartsOnlyOder, string dataSupplyId, string dataEmptyBoxId)
         {
             // IPアドレス取得
             string readyIpAddress = Dns.GetHostEntry(Dns.GetHostName())
@@ -260,26 +265,35 @@ namespace tec_parts_supply_transport_web.Repositories
                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 ?.ToString() ?? "NotFound";
 
+            int supplyId = int.Parse(dataSupplyId); // 部品id
+            int isPartsOnlyOder = int.Parse(dataIsPartsOnlyOder); // 部品のみフラグ
+            int emptyBoxId = int.Parse(dataEmptyBoxId); // 空箱供給依頼id
+
             string whereCondition;
 
-            if (workType == Const.C_WORK_LIFT)
-            {
-                // LIFT：machine_num = xxx AND box_type NOT LIKE 'TP%'
-                whereCondition = $@"
-                    machine_num = {dataMachineNumber}
-                    AND box_type NOT LIKE 'TP%'";
-                }
-            else if (workType == Const.C_WORK_TAGNOVA)
-            {
-                // TAGNOVA：machine_num = xxx AND box_type LIKE 'TP%'
-                whereCondition = $@"
-                    machine_num = {dataMachineNumber}
-                    AND box_type LIKE 'TP%'";
-                }
+            if (isPartsOnlyOder == 1)
+                whereCondition = $"parts_supply_request_id = {supplyId}";
             else
             {
-                // 念のため（想定外のworkType）
-                throw new ArgumentException($"Invalid workType: {workType}");
+                if (workType == Const.C_WORK_LIFT)
+                {
+                    // LIFT：machine_num = xxx AND box_type NOT LIKE 'TP%'
+                    whereCondition = $@"
+                    machine_num = {dataMachineNumber}　AND　empty_box_id = {emptyBoxId}
+                    AND box_type NOT LIKE 'TP%'";
+                }
+                else if (workType == Const.C_WORK_TAGNOVA)
+                {
+                    // TAGNOVA：machine_num = xxx AND box_type LIKE 'TP%'
+                    whereCondition = $@"
+                    machine_num = {dataMachineNumber}　AND　empty_box_id = {emptyBoxId}
+                    AND box_type LIKE 'TP%'";
+                }
+                else
+                {
+                    // 念のため（想定外のworkType）
+                    throw new ArgumentException($"Invalid workType: {workType}");
+                }
             }
 
             var sql = $@"
