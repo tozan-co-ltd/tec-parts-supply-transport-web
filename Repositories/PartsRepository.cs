@@ -90,18 +90,27 @@ namespace tec_parts_supply_transport_web.Repositories
         /// 部品準備取得SQL作成
         /// </summary>
         /// <returns>SQL</returns>
-        public static string CreateSQLToGetPartsIdByMachineNum(
-    string machineNum,
-    string workType)
+        public static string CreateSQLToGetPartsIdByMachineNum(string dataSupplyId, string machineNum, string workType, string dataIsPartsOnlyOder, string dataEmptyBoxId)
         {
             string boxTypeCondition = string.Empty;
 
-            if (workType == Const.C_WORK_LIFT)
-                // box_type が TP 以外
-                boxTypeCondition = "AND t.box_type NOT LIKE 'TP%'";
-            else if (workType == Const.C_WORK_TAGNOVA)
-                // box_type が TP
-                boxTypeCondition = "AND t.box_type LIKE 'TP%'";
+            int supplyId = int.Parse(dataSupplyId); // 部品id
+            int isPartsOnlyOder = int.Parse(dataIsPartsOnlyOder); // 部品のみフラグ
+            int emptyBoxId = int.Parse(dataEmptyBoxId); // 空箱供給依頼id
+
+            if (isPartsOnlyOder == 1)
+            {
+                boxTypeCondition =  $"AND t.parts_supply_request_id = {supplyId}";
+            }
+            else
+            {
+                if (workType == Const.C_WORK_LIFT)
+                    // box_type が TP 以外
+                    boxTypeCondition = $@"AND t.machine_num = {machineNum} AND　empty_box_id = {emptyBoxId} AND t.box_type NOT LIKE 'TP%'";
+                else if (workType == Const.C_WORK_TAGNOVA)
+                    // box_type が TP
+                    boxTypeCondition = $@"AND t.machine_num = {machineNum} AND　empty_box_id = {emptyBoxId} AND t.box_type LIKE 'TP%'";
+            }
 
             var sql = $@"
                 SELECT 
@@ -111,13 +120,11 @@ namespace tec_parts_supply_transport_web.Repositories
                 LEFT JOIN m_machine_number_basic_information AS m
                        ON t.machine_num = m.machine_num
                 WHERE t.is_deleted = 0
-                  AND t.machine_num = {machineNum}
                   {boxTypeCondition};
-            ";
+                ";
 
             return sql;
         }
-
 
 
 

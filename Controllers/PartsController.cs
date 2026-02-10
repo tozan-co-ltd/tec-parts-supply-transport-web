@@ -91,7 +91,7 @@ namespace tec_parts_supply_transport_web.Controllers
         /// <param name="machineNum"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId, string machineNum, string workType)
+        public IActionResult Complete(string dataSupplyId, string machineNum, string workType, string dataIsPartsOnlyOder, string dataEmptyBoxId)
         {
             if (string.IsNullOrEmpty(machineNum))
                 return Json(new { success = false, message = "機械番号がありません。" });
@@ -104,7 +104,7 @@ namespace tec_parts_supply_transport_web.Controllers
             bool resUpdate = true;
             try
             {
-                var sqlGetParts =PartsRepository.CreateSQLToGetPartsIdByMachineNum(machineNum, workType);
+                var sqlGetParts =PartsRepository.CreateSQLToGetPartsIdByMachineNum(dataSupplyId, machineNum, workType, dataIsPartsOnlyOder, dataEmptyBoxId);
                 var listParts = PartsRepository.GetListParts(sqlGetParts);
 
                 if (!listParts.Any())

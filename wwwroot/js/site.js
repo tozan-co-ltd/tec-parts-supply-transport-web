@@ -231,14 +231,18 @@ function BindSupplysToGrid(supplys) {
         btnTotalRegister.forEach(function (button) {
             button.addEventListener('click', function () {
                 var row = button.parentElement.parentElement;
-                var tdWithSupplyId = row.querySelector('.supplyId');
                 var tdWithMachineNumber = row.querySelector('.machine-number');
                 var tdWithPartsNum = row.querySelector('.partsNum');
+                var tdWithIsPartsOnlyOder = row.querySelector('.isPartsOnlyOder');
+                var tdWithSupplyId = row.querySelector('.supplyId');
+                var tdWithEmptyBoxId = row.querySelector('.emptyBoxId');
 
                 // td要素のdata-timeとidを含むテキスト値を取得する
-                var dataSupplyId = tdWithSupplyId.textContent;
                 var dataMachineNumber = tdWithMachineNumber.textContent;
                 var dataPartsNum = tdWithPartsNum.textContent;
+                var dataIsPartsOnlyOder = tdWithIsPartsOnlyOder.textContent;
+                var dataSupplyId = tdWithSupplyId.textContent;
+                var dataEmptyBoxId = tdWithEmptyBoxId.textContent;
 
                 Swal.fire({
                     title: `依頼をすべて完了で登録してもよろしいですか？`,
@@ -253,7 +257,7 @@ function BindSupplysToGrid(supplys) {
                         $.ajax({
                             type: 'POST',
                             url: baseUrl + '/Parts/Complete',
-                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber, workType: workType},
+                            data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber, workType: workType, dataIsPartsOnlyOder: dataIsPartsOnlyOder, dataEmptyBoxId: dataEmptyBoxId },
                             success: function (response) {
                                 if (response.res != true) {
                                     setTimeout(function () {
