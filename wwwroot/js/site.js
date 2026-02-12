@@ -351,7 +351,11 @@ function BindSupplysToGrid(supplys) {
 function autoRegister(item) {
     setTimeout(() => {
         const dataSupplyId = item.partsSupplyRequestId;
+        const dataEmptyBoxId = item.emptyBoxId;
+        const dataIsPartsOnlyOder = item.isPartsOnlyOder;
         const machineNum = item.machineNum;
+        const dataMachineNumber = item.machineNum;
+        const dataPartsNum = item.partsNum;
 
         Swal.fire({
             title: `機番：${machineNum}<br>依頼をすべて完了で登録してもよろしいですか？`,
@@ -366,7 +370,7 @@ function autoRegister(item) {
                 $.ajax({
                     type: 'POST',
                     url: baseUrl + '/Parts/Complete',
-                    data: { dataSupplyId: dataSupplyId, machineNum: machineNum, workType: workType},
+                    data: { dataSupplyId: dataSupplyId, machineNum: dataMachineNumber, workType: workType, dataIsPartsOnlyOder: dataIsPartsOnlyOder, dataEmptyBoxId: dataEmptyBoxId },
                     success: function (response) {
                         if (response.res != true) {
                             setTimeout(function () {
