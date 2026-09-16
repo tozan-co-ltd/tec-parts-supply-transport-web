@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "補充状況";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="restocking-page">
+    <button class="btn btn-primary m-3" onclick="history.back()"> <i class="fa-solid fa-play fa-rotate-180"></i>　戻る</button>
+    <div class="d-flex justify-content-center">
+        <table id="restockTable" class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>機番</th>
+                    <th>補充状況</th>
+                    <th>日付</th>
+                    <th>時間</th>
+                    <th>在庫数</th>
+                </tr>
+            </thead>
+            <tbody id="restock-table-row">
+            </tbody>
+        </table>
+    </div>
+</div>
+<style>
+    #restock-table-row tr td {
+        font-size: 18px;
+    }
+</style>

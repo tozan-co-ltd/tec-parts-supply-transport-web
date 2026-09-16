@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using tec_parts_supply_transport_web.Commons;
 using tec_parts_supply_transport_web.Hubs;
 using tec_parts_supply_transport_web.MiddlewareExtensions;
+using tec_parts_supply_transport_web.Repositories;
 using tec_parts_supply_transport_web.SubscribeTableDependencies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,9 +27,20 @@ builder.Services.AddSingleton<SubscribeTransportationTableDependency>();
 builder.Services.AddSingleton<MachineHub>();
 builder.Services.AddSingleton<SubscribeMachineTableDependency>();
 
+builder.Services.AddSingleton<TRestockingStatusHub>();
+builder.Services.AddSingleton<SubscribeRestockingStatusTableDependency>();
+
+
+builder.Services.AddScoped<TRestockingStatusRepository>(provider => 
+{
+    var connectionString = builder.Configuration.GetConnectionString("tec-inventory-management");
+    return new TRestockingStatusRepository(connectionString);
+});
+
 var app = builder.Build();
 
 var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+var secondConnetionString = ConnectToSQLServer.GetSecondSQLServerConnectionString();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -51,6 +63,8 @@ app.MapHub<PreparationHub>("preparationHub");
 app.MapHub<PartsHub>("partsHub");
 app.MapHub<TransportationHub>("transportationHub");
 app.MapHub<MachineHub>("machineHub");
+app.MapHub<TRestockingStatusHub>("tRestockingStatusHub");
+
 
 app.UseEndpoints(endpoints =>
 {
@@ -63,5 +77,7 @@ app.UseSqlTableDependency<SubscribePreparationTableDependency>(connectionString)
 app.UseSqlTableDependency<SubscribePartsTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeTransportationTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeMachineTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribeRestockingStatusTableDependency>(secondConnetionString);
+
 
 app.Run();

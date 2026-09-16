@@ -13,11 +13,22 @@ const isPreparationPage = document.getElementById("parts-page");
 if (isPreparationPage) {
     var connectionSupply = new signalR.HubConnectionBuilder().withUrl("partsHub").build();
 
+    connectionSupply.on("NewErrorAlert", function (data) {
+        console.log("new Error Data: ", data);
+        if (data == true) {
+            $(".restocking-btn").addClass("btn-error"); 
+        } else {
+            $(".restocking-btn").removeClass("btn-error"); 
+        }
+    });
+
     $(function () {
         connectionSupply.start().then(function () {
+            console.log("Connected! State:", connectionSupply.state);  // check state
+            console.log("Connection ID:", connectionSupply.connectionId); 
             connectionSupply.invoke("JoinGroup", workType); 
             InvokeSupplys();
-        })
+        }).catch(err => console.error("SignalR Error ❌:", err));
     });
 
     connectionSupply.on("NotifyPartsChanged", function (type) {
@@ -25,6 +36,8 @@ if (isPreparationPage) {
             InvokeSupplys();
         }
     });
+
+
 
 
     // 短い遅延後に再接続を試みる
@@ -56,6 +69,12 @@ if (isPreparationPage) {
             $(".connectionSupplyError").text(error);
             $(".connectionSupplyError").show();
         });
+        connectionSupply.invoke("SendRestockingStatus").catch(function (error) {
+            console.log("Error - invoke catch");
+            $(".connectionSupplyError").text(error);
+            $(".connectionSupplyError").show();
+        });
+        
     }
 
 
@@ -984,4 +1003,130 @@ function formatDate(dateInput) {
     const min = String(date.getMinutes()).padStart(2, '0');
 
     return `${yyyy}/${mm}/${dd} ${hh}:${min}`;
+}
+
+
+
+
+
+// -----------------------------------補充状況-----------------------------------//
+// SignalRを使用して接続を初期化する
+const isRestockingStatusPage = document.getElementById("restocking-page");
+if (isRestockingStatusPage) {
+    var connectionMachine = new signalR.HubConnectionBuilder().withUrl("tRestockingStatusHub").build();
+
+    $(function () {
+        connectionMachine.start().then(function () {
+            InvokeTRestockingStatus();
+        })
+    });
+
+    // ページを離れた時やリロードしたタイミングで接続を止める
+    window.addEventListener('unload', function () {
+        console.log("addEventListener - unload");
+        connectionMachine.stop();
+    });
+
+    // ハブのメソッドを呼び出す
+    function InvokeTRestockingStatus() {
+        //  URLからDivisionを取得
+        connectionMachine.invoke("SendTRestockingStatusList").catch(function (error) {
+            // Controllerに接続できない場合はエラー
+            console.log("Error - invoke catch");
+            $(".connectionTransportError").text(error);
+            $(".connectionTransportError").show();
+        });
+    }
+
+    // エラー発生時
+    connectionMachine.on("Error", (error) => {
+        console.log("Error - on");
+        $(".connectionTransportError").text(error);
+        $(".connectionTransportError").show();
+    });
+
+    // グリッドに依頼をバインドする
+    connectionMachine.on("ReceivedTRestockingStatusList", function (status) {
+        console.log("ReceivedTRestockingStatusList", status);
+        BindRestockingStatusToGrid(status);
+    });
+}
+
+// グリッドに依頼をバインド
+function BindRestockingStatusToGrid(status) {
+    $('#restockTable tbody').empty();
+
+    var restockDom = document.getElementById('restockTable');
+
+    if (restockDom !== null) {
+        var table = restockDom.getElementsByTagName('tbody')[0];
+
+        // テーブル取得
+        createTable(status, table);
+
+        // テーブルを作成
+        function createTable(status, table) {
+            if (status.length > 0) {
+                //$(".machine-table-content").show();
+                //$(".noneDateMess").hide();
+
+                for (let i = 0; i < status.length; i++) {
+                    var row = table.insertRow();
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+                    var cell5 = row.insertCell(4);
+                    var cell6 = row.insertCell(5);
+
+
+                    // Convert sang Date object
+                    var dateObj = new Date(status[i].replenishmentRequestDate);
+
+                    // Cell3: chỉ lấy ngày yyyy/MM/dd
+                    var dateOnly = dateObj.getFullYear() + '/'
+                        + String(dateObj.getMonth() + 1).padStart(2, '0') + '/'
+                        + String(dateObj.getDate()).padStart(2, '0');
+
+                    // Cell4: chỉ lấy giờ HH:mm
+                    var timeOnly = String(dateObj.getHours()).padStart(2, '0') + ':'
+                        + String(dateObj.getMinutes()).padStart(2, '0');
+                    cell1.innerHTML = `<input type="checkbox" style="width: 20px; height: 20px; cursor: pointer;" value="${status[i].restockStatusId}" ${status[i].userCheck ? 'checked' : ''} onchange="onCheck(this)">`;
+                    cell2.innerHTML = `${status[i].partsNum}`;
+                    cell3.innerHTML = `${status[i].restockStatus == 4 ? '補充状況' : ''}`;
+                    cell4.innerHTML = dateOnly;
+                    cell5.innerHTML = timeOnly;
+                    cell6.innerHTML = `${status[i].quantity}`;
+
+
+                    //if (machines[i].status) {
+                    //    cell2.style.color = 'orange';
+                    //} else {
+                    //    cell2.style.color = 'green';
+                    //}
+                }
+            } else {
+                //$(".machine-table-content").hide();
+                //$(".noneDateMess").show();
+            }
+        }
+    }
+}
+function onCheck(checkbox) {
+    var id = checkbox.value;
+    var isChecked = checkbox.checked;
+    console.log(`id: ${id}, isChecked: ${isChecked}`);
+
+    $.ajax({
+        type: 'POST',
+        url: baseUrl + '/TRestockingStatus/OnCheck',
+        data: { restockStatusId: id, userCheck: isChecked },
+        success: function (response) {
+            console.log("response", response);
+        }
+    }).done(function () {
+        setTimeout(function () {
+            $("#overlay").fadeOut(300);
+        }, 500);
+    });
 }

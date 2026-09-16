@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System.Diagnostics;
 using tec_parts_supply_transport_web.Commons;
 using tec_parts_supply_transport_web.Models;
 using tec_parts_supply_transport_web.Repositories;
@@ -89,6 +90,22 @@ namespace tec_parts_supply_transport_web.Hubs
                 // 「SQLServerでエラーが発生しました。」
                 var errorMessage = ErrorHandling.CreateErrorMessage("E4001");
                 await Clients.Caller.SendAsync("Error", errorMessage);
+            }
+        }
+
+        // 補充状況に応じてボタンを変化
+        public async Task SendRestockingStatus()
+        {
+            try
+            {
+                var restockStatusList = TRestockingStatusHub.GetRestockingStatusUncheck();
+
+                if (restockStatusList != null && restockStatusList.Any())
+                    await Clients.All.SendAsync("NewErrorAlert", true);
+                else await Clients.All.SendAsync("NewErrorAlert", false);
+            } catch (Exception)
+            {
+                throw;
             }
         }
 

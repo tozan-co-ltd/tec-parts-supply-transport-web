@@ -18,5 +18,19 @@
             var configuration = builder.Build();
             return configuration.GetSection("connectionString").GetValue<string>(databaseName);
         }
+
+        /// <summary>
+        /// SQLServer接続文字列取得
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSecondSQLServerConnectionString()
+        {
+            var databaseName = "tec-inventory-management";
+            var builder = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: false);
+            var configuration = builder.Build();
+            return configuration.GetSection("connectionString").GetValue<string>(databaseName);
+        }
     }
 }

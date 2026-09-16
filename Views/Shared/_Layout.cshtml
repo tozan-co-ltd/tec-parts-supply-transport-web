@@ -23,7 +23,17 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow nav-head">
             <div class="container-fluid justify-content-between">
                 @{
-                    if (@ViewData["Title"] != "トップ")
+                    if (@ViewData["Title"] == "部品準備")
+                    {
+                        <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
+                        <div class="d-flex align-items-center">
+                            <a asp-controller="TRestockingStatus" asp-action="Index" style="margin-right: 20px">
+                                <button type="button" style="font-size: 18px; font-weight: bold; color: #000;" class="btn btn-outline-secondary custom-btn restocking-btn">補充状況</button>
+                            </a>
+                            <a class="navbar-brand home-icon" asp-area="" asp-controller="Top" asp-action="Index"><i class="fa fa-fw fa-home"></i></a>
+                        </div>
+                    }
+                    else if (@ViewData["Title"] != "トップ")
                     {
                         <div class="d-flex justify-content-center align-items-center header-title h2">@ViewData["Title"]</div>
                         <a class="navbar-brand home-icon" asp-area="" asp-controller="Top" asp-action="Index"><i class="fa fa-fw fa-home"></i></a>
@@ -61,6 +71,29 @@
         <style>
             html {
                 background: #000000;
+            }
+
+            .custom-btn:hover {
+                background-color: #f0f0f0 !important; /* màu hover nhạt */
+                color: #000 !important; /* giữ màu chữ đen */
+                border-color: #6c757d !important;
+            }
+
+            .btn-error {
+                background-color: #FF9137;
+                color: white;
+                font-weight: bold;
+            }
+
+            .btn-error::before {
+                 font-family: "Font Awesome 6 Free";
+                 content: "\21"; /* ký tự "!" đơn giản */
+                 font-weight: 900;
+                 margin-right: 4px;
+                 color: red;
+                 font-size: 20px;
+                 display: inline-block;
+                 transform: scaleX(1.5);
             }
         </style>
     }
