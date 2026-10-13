@@ -627,11 +627,13 @@ function BindTransportsToGrid(transports) {
                 var statusBtn = button.textContent || button.innerText;
                 var tdWithSupplyId = row.querySelector('.transportId');
                 var tdWithMachineNum = row.querySelector('.machineNum');
+                var tdWithPartsNum = row.querySelector('.partsNum');
                 var tdWithBoxCount = row.querySelector('.boxCount');
 
                 // td要素のdata-timeとidを含むテキスト値を取得
                 var dataSupplyId = tdWithSupplyId.textContent;
                 var dataMachineNum = tdWithMachineNum.textContent;
+                var dataPartsNum = tdWithPartsNum.textContent;
                 var dataBoxCount = tdWithBoxCount.textContent;
 
                 // 開始ボタン押下時
@@ -680,7 +682,7 @@ function BindTransportsToGrid(transports) {
                             $.ajax({
                                 type: 'POST',
                                 url: baseUrl + '/Transportation/Complete',
-                                data: { dataSupplyId: dataSupplyId, statusBtn: statusBtn},
+                                data: { dataSupplyId: dataSupplyId, dataPartsNum: dataPartsNum, dataBoxCount: dataBoxCount, statusBtn: statusBtn},
                                 success: function (response) {
                                     if (response.res != true) {
                                         setTimeout(function () {

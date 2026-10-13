@@ -115,6 +115,8 @@ namespace tec_parts_supply_transport_web.Repositories
             var sql = $@"
                 SELECT 
                     t.parts_supply_request_id AS PartsSupplyRequestId,
+                    t.parts_num AS PartsNum,
+                    t.required_quantity AS RequiredQuantity,
                     m.parts_supply_AGV AS PartsSupplyAGV
                 FROM t_parts_supply_request AS t
                 LEFT JOIN m_machine_number_basic_information AS m
@@ -228,6 +230,43 @@ namespace tec_parts_supply_transport_web.Repositories
         }
 
 
+        /// <summary>
+        /// 部品在庫を更新するSQL作成
+        /// </summary>
+        /// <param name="workType"></param>
+        /// <param name="agv"></param>
+        /// <param name="partsModel"></param>
+        /// <returns></returns>
+        public static string CreateSQLToUpdatePartsInventory(string workType, int agv)
+        {
+            bool isUseAGV = false;
+
+            if (workType == Const.C_WORK_LIFT)
+            {
+                // リフト：AGV = 1 or 3
+                isUseAGV = (agv == 1 || agv == 3);
+            }
+            else if (workType == Const.C_WORK_TAGNOVA)
+            {
+                // タグノバ：AGV = 1 or 2
+                isUseAGV = (agv == 1 || agv == 2);
+            }
+
+            if (!isUseAGV)
+            {
+                return string.Empty;
+            }
+
+            string sql = $@"
+                UPDATE [tec-inventory-management].[dbo].[t_inventory_information]
+                SET
+                    inventory_num = inventory_num - @Quantity,
+                    restock_last_date = GETDATE()
+                WHERE parts_num = @PartsNum
+            ";
+
+            return sql;
+        }
 
 
         /// <summary>

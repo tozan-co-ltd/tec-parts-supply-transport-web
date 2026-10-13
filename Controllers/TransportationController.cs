@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
+using System.IO;
 using tec_parts_supply_transport_web.Commons;
 using tec_parts_supply_transport_web.Repositories;
 
@@ -26,19 +27,20 @@ namespace tec_parts_supply_transport_web.Controllers
 
 
         /// <summary>
-        /// 運搬開始・運搬終了に更新
+        /// 運搬開始・運搬終了・部品在庫に更新
         /// </summary>
         /// <param name="dataSupplyId"></param>
+        /// <param name="dataPartsNum"></param>
+        /// <param name="dataBoxCount"></param>
         /// <param name="statusBtn"></param>
-        /// <param name="isCancelled"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Complete(string dataSupplyId, string statusBtn)
+        public IActionResult Complete(string dataSupplyId, string dataPartsNum, string dataBoxCount, string statusBtn)
         {
             try
             {
                 string partsSupplyRequestIid = dataSupplyId;
-                bool resUpdate = UpdatePartsSupplyRequest(partsSupplyRequestIid, statusBtn);
+                bool resUpdate = UpdatePartsSupplyRequest(partsSupplyRequestIid, dataPartsNum, dataBoxCount, statusBtn);
                 var result = new { res = resUpdate };
 
                 return Json(result);
@@ -53,40 +55,72 @@ namespace tec_parts_supply_transport_web.Controllers
 
 
         /// <summary>
-        /// 運搬開始・運搬終了に更新
+        /// 運搬開始・運搬終了・部品在庫に更新
         /// </summary>
         /// <param name="empty_box_supply_request_id"></param>
-        /// <returns>成功したらtrueを返す</returns>
-        public bool UpdatePartsSupplyRequest(string empty_box_supply_request_id, string status)
+        /// <param name="partsNum"></param>
+        /// <param name="requiredQuantity"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public bool UpdatePartsSupplyRequest(
+            string empty_box_supply_request_id,
+            string partsNum,
+            string requiredQuantity,
+            string status)
         {
-            try
+            var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
+
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            // SQL作成
+            var sql = TransportationRepository.CreateSQLUpdatePartsSupplyRequest(empty_box_supply_request_id, status);
+
+            // Transaction 1：運搬開始・運搬終了に更新
+            using (var transaction = connection.BeginTransaction())
             {
-                // 戻り値
-                bool isUpdateEmptyBoxSupply = false;
+                int update = connection.Execute(
+                    sql,
+                    new { empty_box_supply_request_id },
+                    transaction: transaction);
 
-                // SQL作成
-                var sql = TransportationRepository.CreateSQLUpdatePartsSupplyRequest(empty_box_supply_request_id, status);
-
-                // DB接続
-                var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-                using (var connection = new SqlConnection(connectionString))
+                if (update < 1)
                 {
-                    connection.ConnectionString = connectionString;
-                    connection.Open();
-
-                    // 戻り値は処理件数
-                    var update = connection.Execute(sql, empty_box_supply_request_id);
-                    if (update >= 1)
-                    {
-                        isUpdateEmptyBoxSupply = true;
-                    }
+                    transaction.Rollback();
+                    return false;
                 }
-                return isUpdateEmptyBoxSupply;
+
+                transaction.Commit();
             }
-            catch (Exception ex)
+
+            // 運搬終了の場合
+            // Transaction 2：部品在庫を更新
+            if (status == "終了")
             {
-                throw;
+                using (var transaction = connection.BeginTransaction())
+                {
+                    string updateInventorySql =TransportationRepository.CreateSQLToUpdatePartsInventory();
+
+                    int updateInventory = connection.Execute(
+                        updateInventorySql,
+                        new
+                        {
+                            PartsNum = partsNum,
+                            Quantity = requiredQuantity
+                        },
+                        transaction: transaction);
+
+                    if (updateInventory <= 0)
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+
+                    transaction.Commit();
+                }
             }
+
+            return true;
         }
     }
 }
