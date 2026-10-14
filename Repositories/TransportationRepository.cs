@@ -1,10 +1,11 @@
-﻿using tec_parts_supply_transport_web.Models;
+﻿using Dapper;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using Dapper;
-using tec_parts_supply_transport_web.Commons;
 using System.Net;
+using tec_parts_supply_transport_web.Commons;
+using tec_parts_supply_transport_web.Hubs;
+using tec_parts_supply_transport_web.Models;
 
 namespace tec_parts_supply_transport_web.Repositories
 {
@@ -89,7 +90,6 @@ namespace tec_parts_supply_transport_web.Repositories
         /// 運搬開始・運搬終了に更新するSQL作成
         /// </summary>
         /// <param name="parts_supply_request_id"></param>
-        /// <param name="isCancelled"></param>
         /// <param name="status"></param>
         /// <remarks>UPDATE文</remarks>
         /// <returns>SQL</returns>
@@ -138,6 +138,24 @@ namespace tec_parts_supply_transport_web.Repositories
             sql += string.Join(",", sets);
 
             sql += $" WHERE parts_supply_request_id = {parts_supply_request_id}";
+
+            return sql;
+        }
+
+
+        /// <summary>
+        /// 部品在庫を更新するSQL作成
+        /// </summary>
+        /// <returns></returns>
+        public static string CreateSQLToUpdatePartsInventory()
+        {
+            string sql = $@"
+                UPDATE [tec-inventory-management].[dbo].[t_inventory_information]
+                SET
+                    inventory_num = inventory_num - @Quantity,
+                    restock_last_date = GETDATE()
+                WHERE parts_num = @PartsNum
+            ";
 
             return sql;
         }
