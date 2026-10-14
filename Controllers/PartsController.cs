@@ -94,8 +94,14 @@ namespace tec_parts_supply_transport_web.Controllers
         [HttpPost]
         public IActionResult Complete(string dataSupplyId, string machineNum, string workType, string dataIsPartsOnlyOder, string dataEmptyBoxId)
         {
+            var errorMessages = new List<string>();
+
             if (string.IsNullOrEmpty(machineNum))
-                return Json(new { res = false, message = "機械番号がありません。" });
+            {
+                errorMessages.Add($"{machineNum}の機械番号がありません。");
+
+                return Json(new { res = false, message = string.Join("<br>", errorMessages) });
+            }
 
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
             using var connection = new SqlConnection(connectionString);
@@ -108,67 +114,53 @@ namespace tec_parts_supply_transport_web.Controllers
 
                 if (!listParts.Any())
                 {
-                    return Json(new
-                    {
-                        res = false,
-                        message = "既に完了済みまたは対象データがありません。"
-                    });
+                    errorMessages.Add($"機番 {machineNum} の<br>既に完了済みまたは対象データがありません。");
+
+                    return Json(new { res = false, message = string.Join("<br>", errorMessages) });
                 }
 
-                // Transaction 1：部品供給AGVの完了状態を更新
                 using (var transaction = connection.BeginTransaction())
                 {
                     foreach (var parts in listParts)
                     {
                         int agv = int.Parse(parts.PartsSupplyAGV);
 
-                        string sqlUpdate = PartsRepository.CreateSQLToUpdateCompletePartsSupplyAGV(parts.PartsSupplyRequestId,workType, agv);
-
-                        int update = connection.Execute(sqlUpdate,transaction: transaction);
+                        // 準備完了登録
+                        string sqlUpdate = PartsRepository.CreateSQLToUpdateCompletePartsSupplyAGV(parts.PartsSupplyRequestId, workType, agv);
+                        int update = connection.Execute(sqlUpdate, transaction: transaction);
 
                         if (update <= 0)
                         {
                             transaction.Rollback();
-
-                            return Json(new
-                            {
-                                res = false,
-                                message = "部品供給AGVの完了状態を更新できませんでした。"
-                            });
+                            errorMessages.Add($"品番 {parts.PartsNum} 品番の<br>準備完了登録ができませんでした。");
+                            return Json(new { res = false, message = string.Join("<br>", errorMessages) });
                         }
-                    }
 
-                    transaction.Commit();
-                }
+                        // AGVである場合部品在庫更新
+                        var (updateInventorySql, isUseAGV) = PartsRepository.CreateSQLToUpdatePartsInventory(workType, agv);
 
-                // Transaction 2：部品在庫を更新
-                using (var transaction = connection.BeginTransaction())
-                {
-                    foreach (var parts in listParts)
-                    {
-                        int agv = int.Parse(parts.PartsSupplyAGV);
-
-                        string updateInventorySql = PartsRepository.CreateSQLToUpdatePartsInventory(workType, agv);
-
-                        if (!string.IsNullOrEmpty(updateInventorySql))
+                        if (isUseAGV)
                         {
+                            if (string.IsNullOrEmpty(updateInventorySql))
+                            {
+                                transaction.Rollback();
+                                errorMessages.Add($"品番 {parts.PartsNum} の<br>部品在庫更新ができませんでした。");
+                                return Json(new { res = false, message = string.Join("<br>", errorMessages) });
+                            }
+
                             int updateInventory = connection.Execute(updateInventorySql,
-                              new
-                              {
-                                  PartsNum = parts.PartsNum,
-                                  Quantity = parts.RequiredQuantity
-                              },
-                              transaction: transaction);
+                                new
+                                {
+                                    PartsNum = parts.PartsNum,
+                                    Quantity = parts.RequiredQuantity
+                                },
+                                transaction: transaction);
 
                             if (updateInventory <= 0)
                             {
                                 transaction.Rollback();
-
-                                return Json(new
-                                {
-                                    res = false,
-                                    message = "部品在庫を更新できませんでした。"
-                                });
+                                errorMessages.Add($"品番 {parts.PartsNum}  の<br>部品在庫更新ができませんでした。");
+                                return Json(new { res = false, message = string.Join("<br>", errorMessages) });
                             }
                         }
                     }
@@ -180,11 +172,9 @@ namespace tec_parts_supply_transport_web.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    res = false,
-                    errorMessage = ex.Message
-                });
+                errorMessages.Add(ex.Message);
+
+                return Json(new { res = false, message = string.Join("<br>", errorMessages) });
             }
         }
 

@@ -39,17 +39,19 @@ namespace tec_parts_supply_transport_web.Controllers
         {
             try
             {
-                string partsSupplyRequestIid = dataSupplyId;
-                bool resUpdate = UpdatePartsSupplyRequest(partsSupplyRequestIid, dataPartsNum, dataBoxCount, statusBtn);
-                var result = new { res = resUpdate };
+                string partsSupplyRequestId = dataSupplyId;
+                var (success, message) = UpdatePartsSupplyRequest(partsSupplyRequestId, dataPartsNum, dataBoxCount, statusBtn);
 
-                return Json(result);
+                if (!success)
+                {
+                    return Json(new { res = false, message = message });
+                }
+
+                return Json(new { res = true });
             }
             catch (Exception ex)
             {
-                var result = new { res = ex.Message };
-
-                return Json(result);
+                return Json(new { res = false, message = ex.Message });
             }
         }
 
@@ -57,70 +59,69 @@ namespace tec_parts_supply_transport_web.Controllers
         /// <summary>
         /// 運搬開始・運搬終了・部品在庫に更新
         /// </summary>
-        /// <param name="empty_box_supply_request_id"></param>
-        /// <param name="partsNum"></param>
-        /// <param name="requiredQuantity"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public bool UpdatePartsSupplyRequest(
+        public (bool success, string message) UpdatePartsSupplyRequest(
             string empty_box_supply_request_id,
             string partsNum,
             string requiredQuantity,
             string status)
         {
             var connectionString = ConnectToSQLServer.GetSQLServerConnectionString();
-
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
-            // SQL作成
             var sql = TransportationRepository.CreateSQLUpdatePartsSupplyRequest(empty_box_supply_request_id, status);
 
-            // Transaction 1：運搬開始・運搬終了に更新
             using (var transaction = connection.BeginTransaction())
             {
-                int update = connection.Execute(
-                    sql,
-                    new { empty_box_supply_request_id },
-                    transaction: transaction);
-
-                if (update < 1)
+                try
                 {
-                    transaction.Rollback();
-                    return false;
-                }
-
-                transaction.Commit();
-            }
-
-            // 運搬終了の場合
-            // Transaction 2：部品在庫を更新
-            if (status == "終了")
-            {
-                using (var transaction = connection.BeginTransaction())
-                {
-                    string updateInventorySql =TransportationRepository.CreateSQLToUpdatePartsInventory();
-
-                    int updateInventory = connection.Execute(
-                        updateInventorySql,
-                        new
-                        {
-                            PartsNum = partsNum,
-                            Quantity = requiredQuantity
-                        },
+                    int update = connection.Execute(
+                        sql,
+                        new { empty_box_supply_request_id },
                         transaction: transaction);
 
-                    if (updateInventory <= 0)
+                    if (update < 1)
                     {
                         transaction.Rollback();
-                        return false;
+                        return (false, $"部品 {partsNum} の<br>運搬終了登録ができませんでした。");
+                    }
+
+                    // 運搬終了場合、部品在庫更新
+                    if (status == "終了")
+                    {
+                        string updateInventorySql = TransportationRepository.CreateSQLToUpdatePartsInventory();
+
+                        if (string.IsNullOrEmpty(updateInventorySql))
+                        {
+                            transaction.Rollback();
+                            return (false, $"部品 {partsNum} の<br>在庫更新SQLが取得できませんでした。");
+                        }
+
+                        int updateInventory = connection.Execute(
+                            updateInventorySql,
+                            new
+                            {
+                                PartsNum = partsNum,
+                                Quantity = requiredQuantity
+                            },
+                            transaction: transaction);
+
+                        if (updateInventory <= 0)
+                        {
+                            transaction.Rollback();
+                            return (false, $"部品 {partsNum} の<br>部品在庫更新ができませんでした。");
+                        }
                     }
 
                     transaction.Commit();
+                    return (true, string.Empty);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return (false, ex.Message);
                 }
             }
-
-            return true;
         }
     }
 }

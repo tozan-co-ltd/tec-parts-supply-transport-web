@@ -236,6 +236,7 @@ function BindSupplysToGrid(supplys) {
                 var tdWithIsPartsOnlyOder = row.querySelector('.isPartsOnlyOder');
                 var tdWithSupplyId = row.querySelector('.supplyId');
                 var tdWithEmptyBoxId = row.querySelector('.emptyBoxId');
+                var tdWithBoxCount = row.querySelector('.boxCount');
 
                 // td要素のdata-timeとidを含むテキスト値を取得する
                 var dataMachineNumber = tdWithMachineNumber.textContent;
@@ -243,6 +244,7 @@ function BindSupplysToGrid(supplys) {
                 var dataIsPartsOnlyOder = tdWithIsPartsOnlyOder.textContent;
                 var dataSupplyId = tdWithSupplyId.textContent;
                 var dataEmptyBoxId = tdWithEmptyBoxId.textContent;
+                var dataBoxCount = tdWithBoxCount.textContent;
 
                 Swal.fire({
                     title: `依頼をすべて完了で登録してもよろしいですか？`,
@@ -263,8 +265,8 @@ function BindSupplysToGrid(supplys) {
                                     setTimeout(function () {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: `箱種 ${dataMachineNumber} 箱数 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
-                                            html: `<span style="color: red;">${response.res}</span>`,
+                                            title: `箱種 ${dataMachineNumber} 箱数 ${dataBoxCount}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                            html: `<span style="color: red;">${response.message}</span>`,
                                             confirmButtonColor: '#0d6efd',
                                             confirmButtonText: '閉じる',
                                             allowOutsideClick: false,
@@ -376,8 +378,8 @@ function autoRegister(item) {
                             setTimeout(function () {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: `箱種 ${machineNum} 箱数 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
-                                    html: `<span style="color: red;">${response.res}</span>`,
+                                    title: `箱種 ${dataMachineNumber} 箱数 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
+                                    html: `<span style="color: red;">${response.message}</span>`,
                                     confirmButtonColor: '#0d6efd',
                                     confirmButtonText: '閉じる',
                                     allowOutsideClick: false,
@@ -438,7 +440,7 @@ function handleRegister(button, isRegister) {
                         Swal.fire({
                             icon: 'error',
                             title: `機番 ${dataMachineNumber} 所番地 ${dataPartsNum}の<br>準備完了登録ができませんでした。<br>再度お試しください。`,
-                            html: `<span style="color: red;">${response.res}</span>`,
+                            html: `<span style="color: red;">${response.message}</span>`,
                             confirmButtonColor: '#0d6efd',
                             confirmButtonText: '閉じる',
                             allowOutsideClick: false,
@@ -689,7 +691,7 @@ function BindTransportsToGrid(transports) {
                                             Swal.fire({
                                                 icon: 'error',
                                                 title: `機番 ${dataMachineNum} 箱数 ${dataBoxCount}の<br>運搬終了登録ができませんでした。<br>再度お試しください。`,
-                                                html: `<span style="color: red;">${response.res}</span>`,
+                                                html: `<span style="color: red;">${response.message}</span>`,
                                                 confirmButtonColor: '#0d6efd',
                                                 confirmButtonText: '閉じる',
                                                 allowOutsideClick: false,

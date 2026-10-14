@@ -235,9 +235,8 @@ namespace tec_parts_supply_transport_web.Repositories
         /// </summary>
         /// <param name="workType"></param>
         /// <param name="agv"></param>
-        /// <param name="partsModel"></param>
         /// <returns></returns>
-        public static string CreateSQLToUpdatePartsInventory(string workType, int agv)
+        public static (string updateInventorySql, bool isUseAGV) CreateSQLToUpdatePartsInventory(string workType, int agv)
         {
             bool isUseAGV = false;
 
@@ -254,10 +253,10 @@ namespace tec_parts_supply_transport_web.Repositories
 
             if (!isUseAGV)
             {
-                return string.Empty;
+                return (string.Empty, false);
             }
 
-            string sql = $@"
+            string updateInventorySql = $@"
                 UPDATE [tec-inventory-management].[dbo].[t_inventory_information]
                 SET
                     inventory_num = inventory_num - @Quantity,
@@ -265,7 +264,7 @@ namespace tec_parts_supply_transport_web.Repositories
                 WHERE parts_num = @PartsNum
             ";
 
-            return sql;
+            return (updateInventorySql, true);
         }
 
 

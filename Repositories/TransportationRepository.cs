@@ -146,9 +146,6 @@ namespace tec_parts_supply_transport_web.Repositories
         /// <summary>
         /// 部品在庫を更新するSQL作成
         /// </summary>
-        /// <param name="workType"></param>
-        /// <param name="agv"></param>
-        /// <param name="partsModel"></param>
         /// <returns></returns>
         public static string CreateSQLToUpdatePartsInventory()
         {
